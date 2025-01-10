@@ -3,7 +3,7 @@
 <?= $this->section('content') ?>
 <div class="row">
     <div class="col-12">
-        <?= form_open("satuan/update/$satuan->id", ['csrf_id' => 'edit_form']) ?>
+        <?= form_open("master/satuan/update/$satuan->id", ['csrf_id' => 'edit_form']) ?>
         <div class="card rounded-0">
             <div class="card-header">
                 <h3 class="card-title">Form Edit Satuan</h3>
@@ -63,7 +63,7 @@
             </div>
             <!-- /.card-body -->
             <div class="card-footer text-left">
-                <a href="<?= base_url('satuan') ?>" class="btn btn-default rounded-0">
+                <a href="<?= base_url('master/satuan') ?>" class="btn btn-default rounded-0">
                     <i class="fas fa-arrow-left mr-2"></i>Kembali
                 </a>
                 <button type="submit" class="btn btn-primary rounded-0 float-right">

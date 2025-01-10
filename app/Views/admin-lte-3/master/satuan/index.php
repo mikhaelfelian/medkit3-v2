@@ -7,7 +7,7 @@
             <div class="card-header">
                 <div class="row">
                     <div class="col-md-6">
-                        <a href="<?= base_url('satuan/create') ?>" class="btn btn-sm btn-primary rounded-0">
+                        <a href="<?= base_url('master/satuan/create') ?>" class="btn btn-sm btn-primary rounded-0">
                             <i class="fas fa-plus"></i> Tambah Data
                         </a>
                     </div>
@@ -58,11 +58,11 @@
                                     </td>
                                     <td>
                                         <div class="btn-group rounded-0">
-                                            <a href="<?= base_url("satuan/edit/$row->id") ?>"
+                                            <a href="<?= base_url("master/satuan/edit/$row->id") ?>"
                                                 class="btn btn-warning btn-sm rounded-0">
                                                 <i class="fas fa-edit"></i>
                                             </a>
-                                            <a href="<?= base_url("satuan/delete/$row->id") ?>"
+                                            <a href="<?= base_url("master/satuan/delete/$row->id") ?>"
                                                 class="btn btn-danger btn-sm rounded-0"
                                                 onclick="return confirm('Apakah anda yakin ingin menghapus data ini?')">
                                                 <i class="fas fa-trash"></i>

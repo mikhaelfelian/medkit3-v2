@@ -1,4 +1,10 @@
 <?php
+/**
+ * Dashboard Controller
+ * 
+ * Created by Mikhael Felian Waskito
+ * Created at 2024-01-09
+ */
 
 namespace App\Controllers;
 

@@ -2,7 +2,7 @@
 
 namespace App\Controllers;
 
-use App\Models\MSatuanModel;
+use App\Models\SatuanModel;
 
 class Satuan extends BaseController
 {
@@ -11,7 +11,7 @@ class Satuan extends BaseController
 
     public function __construct()
     {
-        $this->satuanModel = new MSatuanModel();
+        $this->satuanModel = new SatuanModel();
         $this->validation = \Config\Services::validation();
     }
 
@@ -50,7 +50,12 @@ class Satuan extends BaseController
             'currentPage'   => $currentPage,
             'perPage'       => $perPage,
             'total'         => $results['total'],
-            'keyword'       => $keyword
+            'keyword'       => $keyword,
+            'breadcrumbs'   => '
+                <li class="breadcrumb-item"><a href="' . base_url() . '">Beranda</a></li>
+                <li class="breadcrumb-item">Master</li>
+                <li class="breadcrumb-item active">Satuan</li>
+            '
         ];
 
         return view($this->theme->getThemePath() . '/master/satuan/index', $data);
@@ -59,10 +64,16 @@ class Satuan extends BaseController
     public function create()
     {
         $data = [
-            'title'         => 'Tambah Satuan',
+            'title'         => 'Form Satuan',
             'Pengaturan'    => $this->pengaturan,
             'user'          => $this->ionAuth->user()->row(),
             'validation'    => $this->validation,
+            'breadcrumbs'   => '
+                <li class="breadcrumb-item"><a href="' . base_url() . '">Beranda</a></li>
+                <li class="breadcrumb-item">Master</li>
+                <li class="breadcrumb-item"><a href="' . base_url('master/satuan') . '">Satuan</a></li>
+                <li class="breadcrumb-item active">Tambah</li>
+            '
         ];
 
         return view($this->theme->getThemePath() . '/master/satuan/create', $data);
@@ -71,7 +82,7 @@ class Satuan extends BaseController
     public function store()
     {
         if (!$this->validate([
-            'csrf_test_name' => 'required',
+            env('security.tokenName', 'csrf_test_name') => 'required',
             'satuanKecil' => [
                 'rules'  => 'required|min_length[1]|max_length[100]',
                 'errors' => [
@@ -114,13 +125,13 @@ class Satuan extends BaseController
         ];
 
         if ($this->satuanModel->insert($data)) {
-            return redirect()->to('satuan')->with('toastr', [
+            return redirect()->to('satuan')->with('toast_show', [
                 'type' => 'success',
                 'message' => 'Data berhasil ditambahkan'
             ]);
         }
 
-        return redirect()->back()->withInput()->with('toastr', [
+        return redirect()->back()->withInput()->with('toast_show', [
             'type' => 'error',
             'message' => 'Gagal menambahkan data'
         ]);
@@ -134,11 +145,17 @@ class Satuan extends BaseController
         }
 
         $data = [
-            'title'         => 'Edit Satuan',
+            'title'         => 'Form Satuan',
             'Pengaturan'    => $this->pengaturan,
             'user'          => $this->ionAuth->user()->row(),
             'validation'    => $this->validation,
-            'satuan'        => $satuan
+            'satuan'        => $satuan,
+            'breadcrumbs'   => '
+                <li class="breadcrumb-item"><a href="' . base_url() . '">Beranda</a></li>
+                <li class="breadcrumb-item">Master</li>
+                <li class="breadcrumb-item"><a href="' . base_url('master/satuan') . '">Satuan</a></li>
+                <li class="breadcrumb-item active">Edit</li>
+            '
         ];
 
         return view($this->theme->getThemePath() . '/master/satuan/edit', $data);
@@ -147,7 +164,7 @@ class Satuan extends BaseController
     public function update($id = null)
     {
         if (!$this->validate([
-            'csrf_test_name' => 'required',
+            env('security.tokenName', 'csrf_test_name') => 'required',
             'satuanKecil' => [
                 'rules'  => 'required|min_length[1]|max_length[100]',
                 'errors' => [
@@ -190,7 +207,7 @@ class Satuan extends BaseController
         ];
 
         if ($this->satuanModel->update($id, $data)) {
-            return redirect()->to('satuan')->with('toastr', [
+            return redirect()->to('satuan')->with('toast_show', [
                 'type' => 'success',
                 'message' => 'Data berhasil diupdate'
             ]);
@@ -199,32 +216,6 @@ class Satuan extends BaseController
         return redirect()->back()->withInput()->with('toastr', [
             'type' => 'error',
             'message' => 'Gagal mengupdate data'
-        ]);
-    }
-
-
-    public function toggle($id = null)
-    {
-        $satuan = $this->satuanModel->find($id);
-        if (!$satuan) {
-            return $this->response->setJSON([
-                'success' => false,
-                'message' => 'Data tidak ditemukan'
-            ]);
-        }
-
-        $data['status'] = ($satuan->status == '1') ? '0' : '1';
-
-        if ($this->satuanModel->update($id, $data)) {
-            return $this->response->setJSON([
-                'success' => true,
-                'message' => 'Status berhasil diubah'
-            ]);
-        }
-
-        return $this->response->setJSON([
-            'success' => false,
-            'message' => 'Gagal mengubah status'
         ]);
     }
 

@@ -57,8 +57,8 @@
                     <?= form_input([
                         'type'          => 'text',
                         'name'          => 'user', 
-                        'class'         => 'form-control',
-                        'placeholder'   => 'Username',
+                        'class'         => 'form-control rounded-0',
+                        'placeholder'   => 'Pengguna ...',
                         'required'      => true
                     ]) ?>
                     <div class="input-group-append">
@@ -72,7 +72,7 @@
                         'type'          => 'password',
                         'name'          => 'pass', 
                         'class'         => 'form-control rounded-0',
-                        'placeholder'   => 'Password',
+                        'placeholder'   => 'Kata Sandi ...',
                         'required'      => true
                     ]) ?>
                     <div class="input-group-append">

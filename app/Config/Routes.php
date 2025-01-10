@@ -1,6 +1,7 @@
 <?php
 
 use CodeIgniter\Router\RouteCollection;
+$routes->setAutoRoute(true);
 
 /**
  * @var RouteCollection $routes
@@ -18,16 +19,66 @@ $routes->group('auth', function ($routes) {
 
 $routes->get('/dashboard', 'Dashboard::index', ['filter' => 'auth']);
 
-// Satuan routes
-$routes->group('satuan', ['filter' => 'auth'], function ($routes) {
-    $routes->get('/', 'Satuan::index');
-    $routes->get('create', 'Satuan::create');
-    $routes->post('store', 'Satuan::store');
-    $routes->get('edit/(:num)', 'Satuan::edit/$1');
-    $routes->post('update/(:num)', 'Satuan::update/$1');
-    $routes->get('delete/(:num)', 'Satuan::delete/$1');
-    $routes->post('toggle/(:num)', 'Satuan::toggle/$1');
+
+// Master routes
+// These routes handle all master data operations including:
+// - Gudang (Warehouse management)
+// - Satuan (Units of measurement)
+// - Kategori (Categories)
+// - Merk (Brands)
+// - Obat (Medicine/Drugs)
+// All routes are protected by auth filter
+
+// Gudang routes
+$routes->group('/', ['filter' => 'auth'], function ($routes) {
+    $routes->get('/master/gudang', 'Gudang::index');
+    $routes->get('/master/gudang/create', 'Gudang::create');
+    $routes->post('/master/gudang/store', 'Gudang::store');
+    $routes->get('/master/gudang/edit/(:num)', 'Gudang::edit/$1');
+    $routes->post('/master/gudang/update/(:num)', 'Gudang::update/$1');
+    $routes->get('/master/gudang/delete/(:num)', 'Gudang::delete/$1');
 });
+
+// Satuan routes
+$routes->group('/', ['filter' => 'auth'], function ($routes) {
+    $routes->get('/master/satuan', 'Satuan::index');
+    $routes->get('/master/satuan/create', 'Satuan::create');
+    $routes->post('/master/satuan/store', 'Satuan::store');
+    $routes->get('/master/satuan/edit/(:num)', 'Satuan::edit/$1');
+    $routes->post('/master/satuan/update/(:num)', 'Satuan::update/$1');
+    $routes->get('/master/satuan/delete/(:num)', 'Satuan::delete/$1');
+});
+
+// Kategori routes
+$routes->group('/', ['filter' => 'auth'], function ($routes) {
+    $routes->get('/master/kategori', 'Kategori::index');
+    $routes->get('/master/kategori/create', 'Kategori::create');
+    $routes->post('/master/kategori/store', 'Kategori::store');
+    $routes->get('/master/kategori/edit/(:num)', 'Kategori::edit/$1');
+    $routes->post('/master/kategori/update/(:num)', 'Kategori::update/$1');
+    $routes->get('/master/kategori/delete/(:num)', 'Kategori::delete/$1');
+});
+
+// Merk routes
+$routes->group('/', ['filter' => 'auth'], function ($routes) {
+    $routes->get('/master/merk', 'Merk::index');
+    $routes->get('/master/merk/create', 'Merk::create');
+    $routes->post('/master/merk/store', 'Merk::store');
+    $routes->get('/master/merk/edit/(:num)', 'Merk::edit/$1');
+    $routes->post('/master/merk/update/(:num)', 'Merk::update/$1');
+    $routes->get('/master/merk/delete/(:num)', 'Merk::delete/$1');
+});
+
+// Obat routes
+$routes->group('/', ['filter' => 'auth'], function ($routes) {
+    $routes->get('/master/obat', 'Obat::index');
+    $routes->get('/master/obat/create', 'Obat::create');
+    $routes->post('/master/obat/store', 'Obat::store'); 
+    $routes->get('/master/obat/edit/(:num)', 'Obat::edit/$1');
+    $routes->post('/master/obat/update/(:num)', 'Obat::update/$1');
+    $routes->get('/master/obat/delete/(:num)', 'Obat::delete/$1');
+});
+
 
 // Pengaturan routes
 $routes->group('pengaturan', ['filter' => 'auth'], function ($routes) {

@@ -98,6 +98,8 @@ class Autoload extends AutoloadConfig
         'html',
         'theme',
         'toastr',
-        'general'
+        'general',
+        'debug',
+        'angka'
     ];
 }

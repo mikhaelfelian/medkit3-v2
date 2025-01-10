@@ -3,7 +3,7 @@
 <?= $this->section('content') ?>
 <div class="row">
     <div class="col-12">
-        <?= form_open('satuan/store', ['csrf_id' => 'create_form']) ?>
+        <?= form_open('master/satuan/store') ?>
         <div class="card rounded-0">
             <div class="card-header">
                 <h3 class="card-title">Form Tambah Satuan</h3>
@@ -29,6 +29,7 @@
                         'id' => 'satuanBesar',
                         'name' => 'satuanBesar'
                     ]) ?>
+
                 </div>
 
                 <div class="form-group">
@@ -60,7 +61,7 @@
             </div>
             <!-- /.card-body -->
             <div class="card-footer text-left">
-                <a href="<?= base_url('satuan') ?>" class="btn btn-default rounded-0">
+                <a href="<?= base_url('master/satuan') ?>" class="btn btn-default rounded-0">
                     <i class="fas fa-arrow-left mr-2"></i>Kembali
                 </a>
                 <button type="submit" class="btn btn-primary rounded-0 float-right">

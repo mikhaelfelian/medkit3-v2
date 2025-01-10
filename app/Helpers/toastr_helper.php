@@ -12,7 +12,8 @@ if (!function_exists('toast_show')) {
     function toast_show($message = null, $type = "success", $title = "") 
     {
         if ($message) {
-            return "<script>
+            $toastr = "<!-- Toastr JS Tampil disini -->";
+            $toastr .= "<script>
                 toastr.options = {
                     'closeButton': true,
                     'debug': false,
@@ -32,6 +33,8 @@ if (!function_exists('toast_show')) {
                 };
                 toastr." . $type . "('" . $message . "', '" . $title . "');
             </script>";
+
+            return $toastr;
         }
     }
 }
@@ -59,26 +62,3 @@ if (!function_exists('toast_info')) {
         return toast_show($message, "info", $title);
     }
 }
-
-if (!function_exists('show_toastr')) {
-    function show_toastr()
-    {
-        $session = session();
-        $toastr = $session->get('toastr');
-        
-        if ($toastr) {
-            $script = "<script>
-                toastr.options = {
-                    'closeButton': true,
-                    'progressBar': true,
-                    'positionClass': 'toast-top-right',
-                    'timeOut': '5000'
-                };
-                toastr.{$toastr['type']}('{$toastr['message']}');
-            </script>";
-            
-            $session->remove('toastr');
-            return $script;
-        }
-    }
-} 

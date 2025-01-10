@@ -41,11 +41,43 @@
                     </a>
                     <ul class="nav nav-treeview">
                         <li class="nav-item">
-                            <a href="<?= base_url('satuan') ?>" 
-                               class="nav-link <?= isMenuActive('satuan') ? 'active' : '' ?>">
+                            <a href="<?= base_url('master/gudang') ?>" 
+                               class="nav-link <?= isMenuActive('master/gudang') ? 'active' : '' ?>">
+                                <?= nbs(3) ?>
+                                <i class="fas fa-warehouse nav-icon"></i>
+                                <p>Data Gudang</p>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="<?= base_url('master/satuan') ?>" 
+                               class="nav-link <?= isMenuActive('master/satuan') ? 'active' : '' ?>">
                                 <?= nbs(3) ?>
                                 <i class="fas fa-ruler nav-icon"></i>
                                 <p>Data Satuan</p>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="<?= base_url('master/kategori') ?>" 
+                               class="nav-link <?= isMenuActive('master/kategori') ? 'active' : '' ?>">
+                                <?= nbs(3) ?>
+                                <i class="fas fa-tags nav-icon"></i>
+                                <p>Data Kategori</p>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="<?= base_url('master/merk') ?>" 
+                               class="nav-link <?= isMenuActive('master/merk') ? 'active' : '' ?>">
+                                <?= nbs(3) ?>
+                                <i class="fas fa-trademark nav-icon"></i>
+                                <p>Data Merk</p>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="<?= base_url('master/obat') ?>" 
+                               class="nav-link <?= isMenuActive('master/obat') ? 'active' : '' ?>">
+                                <?= nbs(3) ?>
+                                <i class="fas fa-pills nav-icon"></i>
+                                <p>Data Obat</p>
                             </a>
                         </li>
                     </ul>
