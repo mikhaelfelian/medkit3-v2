@@ -2,7 +2,7 @@
 
 <?= $this->section('content') ?>
 <div class="row">
-    <div class="col-12">
+    <div class="col-5">
         <?= form_open('master/obat/update/' . $obat->id) ?>
         <div class="card rounded-0">
             <div class="card-header">
@@ -171,6 +171,68 @@
             </div>
         </div>
         <?= form_close() ?>
+    </div>
+    <div class="col-7">
+        <div class="card rounded-0">
+            <div class="card-header">
+                <h3 class="card-title">Item Referensi</h3>
+            </div>
+            <div class="card-body">
+                <?= form_open('', ['id' => 'formItemRef']) ?>
+                    <div class="row mb-3">
+                        <div class="col-5">
+                            <?= form_input([
+                                'type' => 'text',
+                                'name' => 'item',
+                                'class' => 'form-control rounded-0',
+                                'placeholder' => 'Item'
+                            ]) ?>
+                        </div>
+                        <div class="col-2">
+                            <?= form_input([
+                                'type' => 'text', 
+                                'name' => 'jumlah',
+                                'class' => 'form-control rounded-0',
+                                'placeholder' => 'Jumlah'
+                            ]) ?>
+                        </div>
+                        <div class="col-3">
+                            <?= form_input([
+                                'type' => 'text',
+                                'name' => 'harga',
+                                'class' => 'form-control rounded-0',
+                                'placeholder' => 'Harga'
+                            ]) ?>
+                        </div>
+                        <div class="col-2">
+                            <button type="submit" class="btn btn-primary rounded-0">
+                                <i class="fas fa-plus"></i> Simpan
+                            </button>
+                        </div>
+                    </div>
+                <?= form_close() ?>
+
+                <div class="table-responsive">
+                    <table class="table table-striped">
+                        <thead>
+                            <tr>
+                                <th width="5%">No</th>
+                                <th>Item</th>
+                                <th width="15%">Jumlah</th>
+                                <th width="20%">Harga</th>
+                                <th width="20%">Subtotal</th>
+                                <th width="10%">Aksi</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td colspan="6" class="text-center">Tidak ada data</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
     </div>
 </div>
 <?= $this->endSection() ?>
