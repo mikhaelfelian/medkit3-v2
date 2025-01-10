@@ -7,11 +7,8 @@
             <div class="card-header">
                 <div class="row">
                     <div class="col-md-6">
-                        <a href="<?= base_url('master/obat/create') ?>" class="btn btn-sm btn-primary rounded-0">
-                            <i class="fas fa-plus"></i> Tambah Data
-                        </a>
-                        <a href="<?= base_url('master/obat/trash') ?>" class="btn btn-sm btn-danger rounded-0">
-                            <i class="fas fa-trash"></i> Sampah (<?= $trashCount ?>)
+                        <a href="<?= base_url('master/obat') ?>" class="btn btn-sm btn-secondary rounded-0">
+                            <i class="fas fa-arrow-left"></i> Kembali
                         </a>
                     </div>
                     <div class="col-md-6">
@@ -75,13 +72,14 @@
                                 </td>
                                 <td>
                                     <div class="btn-group">
-                                        <a href="<?= base_url("master/obat/edit/$row->id") ?>"
-                                            class="btn btn-warning btn-sm rounded-0">
-                                            <i class="fas fa-edit"></i>
+                                        <a href="<?= base_url("master/obat/restore/$row->id") ?>"
+                                            class="btn btn-success btn-sm rounded-0"
+                                            onclick="return confirm('Apakah anda yakin ingin memulihkan data ini?')">
+                                            <i class="fas fa-undo"></i>
                                         </a>
-                                        <a href="<?= base_url("master/obat/delete/$row->id") ?>"
+                                        <a href="<?= base_url("master/obat/delete_permanent/$row->id") ?>"
                                             class="btn btn-danger btn-sm rounded-0"
-                                            onclick="return confirm('Apakah anda yakin ingin menghapus data ini?')">
+                                            onclick="return confirm('Apakah anda yakin ingin menghapus permanen data ini?')">
                                             <i class="fas fa-trash"></i>
                                         </a>
                                     </div>
@@ -100,7 +98,7 @@
             <?php if ($pager): ?>
                 <div class="card-footer clearfix">
                     <div class="float-right">
-                        <?= $pager->links('obat', 'adminlte_pagination') ?>
+                        <?= $pager->links('default', 'adminlte_pagination') ?>
                     </div>
                 </div>
             <?php endif ?>

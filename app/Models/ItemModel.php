@@ -25,6 +25,7 @@ class ItemModel extends Model
     protected $dateFormat    = 'datetime';
     protected $createdField  = 'created_at';
     protected $updatedField  = 'updated_at';
+    protected $deletedField  = 'deleted_at';
 
     /**
      * Generate unique kode for item
@@ -54,7 +55,7 @@ class ItemModel extends Model
     public function getItemWithRelations($id = null)
     {
         $builder = $this->db->table($this->table . ' i')
-            ->select('i.*, s.satuan, k.kategori, m.merk')
+            ->select('i.*, s.satuanBesar as satuan, k.kategori, m.merk')
             ->join('tbl_m_satuan s', 's.id = i.id_satuan', 'left')
             ->join('tbl_m_kategori k', 'k.id = i.id_kategori', 'left')
             ->join('tbl_m_merk m', 'm.id = i.id_merk', 'left');
@@ -75,7 +76,16 @@ class ItemModel extends Model
             return parent::delete($id, true);
         }
         
-        return $this->update($id, ['status_hps' => '1','deleted_at' => date('Y-m-d H:i:s'),'updated_at' => date('Y-m-d H:i:s')]);
+        $data = [
+            'status_hps'  => '1',
+            'deleted_at'  => date('Y-m-d H:i:s'),
+            'updated_at'  => date('Y-m-d H:i:s')
+        ];
+
+        // Use the query builder to ensure timestamps are updated
+        return $this->db->table($this->table)
+                        ->where($this->primaryKey, $id)
+                        ->update($data);
     }
 
     /**
@@ -121,5 +131,32 @@ class ItemModel extends Model
             ->join('tbl_m_kategori', 'tbl_m_kategori.id = tbl_m_item.id_kategori', 'left')
             ->where('tbl_m_item.status_item', 1)
             ->where('tbl_m_item.status_hps', '0');
+    }
+
+    /**
+     * Count soft deleted records
+     */
+    public function countDeleted()
+    {
+        return $this->db->table($this->table)
+                        ->where('status_hps', '1')
+                        ->where('status_item', 1)  // Only count obat items
+                        ->countAllResults();
+    }
+
+    /**
+     * Get deleted obat items
+     */
+    public function getDeletedObat()
+    {
+        $builder = $this->db->table($this->table);
+        $builder->select('tbl_m_item.*, tbl_m_merk.merk, tbl_m_satuan.satuanBesar, tbl_m_satuan.satuanKecil, tbl_m_satuan.jml, tbl_m_kategori.kategori')
+            ->join('tbl_m_merk', 'tbl_m_merk.id = tbl_m_item.id_merk', 'left')
+            ->join('tbl_m_satuan', 'tbl_m_satuan.id = tbl_m_item.id_satuan', 'left')
+            ->join('tbl_m_kategori', 'tbl_m_kategori.id = tbl_m_item.id_kategori', 'left')
+            ->where('tbl_m_item.status_item', 1)
+            ->where('tbl_m_item.status_hps', '1');
+        
+        return $builder;
     }
 } 

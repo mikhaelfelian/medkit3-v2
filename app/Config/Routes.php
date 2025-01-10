@@ -77,6 +77,8 @@ $routes->group('/', ['filter' => 'auth'], function ($routes) {
     $routes->get('/master/obat/edit/(:num)', 'Obat::edit/$1');
     $routes->post('/master/obat/update/(:num)', 'Obat::update/$1');
     $routes->get('/master/obat/delete/(:num)', 'Obat::delete/$1');
+    $routes->get('/master/obat/trash', 'Obat::trash');
+    $routes->get('/master/obat/restore/(:num)', 'Obat::restore/$1');
 });
 
 

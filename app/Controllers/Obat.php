@@ -53,6 +53,7 @@ class Obat extends BaseController
             'currentPage'   => $currentPage,
             'perPage'       => $perPage,
             'keyword'       => $keyword,
+            'trashCount'    => $this->itemModel->countDeleted(),
             'breadcrumbs'   => '
                 <li class="breadcrumb-item"><a href="' . base_url() . '">Beranda</a></li>
                 <li class="breadcrumb-item">Master</li>
@@ -282,7 +283,35 @@ class Obat extends BaseController
             'status_racikan'=> $this->request->getPost('status_racikan') ?? '0'
         ];
 
+        $lastInsertId = $id;
+
         if ($this->itemModel->update($id, $data)) {
+            // If stockable, create initial stock entries for active warehouses
+            if ($data['status_stok'] == '1') {
+                $gudangAktif = $this->gudangModel->where('status', '1')->findAll();
+
+                foreach ($gudangAktif as $gudang) {
+                    // Check if stock entry already exists for this warehouse and item
+                    $existingStok = $this->itemStokModel->where([
+                        'id_gudang' => $gudang->id,
+                        'id_item'   => $lastInsertId
+                    ])->first();
+
+                    // Only create new stock entry if it doesn't exist
+                    if (!$existingStok) {
+                        $stokData = [
+                            'id_gudang'  => $gudang->id,
+                            'id_item'    => $lastInsertId,
+                            'id_satuan'  => $data['id_satuan'],
+                            'jml'        => 0,
+                            'status'     => $gudang->status
+                        ];
+
+                        $this->itemStokModel->insert($stokData);
+                    }
+                }
+            }
+
             return redirect()->to(base_url('master/obat'))
                 ->with('success', 'Data obat berhasil diubah');
         }
@@ -300,6 +329,7 @@ class Obat extends BaseController
         try {
             // Soft delete the item
             $this->itemModel->delete($id);
+
             $this->db->transCommit();
             
             return redirect()->to(base_url('master/obat'))
@@ -329,6 +359,80 @@ class Obat extends BaseController
             
             return redirect()->back()
                 ->with('error', 'Gagal menghapus permanen data obat');
+        }
+    }
+
+    public function trash()
+    {
+        $currentPage = $this->request->getVar('page_obat') ?? 1;
+        $perPage = 10;
+        $offset = ($currentPage - 1) * $perPage;
+        $keyword = $this->request->getVar('keyword');
+        $builder = $this->itemModel->getDeletedObat();
+
+        if ($keyword) {
+            $builder->groupStart()
+                ->like('tbl_m_item.item', $keyword)
+                ->orLike('tbl_m_item.kode', $keyword)
+                ->orLike('tbl_m_item.barcode', $keyword)
+                ->orLike('tbl_m_item.item_alias', $keyword)
+                ->groupEnd();
+        }
+
+        // Get total rows for pagination
+        $total = $builder->countAllResults(false);  // false to not reset the query builder
+
+        // Get paginated results
+        $obat = $builder->limit($perPage, $offset)->get()->getResult();
+
+        // Create pager
+        $pager = service('pager');
+        $pager->setPath('master/obat/trash');
+        $pager->makeLinks($currentPage, $perPage, $total, 'adminlte_pagination');
+
+        $data = [
+            'title'         => 'Data Obat Terhapus',
+            'Pengaturan'    => $this->pengaturan,
+            'user'          => $this->ionAuth->user()->row(),
+            'obat'          => $obat,
+            'pager'         => $pager,
+            'currentPage'   => $currentPage,
+            'perPage'       => $perPage,
+            'total'         => $total,
+            'keyword'       => $keyword,
+            'breadcrumbs'   => '
+                <li class="breadcrumb-item"><a href="' . base_url() . '">Beranda</a></li>
+                <li class="breadcrumb-item">Master</li>
+                <li class="breadcrumb-item"><a href="' . base_url('master/obat') . '">Obat</a></li>
+                <li class="breadcrumb-item active">Sampah</li>
+            '
+        ];
+
+        return view($this->theme->getThemePath() . '/master/obat/trash', $data);
+    }
+
+    public function restore($id)
+    {
+        // Start transaction
+        $this->db->transStart();
+
+        try {            
+            // Restore the item
+            $this->itemModel->update($id, [
+                'status_hps' => '0',
+                'deleted_at' => null,
+                'updated_at' => date('Y-m-d H:i:s')
+            ]);
+
+            $this->db->transCommit();
+            
+            return redirect()->to(base_url('master/obat/trash'))
+                ->with('success', 'Data obat berhasil dipulihkan');
+        } catch (\Exception $e) {
+            $this->db->transRollback();
+            
+            return redirect()->back()
+                ->with('error', 'Gagal memulihkan data obat');
         }
     }
 } 

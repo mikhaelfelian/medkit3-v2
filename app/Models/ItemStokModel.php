@@ -43,7 +43,7 @@ class ItemStokModel extends Model
     public function getStockWithRelations($id = null)
     {
         $builder = $this->db->table($this->table . ' s')
-            ->select('s.*, i.kode as item_kode, i.item, g.gudang, st.satuan')
+            ->select('s.*, i.kode as item_kode, i.item, g.gudang, st.satuanBesar as satuan')
             ->join('tbl_m_item i', 'i.id = s.id_item', 'left')
             ->join('tbl_m_gudang g', 'g.id = s.id_gudang', 'left')
             ->join('tbl_m_satuan st', 'st.id = s.id_satuan', 'left')
@@ -146,7 +146,16 @@ class ItemStokModel extends Model
             return parent::delete($id, true);
         }
         
-        return $this->update($id, ['status_hps' => '1']);
+        $data = [
+            'status_hps'  => '1',
+            'deleted_at'  => date('Y-m-d H:i:s'),
+            'updated_at'  => date('Y-m-d H:i:s')
+        ];
+
+        // Use the query builder to ensure timestamps are updated
+        return $this->db->table($this->table)
+                        ->where($this->primaryKey, $id)
+                        ->update($data);
     }
 
     /**
