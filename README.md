@@ -1,68 +1,91 @@
-# CodeIgniter 4 Application Starter
+# Medkit 3
 
-## What is CodeIgniter?
+Medkit 3 is a mini SIMRS (Sistem Informasi Manajemen Rumah Sakit) application developed specifically for Klinik Esensia Semarang.
 
-CodeIgniter is a PHP full-stack web framework that is light, fast, flexible and secure.
-More information can be found at the [official site](https://codeigniter.com).
+## Features
 
-This repository holds a composer-installable app starter.
-It has been built from the
-[development repository](https://github.com/codeigniter4/CodeIgniter4).
+- Master data management (obat, kategori, merk, satuan)
+- Inventory management with multi-warehouse support
+- Purchase order and receiving
+- Sales and billing
+- Patient records
+- Prescription management
+- User management with role-based access control
+- Reports and analytics
 
-More information about the plans for version 4 can be found in [CodeIgniter 4](https://forum.codeigniter.com/forumdisplay.php?fid=28) on the forums.
+## Technology Stack
 
-You can read the [user guide](https://codeigniter.com/user_guide/)
-corresponding to the latest version of the framework.
+- PHP 7.4+ with CodeIgniter 4 framework
+- MySQL/MariaDB database
+- AdminLTE 3 template
+- jQuery and Bootstrap 4
 
-## Installation & updates
+## Installation
 
-`composer create-project codeigniter4/appstarter` then `composer update` whenever
-there is a new release of the framework.
+1. Clone this repository
+2. Run `composer install`
+3. Copy `env` to `.env` and configure your database settings
+4. Run `php spark migrate` to create database tables
+5. Run `php spark db:seed` to populate initial data
+6. Configure your web server to point to the `public` directory
 
-When updating, check the release notes to see if there are any changes you might need to apply
-to your `app` folder. The affected files can be copied or merged from
-`vendor/codeigniter4/framework/app`.
+## Requirements
 
-## Setup
+- PHP 7.4 or higher
+- MySQL 5.7+ or MariaDB 10.2+
+- Apache/Nginx web server
+- Composer
 
-Copy `env` to `.env` and tailor for your app, specifically the baseURL
-and any database settings.
+## Core Framework
 
-## Important Change with index.php
+This project is built with CodeIgniter 4, which requires:
 
-`index.php` is no longer in the root of the project! It has been moved inside the *public* folder,
-for better security and separation of components.
+- PHP 7.4 or higher
+- Composer for dependency management
+- CodeIgniter 4 framework
+- MySQL/MariaDB database
 
-This means that you should configure your web server to "point" to your project's *public* folder, and
-not to the project root. A better practice would be to configure a virtual host to point there. A poor practice would be to point your web server to the project root and expect to enter *public/...*, as the rest of your logic and the
-framework are exposed.
+## License
 
-**Please** read the user guide for a better explanation of how CI4 works!
+This project is licensed under the MIT License - see the [LICENSE.md](LICENSE.md) file for details.
 
-## Repository Management
+## Authors
 
-We use GitHub issues, in our main repository, to track **BUGS** and to track approved **DEVELOPMENT** work packages.
-We use our [forum](http://forum.codeigniter.com) to provide SUPPORT and to discuss
-FEATURE REQUESTS.
+- Mikhael Felian Waskito
 
-This repository is a "distribution" one, built by our release preparation script.
-Problems with it can be raised on our forum, or as issues in the main repository.
+## Libraries
+- CodeIgniter team
+- Ion Auth
+- AdminLTE contributors
+- All open source packages used in this project
+- FPDF
+- PHPExcel
 
-## Server Requirements
+## Changelog
+```
+### 2024-10-10
+- Added filter by status in obat management
+- Fixed bug in stock calculation
+- Improved obat form validation
+- Added item alias and kandungan fields
 
-PHP version 8.1 or higher is required, with the following extensions installed:
+### 2024-10-15
+- Enhanced obat management features
+- Added stockable flag for items
+- Improved price formatting
+- Added initial stock creation for new items
 
-- [intl](http://php.net/manual/en/intl.requirements.php)
-- [mbstring](http://php.net/manual/en/mbstring.installation.php)
+### 2024-10-16
+- Added CRUD operations for obat (medicines)
+- Integrated with gudang (warehouse) module
+- Added price management features
+- Implemented soft deletes
 
-> [!WARNING]
-> - The end of life date for PHP 7.4 was November 28, 2022.
-> - The end of life date for PHP 8.0 was November 26, 2023.
-> - If you are still using PHP 7.4 or 8.0, you should upgrade immediately.
-> - The end of life date for PHP 8.1 will be December 31, 2025.
+### 2024-10-18
+- Initial release
+- Basic authentication system
+- Admin dashboard
+- User management
+- Basic inventory system
 
-Additionally, make sure that the following extensions are enabled in your PHP:
-
-- json (enabled by default - don't turn it off)
-- [mysqlnd](http://php.net/manual/en/mysqlnd.install.php) if you plan to use MySQL
-- [libcurl](http://php.net/manual/en/curl.requirements.php) if you plan to use the HTTP\CURLRequest library
+```
