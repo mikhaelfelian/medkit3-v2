@@ -169,8 +169,6 @@
         <?= toast_info(session('info')) ?>
     <?php endif ?>
 
-    <?= show_toastr() ?>
-
     <!-- Add reCAPTCHA script -->
     <script>
     grecaptcha.ready(function() {

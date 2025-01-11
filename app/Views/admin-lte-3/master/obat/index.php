@@ -35,6 +35,7 @@
             </div>
             <!-- /.card-header -->
             <div class="card-body table-responsive">
+                <?= form_open(base_url('master/obat'), ['method' => 'get']) ?>
                 <table class="table table-striped">
                     <thead>
                         <tr>
@@ -45,6 +46,53 @@
                             <th>Harga Beli</th>
                             <th>Status</th>
                             <th width="100">Aksi</th>
+                        </tr>
+                        <tr>
+                            <th></th>
+                            <th>
+                                <select name="kategori" class="form-control form-control-sm rounded-0">
+                                    <option value="">- Kategori -</option>
+                                <?php foreach($kategoriList ?? [] as $value => $label): ?>
+                                        <option value="<?= $value ?>" <?= ($selectedKategori ?? '') == $value ? 'selected' : '' ?>><?= $label ?></option>
+                                    <?php endforeach; ?>
+                                </select>
+                            </th>
+                            <th>
+                                <select name="merk" class="form-control form-control-sm rounded-0">
+                                    <option value="">- Merk -</option>
+                                    <?php foreach($merkList as $value => $label): ?>
+                                        <option value="<?= $value ?>" <?= ($selectedMerk ?? '') == $value ? 'selected' : '' ?>>
+                                            <?= esc($label) ?>
+                                        </option>
+                                    <?php endforeach; ?>
+                                </select>
+                            </th>
+                            <th>
+                                <?= form_input([
+                                    'name' => 'item',
+                                    'class' => 'form-control form-control-sm rounded-0',
+                                    'placeholder' => 'Filter item...'
+                                ]) ?>
+                            </th>
+                            <th>
+                                <?= form_input([
+                                    'name' => 'harga_beli',
+                                    'class' => 'form-control form-control-sm rounded-0',
+                                    'placeholder' => 'Filter harga...'
+                                ]) ?>
+                            </th>
+                            <th>
+                                <?= form_dropdown('status', [
+                                    '' => 'Semua',
+                                    '1' => 'Aktif',
+                                    '0' => 'Tidak Aktif'
+                                ], $selectedStatus ?? '', ['class' => 'form-control form-control-sm rounded-0']) ?>
+                            </th>
+                            <th>
+                                <button type="submit" class="btn btn-sm btn-primary rounded-0">
+                                    <i class="fas fa-filter"></i>
+                                </button>
+                            </th>
                         </tr>
                     </thead>
                     <tbody>
@@ -95,6 +143,7 @@
                         <?php endif ?>
                     </tbody>
                 </table>
+                <?= form_close() ?>
             </div>
             <!-- /.card-body -->
             <?php if ($pager): ?>

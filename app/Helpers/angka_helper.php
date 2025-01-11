@@ -26,10 +26,10 @@ if (!function_exists('format_angka_db')) {
      * @param mixed $angka Number to format
      * @return float
      */
-    function format_angka_db($angka)
+    function format_angka_db($str)
     {
-        $angka  = (float)$angka;
-        $string = str_replace(',', '.', str_replace('.', '', $angka));
+        $angka  = (float) $str;
+        $string = str_replace(',','.', str_replace('.','', $str));
         return $string;
     }
 }

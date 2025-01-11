@@ -10,18 +10,13 @@
             </div>
             <div class="card-body">
                 <div class="form-group">
-                    <label>Kategori <span class="text-danger">*</span></label>
-                    <select name="id_kategori" class="form-control select2 rounded-0 <?= validation_show_error('id_kategori') ? 'is-invalid' : '' ?>">
+                    <label for="id_kategori">Kategori</label>
+                    <select name="id_kategori" id="id_kategori" class="form-control rounded-0">
                         <option value="">Pilih Kategori</option>
-                        <?php foreach($kategori as $k): ?>
-                            <option value="<?= $k->id ?>" <?= old('id_kategori') == $k->id ? 'selected' : '' ?>>
-                                <?= $k->kategori ?>
-                            </option>
+                        <?php foreach ($kategori as $k): ?>
+                            <option value="<?= $k->id ?>"><?= $k->kategori ?></option>
                         <?php endforeach; ?>
                     </select>
-                    <div class="invalid-feedback">
-                        <?= validation_show_error('id_kategori') ?>
-                    </div>
                 </div>
 
                 <div class="form-group">

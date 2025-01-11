@@ -32,29 +32,72 @@ class Obat extends BaseController
     {
         $currentPage    = $this->request->getVar('page_obat') ?? 1;
         $perPage        = 10;
-        $keyword        = $this->request->getVar('keyword');
         $query          = $this->itemModel->getObat();
 
-        if ($keyword) {
+        // Get active kategori list for dropdown
+        $kategoriList = [];
+        $activeKategori = $this->kategoriModel->where('status', '1')->findAll();
+        foreach ($activeKategori as $kategori) {
+            $kategoriList[$kategori->id] = $kategori->kategori;
+        }
+
+        // Get active merk list for dropdown
+        $merkList = [];
+        $activeMerks = $this->merkModel->where('status', '1')->findAll();
+        foreach ($activeMerks as $merk) {
+            $merkList[$merk->id] = $merk->merk;
+        }
+
+        // Filter by kategori
+        $selectedKategori = $this->request->getVar('kategori');
+        if ($selectedKategori) {
+            $query->where('tbl_m_item.id_kategori', $selectedKategori);
+        }
+
+        // Filter by merk
+        $selectedMerk = $this->request->getVar('merk');
+        if ($selectedMerk) {
+            $query->where('tbl_m_item.id_merk', $selectedMerk);
+        }
+
+        // Filter by item name/code/alias
+        $item = $this->request->getVar('item');
+        if ($item) {
             $query->groupStart()
-                ->like('item', $keyword)
-                ->orLike('kode', $keyword)
-                ->orLike('barcode', $keyword)
-                ->orLike('item_alias', $keyword)
+                ->like('tbl_m_item.item', $item)
+                ->orLike('tbl_m_item.kode', $item)
+                ->orLike('tbl_m_item.item_alias', $item)
                 ->groupEnd();
         }
 
+        // Filter by harga_beli
+        $hargaBeli = $this->request->getVar('harga_beli');
+        if ($hargaBeli) {
+            $hargaBeli = format_angka_db($hargaBeli);
+            $query->where('tbl_m_item.harga_beli', $hargaBeli);
+        }
+
+        // Filter by status
+        $selectedStatus = $this->request->getVar('status');
+        if ($selectedStatus !== null && $selectedStatus !== '') {
+            $query->where('tbl_m_item.status', $selectedStatus);
+        }
+
         $data = [
-            'title'         => 'Data Obat',
-            'Pengaturan'    => $this->pengaturan,
-            'user'          => $this->ionAuth->user()->row(),
-            'obat'          => $query->paginate($perPage, 'obat'),
-            'pager'         => $this->itemModel->pager,
-            'currentPage'   => $currentPage,
-            'perPage'       => $perPage,
-            'keyword'       => $keyword,
-            'trashCount'    => $this->itemModel->countDeleted(),
-            'breadcrumbs'   => '
+            'title'           => 'Data Obat',
+            'Pengaturan'      => $this->pengaturan,
+            'user'            => $this->ionAuth->user()->row(),
+            'obat'            => $query->paginate($perPage, 'obat'),
+            'pager'           => $this->itemModel->pager,
+            'currentPage'     => $currentPage,
+            'perPage'         => $perPage,
+            'kategoriList'    => $kategoriList,
+            'selectedKategori'=> $selectedKategori,
+            'merkList'        => $merkList,
+            'selectedMerk'    => $selectedMerk,
+            'selectedStatus'  => $selectedStatus,
+            'trashCount'      => $this->itemModel->countDeleted(),
+            'breadcrumbs'     => '
                 <li class="breadcrumb-item"><a href="' . base_url() . '">Beranda</a></li>
                 <li class="breadcrumb-item">Master</li>
                 <li class="breadcrumb-item active">Obat</li>
@@ -276,8 +319,8 @@ class Obat extends BaseController
             'id_merk'       => $this->request->getPost('id_merk'),
             'jml_min'       => $this->request->getPost('jml_min') ?? 0,
             'jml_limit'     => $this->request->getPost('jml_limit') ?? 0,
-            'harga_beli'    => $this->request->getPost('harga_beli') ?? 0,
-            'harga_jual'    => $this->request->getPost('harga_jual') ?? 0,
+            'harga_beli'    => format_angka_db($this->request->getPost('harga_beli')) ?? 0,
+            'harga_jual'    => format_angka_db($this->request->getPost('harga_jual')) ?? 0,
             'status'        => $this->request->getPost('status'),
             'status_stok'   => $this->request->getPost('status_stok') ?? '0',
             'status_racikan'=> $this->request->getPost('status_racikan') ?? '0'
