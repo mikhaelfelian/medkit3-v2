@@ -10,6 +10,9 @@
                         <a href="<?= base_url('master/obat/create') ?>" class="btn btn-sm btn-primary rounded-0">
                             <i class="fas fa-plus"></i> Tambah Data
                         </a>
+                        <a href="<?= base_url('master/obat/export') ?>" class="btn btn-sm btn-success rounded-0">
+                            <i class="fas fa-file-excel"></i> Export Excel
+                        </a>
                         <a href="<?= base_url('master/obat/trash') ?>" class="btn btn-sm btn-danger rounded-0">
                             <i class="fas fa-trash"></i> Sampah (<?= $trashCount ?>)
                         </a>
