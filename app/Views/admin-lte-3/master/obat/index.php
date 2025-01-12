@@ -22,6 +22,7 @@
                 </div>
             </div>
             <!-- /.card-header -->
+             
             <div class="card-body table-responsive">
                 <?= form_open(base_url('master/obat'), ['method' => 'get']) ?>
                 <table class="table table-striped">
