@@ -1,4 +1,13 @@
 <?php
+/**
+ * Gudang Controller
+ * 
+ * Controller for managing warehouses (gudang)
+ * Handles CRUD operations and other related functionalities
+ * 
+ * @author    Mikhael Felian Waskito <mikhaelfelian@gmail.com>
+ * @date      2025-01-12
+ */
 
 namespace App\Controllers;
 

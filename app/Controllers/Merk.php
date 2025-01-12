@@ -1,4 +1,13 @@
 <?php
+/**
+ * Merk Controller
+ * 
+ * Controller for managing brands (merk)
+ * Handles CRUD operations and other related functionalities
+ * 
+ * @author    Mikhael Felian Waskito <mikhaelfelian@gmail.com>
+ * @date      2025-01-12
+ */
 
 namespace App\Controllers;
 

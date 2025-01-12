@@ -26,6 +26,12 @@ class ItemModel extends Model
         'jml_limit',
         'harga_beli',
         'harga_jual',
+        'remun_tipe',
+        'remun_perc',
+        'remun_nom',
+        'apres_tipe',
+        'apres_perc',
+        'apres_nom',
         'status',
         'status_stok',
         'status_racikan',
@@ -175,27 +181,66 @@ class ItemModel extends Model
     /**
      * Count soft deleted records
      */
-    public function countDeleted()
+    public function countDeleted($status_item = 1)  // Default to OBAT (1)
     {
         return $this->db->table($this->table)
             ->where('status_hps', '1')
-            ->where('status_item', 1)  // Only count obat items
+            ->where('status_item', $status_item)
             ->countAllResults();
     }
 
     /**
      * Get deleted obat items
      */
-    public function getDeletedObat()
+    public function getObatTrash()
     {
         $builder = $this->db->table($this->table);
-        $builder->select('tbl_m_item.*, tbl_m_merk.merk, tbl_m_satuan.satuanBesar, tbl_m_satuan.satuanKecil, tbl_m_satuan.jml, tbl_m_kategori.kategori')
-            ->join('tbl_m_merk', 'tbl_m_merk.id = tbl_m_item.id_merk', 'left')
+        $builder->select('
+                tbl_m_item.*,
+                tbl_m_satuan.satuanBesar,
+                tbl_m_kategori.kategori,
+                tbl_m_merk.merk
+            ')
             ->join('tbl_m_satuan', 'tbl_m_satuan.id = tbl_m_item.id_satuan', 'left')
             ->join('tbl_m_kategori', 'tbl_m_kategori.id = tbl_m_item.id_kategori', 'left')
+            ->join('tbl_m_merk', 'tbl_m_merk.id = tbl_m_item.id_merk', 'left')
             ->where('tbl_m_item.status_item', 1)
             ->where('tbl_m_item.status_hps', '1');
 
         return $builder;
+    }
+
+    public function getTindakan()
+    {
+        return $this->select('
+                tbl_m_item.id,
+                tbl_m_item.kode,
+                tbl_m_item.item,
+                tbl_m_item.item_alias,
+                tbl_m_item.item_kand,
+                tbl_m_item.harga_jual,
+                tbl_m_item.status,
+                tbl_m_item.status_item
+            ')
+            ->where('tbl_m_item.status_item', 2)
+            ->where('tbl_m_item.status_hps', '0');
+    }
+
+    public function getTindakanTrash()
+    {
+        $builder = $this->db->table($this->table);
+        return $builder->select('
+                tbl_m_item.id,
+                tbl_m_item.kode,
+                tbl_m_item.item,
+                tbl_m_item.item_alias,
+                tbl_m_item.item_kand,
+                tbl_m_item.harga_jual,
+                tbl_m_item.status,
+                tbl_m_item.status_item,
+                tbl_m_item.deleted_at
+            ')
+            ->where('tbl_m_item.status_item', 2)
+            ->where('tbl_m_item.status_hps', '1');
     }
 }

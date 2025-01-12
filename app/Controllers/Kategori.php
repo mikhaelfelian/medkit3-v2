@@ -1,4 +1,13 @@
 <?php
+/**
+ * Kategori Controller
+ * 
+ * Controller for managing categories (kategori)
+ * Handles CRUD operations and other related functionalities
+ * 
+ * @author    Mikhael Felian Waskito <mikhaelfelian@gmail.com>
+ * @date      2025-01-12
+ */
 
 namespace App\Controllers;
 

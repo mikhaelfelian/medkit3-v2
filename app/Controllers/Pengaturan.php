@@ -1,4 +1,13 @@
 <?php
+/**
+ * Pengaturan Controller
+ * 
+ * Controller for managing application settings (pengaturan)
+ * Handles CRUD operations and other related functionalities
+ * 
+ * @author    Mikhael Felian Waskito <mikhaelfelian@gmail.com>
+ * @date      2025-01-12
+ */
 
 namespace App\Controllers;
 

@@ -1,4 +1,11 @@
 <?php
+/**
+ * Created by:
+ * Mikhael Felian Waskito - mikhaelfelian@gmail.com
+ * 2025-01-12
+ * 
+ * Auth Controller
+ */
 
 namespace App\Controllers;
 

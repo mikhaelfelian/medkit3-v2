@@ -19,6 +19,16 @@ use Psr\Log\LoggerInterface;
  *
  * For security be sure to declare any new methods as protected or private.
  */
+/**
+ * BaseController
+ * 
+ * Base controller class that provides common functionality and properties
+ * for all controllers in the application
+ * 
+ * @author    Mikhael Felian Waskito <mikhaelfelian@gmail.com>
+ * @date      2025-01-12
+ */
+
 abstract class BaseController extends Controller
 {
     /**

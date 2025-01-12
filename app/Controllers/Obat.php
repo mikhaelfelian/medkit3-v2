@@ -1,4 +1,13 @@
 <?php
+/**
+ * Obat Controller
+ * 
+ * Controller for managing medicines (obat)
+ * Handles CRUD operations and other related functionalities
+ * 
+ * @author    Mikhael Felian Waskito <mikhaelfelian@gmail.com>
+ * @date      2025-01-12
+ */
 
 namespace App\Controllers;
 
@@ -9,6 +18,8 @@ use App\Models\ItemStokModel;
 use App\Models\SatuanModel;
 use App\Models\KategoriModel;
 use App\Models\MerkModel;
+use PhpOffice\PhpSpreadsheet\Spreadsheet;
+use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
 
 class Obat extends BaseController
 {
@@ -270,7 +281,7 @@ class Obat extends BaseController
         ];
 
         $data['obat']       = $this->itemModel->getItemWithRelations($id);
-        $data['item_refs']  = $this->itemRefModel->where('id_item', $id)->findAll();
+        $data['item_refs']  = $this->itemRefModel->getRefsByItem($id);
 
         if (empty($data['obat'])) {
             return redirect()->to(base_url('master/obat'))
@@ -414,7 +425,7 @@ class Obat extends BaseController
         $perPage = 10;
         $offset = ($currentPage - 1) * $perPage;
         $keyword = $this->request->getVar('keyword');
-        $builder = $this->itemModel->getDeletedObat();
+        $builder = $this->itemModel->getObatTrash();
 
         if ($keyword) {
             $builder->groupStart()
@@ -613,6 +624,150 @@ class Obat extends BaseController
             
             return redirect()->back()
                 ->with('error', ENVIRONMENT === 'development' ? $e->getMessage() : 'Gagal menghapus data referensi obat');
+        }
+    }
+
+    public function xls_items()
+    {
+        try {
+            // Create new Spreadsheet object
+            $spreadsheet = new Spreadsheet();
+            $sheet = $spreadsheet->getActiveSheet();
+
+            // Set document properties
+            $spreadsheet->getProperties()
+                ->setCreator($this->pengaturan->judul_app)
+                ->setLastModifiedBy($this->pengaturan->judul_app)
+                ->setTitle('Data Obat')
+                ->setSubject('Data Obat ' . $this->pengaturan->judul_app)
+                ->setDescription('Data Obat ' . date('Y-m-d H:i:s'));
+
+            // Add header row
+            $sheet->setCellValue('A1', 'No');
+            $sheet->setCellValue('B1', 'Kode');
+            $sheet->setCellValue('C1', 'Nama Obat');
+            $sheet->setCellValue('D1', 'Alias');
+            $sheet->setCellValue('E1', 'Kandungan');
+            $sheet->setCellValue('F1', 'Kategori');
+            $sheet->setCellValue('G1', 'Merk');
+            $sheet->setCellValue('H1', 'Satuan');
+            $sheet->setCellValue('I1', 'Harga Beli');
+            $sheet->setCellValue('J1', 'Harga Jual');
+            $sheet->setCellValue('K1', 'Stok');
+            $sheet->setCellValue('L1', 'Status Item');
+            $sheet->setCellValue('M1', 'isStockAble');
+            $sheet->setCellValue('N1', 'isRacikan');
+
+            // Style the header row
+            $headerStyle = [
+                'font' => [
+                    'bold' => true,
+                    'color' => ['rgb' => 'FFFFFF'],
+                ],
+                'fill' => [
+                    'fillType' => \PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID,
+                    'startColor' => ['rgb' => '4B5563'],
+                ],
+                'borders' => [
+                    'allBorders' => [
+                        'borderStyle' => \PhpOffice\PhpSpreadsheet\Style\Border::BORDER_THIN,
+                    ],
+                ],
+            ];
+            $sheet->getStyle('A1:N1')->applyFromArray($headerStyle);
+
+            // Get data with filters
+            $query = $this->itemModel->getObat()->where('tbl_m_item.status_hps', '0');
+
+            // Apply filters
+            $selectedKategori = $this->request->getVar('kategori');
+            if ($selectedKategori) {
+                $query->where('tbl_m_item.id_kategori', $selectedKategori);
+            }
+
+            $selectedMerk = $this->request->getVar('merk');
+            if ($selectedMerk) {
+                $query->where('tbl_m_item.id_merk', $selectedMerk);
+            }
+
+            $item = $this->request->getVar('item');
+            if ($item) {
+                $query->groupStart()
+                    ->like('tbl_m_item.item', $item)
+                    ->orLike('tbl_m_item.kode', $item)
+                    ->orLike('tbl_m_item.item_alias', $item)
+                    ->groupEnd();
+            }
+
+            $hargaBeli = $this->request->getVar('harga_beli');
+            if ($hargaBeli) {
+                $hargaBeli = format_angka_db($hargaBeli);
+                $query->where('tbl_m_item.harga_beli', $hargaBeli);
+            }
+
+            $selectedStatus = $this->request->getVar('status');
+            if ($selectedStatus !== null && $selectedStatus !== '') {
+                $query->where('tbl_m_item.status', $selectedStatus);
+            }
+
+            $items = $query->orderBy('tbl_m_item.item', 'ASC')->findAll();
+
+            // Add data rows
+            $row = 2;
+            foreach ($items as $i => $item) {
+                $sheet->setCellValue('A' . $row, $i + 1);
+                $sheet->setCellValue('B' . $row, $item->kode);
+                $sheet->setCellValue('C' . $row, $item->item);
+                $sheet->setCellValue('D' . $row, $item->item_alias);
+                $sheet->setCellValue('E' . $row, $item->item_kand);
+                $sheet->setCellValue('F' . $row, $item->kategori);
+                $sheet->setCellValue('G' . $row, $item->merk);
+                $sheet->setCellValue('H' . $row, $item->satuanBesar);
+                $sheet->setCellValue('I' . $row, $item->harga_beli);
+                $sheet->setCellValue('J' . $row, $item->harga_jual);
+                $sheet->setCellValue('K' . $row, $item->jml);
+                $sheet->setCellValue('L' . $row, $item->status_stok);
+                $sheet->setCellValue('M' . $row, $item->status_racikan);
+                $sheet->setCellValue('N' . $row, $item->status);
+
+                // Format currency cells
+                $sheet->getStyle('I' . $row)->getNumberFormat()->setFormatCode('#,##0');
+                $sheet->getStyle('J' . $row)->getNumberFormat()->setFormatCode('#,##0');
+
+                $row++;
+            }
+
+            // Style the data rows
+            $dataStyle = [
+                'borders' => [
+                    'allBorders' => [
+                        'borderStyle' => \PhpOffice\PhpSpreadsheet\Style\Border::BORDER_THIN,
+                    ],
+                ],
+            ];
+            $sheet->getStyle('A2:N' . ($row - 1))->applyFromArray($dataStyle);
+
+            // Auto-size columns
+            foreach (range('A', 'N') as $col) {
+                $sheet->getColumnDimension($col)->setAutoSize(true);
+            }
+
+            // Create your filename
+            $filename = 'Data_Obat_' . date('Y-m-d_H-i-s') . '.xlsx';
+
+            // Redirect output to client browser
+            header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+            header('Content-Disposition: attachment;filename="' . $filename . '"');
+            header('Cache-Control: max-age=0');
+
+            $writer = new Xlsx($spreadsheet);
+            $writer->save('php://output');
+            exit();
+
+        } catch (\Exception $e) {
+            log_message('error', '[Obat::xls_items] ' . $e->getMessage());
+            return redirect()->back()
+                ->with('error', ENVIRONMENT === 'development' ? $e->getMessage() : 'Gagal mengekspor data obat');
         }
     }
 } 

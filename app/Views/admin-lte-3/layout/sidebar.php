@@ -80,6 +80,14 @@
                                 <p>Data Obat</p>
                             </a>
                         </li>
+                        <li class="nav-item">
+                            <a href="<?= base_url('master/tindakan') ?>" 
+                               class="nav-link <?= isMenuActive('master/tindakan') ? 'active' : '' ?>">
+                                <?= nbs(3) ?>
+                                <i class="fas fa-procedures nav-icon"></i>
+                                <p>Data Tindakan</p>
+                            </a>
+                        </li>
                     </ul>
                 </li>
 

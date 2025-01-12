@@ -81,8 +81,24 @@ $routes->group('/', ['filter' => 'auth'], function ($routes) {
     $routes->get('/master/obat/restore/(:num)', 'Obat::restore/$1');
     $routes->post('/master/obat/item_ref_save/(:num)', 'Obat::item_ref_save/$1');
     $routes->get('/master/obat/item_ref_delete/(:num)', 'Obat::item_ref_delete/$1');
+    $routes->get('/master/obat/export', 'Obat::xls_items');
 });
 
+// Tindakan routes
+$routes->group('/', ['filter' => 'auth'], function ($routes) {
+    $routes->get('/master/tindakan', 'Tindakan::index');
+    $routes->get('/master/tindakan/create', 'Tindakan::create');
+    $routes->post('/master/tindakan/store', 'Tindakan::store');
+    $routes->get('/master/tindakan/edit/(:num)', 'Tindakan::edit/$1');
+    $routes->post('/master/tindakan/update/(:num)', 'Tindakan::update/$1');
+    $routes->get('/master/tindakan/delete/(:num)', 'Tindakan::delete/$1');
+    $routes->get('/master/tindakan/delete_permanent/(:num)', 'Tindakan::delete_permanent/$1');
+    $routes->get('/master/tindakan/trash', 'Tindakan::trash');
+    $routes->get('/master/tindakan/restore/(:num)', 'Tindakan::restore/$1');
+    $routes->get('/master/tindakan/export', 'Tindakan::xls_items');
+    $routes->post('/master/tindakan/item_ref_save/(:num)', 'Tindakan::item_ref_save/$1');
+    $routes->get('/master/tindakan/item_ref_delete/(:num)', 'Tindakan::item_ref_delete/$1');
+});
 
 // Pengaturan routes
 $routes->group('pengaturan', ['filter' => 'auth'], function ($routes) {
