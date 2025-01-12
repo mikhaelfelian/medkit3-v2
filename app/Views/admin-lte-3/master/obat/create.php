@@ -11,7 +11,7 @@
             <div class="card-body">
                 <div class="form-group">
                     <label for="id_kategori">Kategori</label>
-                    <select name="id_kategori" id="id_kategori" class="form-control rounded-0">
+                    <select name="id_kategori" id="id_kategori" class="form-control select2 rounded-0">
                         <option value="">Pilih Kategori</option>
                         <?php foreach ($kategori as $k): ?>
                             <option value="<?= $k->id ?>"><?= $k->kategori ?></option>
@@ -138,6 +138,19 @@
                         <label class="custom-control-label" for="status_stok">Stockable</label>
                     </div>
                     <small class="form-text text-muted">Aktifkan jika di centang maka akan mengurangi stok.</small>
+                </div>
+
+                <div class="form-group">
+                    <label>Tipe Racikan</label><br/>
+                    <div class="btn-group btn-group-toggle" data-toggle="buttons">
+                        <label class="btn btn-secondary active">
+                            <input type="radio" name="status_racikan" value="0" checked> Non
+                        </label>
+                        <label class="btn btn-secondary">
+                            <input type="radio" name="status_racikan" value="1"> Racikan
+                        </label>
+                    </div>
+                    <small class="form-text text-muted">Racikan hanya dapat di inputkan jika di pilih.</small>
                 </div>
 
                 <div class="form-group">

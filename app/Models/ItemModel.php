@@ -6,47 +6,86 @@ use CodeIgniter\Model;
 
 class ItemModel extends Model
 {
-    protected $table            = 'tbl_m_item';
-    protected $primaryKey       = 'id';
+    protected $table = 'tbl_m_item';
+    protected $primaryKey = 'id';
     protected $useAutoIncrement = true;
-    protected $returnType       = 'object';
-    protected $useSoftDeletes   = false;
-    protected $protectFields    = true;
-    protected $allowedFields    = [
-        'kode', 'item', 'item_alias', 'item_kand', 'barcode',
-        'id_satuan', 'id_kategori', 'id_merk', 'jml', 'jml_min',
-        'jml_limit', 'harga_beli', 'harga_jual', 'status',
-        'status_stok', 'status_racikan', 'status_item', 'id_user',
+    protected $returnType = 'object';
+    protected $useSoftDeletes = false;
+    protected $protectFields = true;
+    protected $allowedFields = [
+        'kode',
+        'item',
+        'item_alias',
+        'item_kand',
+        'barcode',
+        'id_satuan',
+        'id_kategori',
+        'id_merk',
+        'jml',
+        'jml_min',
+        'jml_limit',
+        'harga_beli',
+        'harga_jual',
+        'status',
+        'status_stok',
+        'status_racikan',
+        'status_item',
+        'id_user',
         'status_hps'
     ];
 
     // Dates
     protected $useTimestamps = true;
-    protected $dateFormat    = 'datetime';
-    protected $createdField  = 'created_at';
-    protected $updatedField  = 'updated_at';
-    protected $deletedField  = 'deleted_at';
+    protected $dateFormat = 'datetime';
+    protected $createdField = 'created_at';
+    protected $updatedField = 'updated_at';
+    protected $deletedField = 'deleted_at';
 
     /**
      * Generate unique kode for item
      * Format: OBT-001, OBT-002, etc
      */
-    public function generateKode()
+    public function generateKode($status_item = null)
     {
-        $prefix = 'OBT-';
+        switch ($status_item) {
+            case 1:
+                $prefix = 'OBT' . date('ym') . rand(10, 99);
+                break;
+
+            case 2:
+                $prefix = 'TND' . date('ym') . rand(10, 99);
+                break;
+
+            case 3:
+                $prefix = 'LAB' . date('ym') . rand(10, 99);
+                break;
+
+            case 4:
+                $prefix = 'RAD' . date('ym') . rand(10, 99);
+                break;
+
+            case 5:
+                $prefix = 'BHP' . date('ym') . rand(10, 99);
+                break;
+
+            default:
+                $prefix = '-';
+                break;
+        }
+
         $lastKode = $this->select('kode')
-                        ->like('kode', $prefix, 'after')
-                        ->orderBy('kode', 'DESC')
-                        ->first();
+            ->where('status_item', $status_item)
+            ->orderBy('kode', 'DESC')
+            ->first();
 
         if (!$lastKode) {
-            return $prefix . '001';
+            return $prefix . '00001';
         }
 
         $lastNumber = (int) substr($lastKode->kode, strlen($prefix));
-        $newNumber = $lastNumber + 1;
-        
-        return $prefix . str_pad($newNumber, 3, '0', STR_PAD_LEFT);
+        $newNumber  = $lastNumber + 1;
+
+        return $prefix . str_pad($newNumber, 5, '0', STR_PAD_LEFT);
     }
 
     /**
@@ -75,17 +114,17 @@ class ItemModel extends Model
         if ($purge) {
             return parent::delete($id, true);
         }
-        
+
         $data = [
-            'status_hps'  => '1',
-            'deleted_at'  => date('Y-m-d H:i:s'),
-            'updated_at'  => date('Y-m-d H:i:s')
+            'status_hps' => '1',
+            'deleted_at' => date('Y-m-d H:i:s'),
+            'updated_at' => date('Y-m-d H:i:s')
         ];
 
         // Use the query builder to ensure timestamps are updated
         return $this->db->table($this->table)
-                        ->where($this->primaryKey, $id)
-                        ->update($data);
+            ->where($this->primaryKey, $id)
+            ->update($data);
     }
 
     /**
@@ -139,9 +178,9 @@ class ItemModel extends Model
     public function countDeleted()
     {
         return $this->db->table($this->table)
-                        ->where('status_hps', '1')
-                        ->where('status_item', 1)  // Only count obat items
-                        ->countAllResults();
+            ->where('status_hps', '1')
+            ->where('status_item', 1)  // Only count obat items
+            ->countAllResults();
     }
 
     /**
@@ -156,7 +195,7 @@ class ItemModel extends Model
             ->join('tbl_m_kategori', 'tbl_m_kategori.id = tbl_m_item.id_kategori', 'left')
             ->where('tbl_m_item.status_item', 1)
             ->where('tbl_m_item.status_hps', '1');
-        
+
         return $builder;
     }
-} 
+}

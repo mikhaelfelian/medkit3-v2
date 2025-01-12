@@ -15,21 +15,6 @@
                         </a>
                     </div>
                     <div class="col-md-6">
-                        <?= form_open('', ['method' => 'get', 'class' => 'float-right']) ?>
-                        <div class="input-group input-group-sm">
-                            <?= form_input([
-                                'name' => 'keyword',
-                                'class' => 'form-control rounded-0',
-                                'value' => $keyword ?? '',
-                                'placeholder' => 'Cari...'
-                            ]) ?>
-                            <div class="input-group-append">
-                                <button class="btn btn-sm btn-primary rounded-0" type="submit">
-                                    <i class="fas fa-search"></i>
-                                </button>
-                            </div>
-                        </div>
-                        <?= form_close() ?>
                     </div>
                 </div>
             </div>
@@ -102,8 +87,8 @@
                                 <td><?= $row->kategori ?></td>
                                 <td><?= $row->merk ?></td>
                                 <td>
-                                    <small><i><?= $row->kode ?></i></small><?=br(); ?>
                                     <?= $row->item.br(); ?>
+                                    <small><i><?= $row->kode ?></i></small><?=br(); ?>
                                     <small><b><?= format_angka_rp($row->harga_jual) ?></b></small>
                                     <?php if (!empty($row->item_alias)): ?>
                                         <?=br();?>

@@ -1,3 +1,6 @@
+# Allow direct access to assets directory
+RewriteRule ^assets/ - [L]
+
 # Disable directory browsing
 Options All -Indexes
 

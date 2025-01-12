@@ -17,7 +17,7 @@ class App extends BaseConfig
      *
      * E.g., http://example.com/
      */
-    public string $baseURL = 'http://localhost/medkit3/';
+    public string $baseURL = 'http://localhost/medkit3-v2/';
 
     /**
      * Allowed Hostnames in the Site URL other than the hostname in the baseURL.
@@ -208,4 +208,11 @@ class App extends BaseConfig
     public $sessionMatchIP = false;
     public $sessionTimeToUpdate = 300;
     public $sessionRegenerateDestroy = false;
+
+    public $cookiePrefix   = '';
+    public $cookieDomain   = '';
+    public $cookiePath     = '/';
+    public $cookieSecure   = false;
+    public $cookieHTTPOnly = true;
+    public $cookieSameSite = 'Lax';
 }

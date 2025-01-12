@@ -48,3 +48,25 @@ RewriteRule ^(.*)$ index.php [QSA,L]
     AddOutputFilterByType DEFLATE text/plain
     AddOutputFilterByType DEFLATE text/xml
 </IfModule>
+
+# Add these lines to your .htaccess file
+AddType text/css .css
+AddType application/javascript .js
+AddType application/json .json
+
+# Force MIME types
+<IfModule mod_mime.c>
+    AddType text/css .css
+    AddType text/javascript .js
+    AddType application/json .json
+</IfModule>
+
+# Set proper headers
+<IfModule mod_headers.c>
+    <FilesMatch "\.(css)$">
+        Header set Content-Type "text/css"
+    </FilesMatch>
+    <FilesMatch "\.(js)$">
+        Header set Content-Type "application/javascript"
+    </FilesMatch>
+</IfModule>

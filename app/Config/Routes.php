@@ -79,6 +79,8 @@ $routes->group('/', ['filter' => 'auth'], function ($routes) {
     $routes->get('/master/obat/delete/(:num)', 'Obat::delete/$1');
     $routes->get('/master/obat/trash', 'Obat::trash');
     $routes->get('/master/obat/restore/(:num)', 'Obat::restore/$1');
+    $routes->post('/master/obat/item_ref_save/(:num)', 'Obat::item_ref_save/$1');
+    $routes->get('/master/obat/item_ref_delete/(:num)', 'Obat::item_ref_delete/$1');
 });
 
 
@@ -86,4 +88,9 @@ $routes->group('/', ['filter' => 'auth'], function ($routes) {
 $routes->group('pengaturan', ['filter' => 'auth'], function ($routes) {
     $routes->get('app', 'Pengaturan::index');
     $routes->post('app/update', 'Pengaturan::update');
+});
+
+// Public API routes
+$routes->group('publik', function ($routes) {
+    $routes->get('items', 'Publik::getItems');
 });

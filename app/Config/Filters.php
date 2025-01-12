@@ -34,7 +34,7 @@ class Filters extends BaseFilters
         'cors'          => Cors::class,
         'forcehttps'    => ForceHTTPS::class,
         'pagecache'     => PageCache::class,
-        // 'performance'   => PerformanceMetrics::class,
+        'performance'   => PerformanceMetrics::class,
         'auth'          => AuthFilter::class,
     ];
 
@@ -58,7 +58,7 @@ class Filters extends BaseFilters
         ],
         'after' => [
             'pagecache',   // Web Page Caching
-            // 'performance', // Performance Metrics
+            'performance', // Performance Metrics
             // 'toolbar',     // Debug Toolbar
         ],
     ];
@@ -71,13 +71,10 @@ class Filters extends BaseFilters
      */
     public array $globals = [
         'before' => [
-            'csrf',  // Enable CSRF protection globally
-            // 'honeypot',
-            // 'invalidchars',
+            'csrf' => ['except' => ['publik/*']]
         ],
         'after' => [
-            // 'honeypot',
-            // 'secureheaders',
+            // 'toolbar',
         ],
     ];
 

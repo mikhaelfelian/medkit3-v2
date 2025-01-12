@@ -483,6 +483,9 @@ class Mimes
             'application/vnd.ms-pki.stl',
             'application/x-navistyle',
         ],
+        'css'  => ['text/css', 'text/plain'],
+        'js'   => ['application/javascript', 'application/x-javascript', 'text/javascript', 'text/plain'],
+        'json' => ['application/json', 'text/plain'],
     ];
 
     /**

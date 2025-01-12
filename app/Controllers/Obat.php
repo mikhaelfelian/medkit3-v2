@@ -4,6 +4,7 @@ namespace App\Controllers;
 
 use App\Models\GudangModel;
 use App\Models\ItemModel;
+use App\Models\ItemRefModel;
 use App\Models\ItemStokModel;
 use App\Models\SatuanModel;
 use App\Models\KategoriModel;
@@ -21,6 +22,7 @@ class Obat extends BaseController
     {
         $this->gudangModel   = new GudangModel();
         $this->itemModel     = new ItemModel();
+        $this->itemRefModel  = new ItemRefModel();
         $this->itemStokModel = new ItemStokModel();
         $this->satuanModel   = new SatuanModel(); 
         $this->kategoriModel = new KategoriModel();
@@ -186,14 +188,15 @@ class Obat extends BaseController
             ]
         ];
 
-        if (!$this->validate($rules)) {
-            return redirect()->back()
-                ->withInput()
-                ->with('error', 'Validasi gagal');
-        }
+        // if (!$this->validate($rules)) {
+        //     return redirect()->back()
+        //         ->withInput()
+        //         ->with('error', 'Validasi gagal');
+        // }
 
         $data = [
-            'kode'          => $this->itemModel->generateKode(),
+            'id_user'       => $this->ionAuth->user()->row()->id,
+            'kode'          => $this->itemModel->generateKode(1),
             'item'          => $this->request->getPost('item'),
             'item_alias'    => $this->request->getPost('item_alias'),
             'item_kand'     => $this->request->getPost('item_kand'),
@@ -208,7 +211,6 @@ class Obat extends BaseController
             'status_stok'   => $this->request->getPost('status_stok') ?? '0',
             'status_racikan'=> $this->request->getPost('status_racikan') ?? '0',
             'status_item'   => 1, // 1 = Obat
-            'id_user'       => $this->ionAuth->user()->row()->id
         ];
 
         if ($this->itemModel->insert($data)) {
@@ -267,7 +269,8 @@ class Obat extends BaseController
             '
         ];
 
-        $data['obat'] = $this->itemModel->getItemWithRelations($id);
+        $data['obat']       = $this->itemModel->getItemWithRelations($id);
+        $data['item_refs']  = $this->itemRefModel->where('id_item', $id)->findAll();
 
         if (empty($data['obat'])) {
             return redirect()->to(base_url('master/obat'))
@@ -476,6 +479,140 @@ class Obat extends BaseController
             
             return redirect()->back()
                 ->with('error', 'Gagal memulihkan data obat');
+        }
+    }
+
+    public function item_ref_save($id = null)
+    {
+        if (!$id) {
+            return redirect()->back()
+                ->with('error', 'ID obat tidak ditemukan');
+        }
+
+        $id_item        = $this->request->getPost('id_item');
+        $id_item_ref    = $this->request->getPost('id_item_ref');
+        $jml            = $this->request->getPost('jml');
+
+        // Validation rules
+        $rules = [
+            'id_item' => [
+                'rules' => 'required|integer',
+                'errors' => [
+                    'required' => 'ID item harus diisi',
+                    'integer' => 'ID item tidak valid'
+                ]
+            ],
+            'id_item_ref' => [
+                'rules' => 'required|integer|differs[id_item]',
+                'errors' => [
+                    'required' => 'ID item referensi harus diisi',
+                    'integer' => 'ID item referensi tidak valid',
+                    'differs' => 'Item referensi tidak boleh sama dengan item utama'
+                ]
+            ],
+            'item_ref' => [
+                'rules' => 'required|max_length[160]',
+                'errors' => [
+                    'required' => 'Item harus diisi',
+                    'max_length' => 'Item maksimal 160 karakter'
+                ]
+            ],
+            'jml' => [
+                'rules' => 'required|numeric|greater_than[0]',
+                'errors' => [
+                    'required' => 'Jumlah harus diisi',
+                    'numeric' => 'Jumlah harus berupa angka',
+                    'greater_than' => 'Jumlah harus lebih besar dari 0'
+                ]
+            ]
+        ];
+
+        if (!$this->validate($rules)) {
+            return redirect()->back()
+                ->withInput()
+                ->with('validation_errors', $this->validator->getErrors())
+                ->with('error', 'Validasi gagal. Silakan periksa kembali input Anda.');
+        }
+
+        // Start transaction
+        $this->db->transStart();
+
+        try {
+            // Get required data
+            $sql_item = $this->itemModel->find($id_item);
+            if (!$sql_item) {
+                throw new \Exception('Item utama tidak ditemukan');
+            }
+
+            $sql_item_ref = $this->itemModel->find($id_item_ref);
+            if (!$sql_item_ref) {
+                throw new \Exception('Item referensi tidak ditemukan');
+            }
+
+            $sql_satuan = $this->satuanModel->find($sql_item_ref->id_satuan);
+            if (!$sql_satuan) {
+                throw new \Exception('Satuan tidak ditemukan');
+            }
+
+            // Calculate values
+            $subtotal = format_angka_db($sql_item_ref->harga_jual * $jml);
+
+            $data = [
+                'id_item'      => $sql_item->id,
+                'id_item_ref'  => $sql_item_ref->id,
+                'id_satuan'    => $sql_item_ref->id_satuan,
+                'id_user'      => $this->ionAuth->user()->row()->id,
+                'item'         => $sql_item_ref->item,
+                'harga'        => format_angka_db($sql_item_ref->harga_jual),
+                'jml'          => (int)$jml,
+                'jml_satuan'   => (int)$sql_satuan->jml,
+                'subtotal'     => $subtotal,
+                'status'       => $sql_item_ref->status
+            ];
+
+            // Insert data
+            if (!$this->itemRefModel->insert($data)) {
+                throw new \Exception('Gagal menyimpan data referensi obat');
+            }
+
+            // Commit transaction
+            $this->db->transCommit();
+
+            return redirect()->to(base_url('master/obat/edit/' . $id_item))
+                ->with('success', 'Berhasil menyimpan data referensi obat');
+
+        } catch (\Exception $e) {
+            // Rollback transaction
+            $this->db->transRollback();
+
+            log_message('error', '[Obat::item_ref_save] ' . $e->getMessage());
+            
+            return redirect()->to(base_url('master/obat/edit/' . $id_item))
+                ->withInput()
+                ->with('error', ENVIRONMENT === 'development' ? $e->getMessage() : 'Gagal menyimpan data referensi obat');
+        }
+    }
+
+    public function item_ref_delete($id)
+    {
+        try {
+            $itemRef = $this->itemRefModel->find($id);
+            if (!$itemRef) {
+                throw new \Exception('Data referensi obat tidak ditemukan');
+            }
+
+            if (!$this->itemRefModel->delete($id)) {
+                throw new \Exception('Gagal menghapus data referensi obat');
+            }
+
+            return redirect()->back()
+                ->with('success', 'Berhasil menghapus data referensi obat');
+
+        } catch (\Exception $e) {
+            log_message('error', '[Obat::item_ref_delete] ' . $e->getMessage());
+            
+            return redirect()->back()
+                ->with('error', ENVIRONMENT === 'development' ? $e->getMessage() : 'Gagal menghapus data referensi obat');
         }
     }
 } 

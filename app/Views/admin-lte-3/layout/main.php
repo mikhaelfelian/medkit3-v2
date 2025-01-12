@@ -19,15 +19,18 @@ if (!isset($Pengaturan)) {
     <!-- Google Font: Source Sans Pro -->
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700&display=fallback">
     <!-- Font Awesome -->
-    <link rel="stylesheet" href="<?= base_url('public') ?>/assets/theme/admin-lte-3/plugins/fontawesome-free/css/all.min.css">
+    <link rel="stylesheet" href="<?= base_url('public/assets/theme/admin-lte-3/plugins/fontawesome-free/css/all.min.css') ?>">
     <!-- Theme style -->
-    <link rel="stylesheet" href="<?= base_url('public') ?>/assets/theme/admin-lte-3/dist/css/adminlte.min.css">
+    <link rel="stylesheet" href="<?= base_url('public/assets/theme/admin-lte-3/dist/css/adminlte.min.css') ?>">    
     <?= $this->renderSection('css') ?>
 	
     <!-- Core Scripts -->
     <script src="<?= base_url('public/assets/theme/admin-lte-3/plugins/jquery/jquery.min.js') ?>"></script>
     <script src="<?= base_url('public/assets/theme/admin-lte-3/plugins/bootstrap/js/bootstrap.bundle.min.js') ?>"></script>
+    <script src="<?= base_url('public/assets/theme/admin-lte-3/plugins/jquery-ui/jquery-ui.min.js')?>"></script>
+    <script src="<?= base_url('public/assets/theme/admin-lte-3/plugins/moment/moment.min.js') ?>"></script>
     <script src="<?= base_url('public/assets/theme/admin-lte-3/dist/js/adminlte.min.js') ?>"></script>
+    <link rel="stylesheet" href="<?= base_url('public/assets/theme/admin-lte-3/plugins/jquery-ui/jquery-ui.min.css') ?>">
 	
     <!-- Datepicker -->
     <script src="<?= base_url('public/assets/theme/admin-lte-3/plugins/bootstrap-datepicker/bootstrap-datepicker.min.js') ?>"></script>
@@ -39,16 +42,13 @@ if (!isset($Pengaturan)) {
 	<link rel="stylesheet" href="<?= base_url('public/assets/theme/admin-lte-3/plugins/select2/css/select2.min.css') ?>">
 	<link rel="stylesheet" href="<?= base_url('public/assets/theme/admin-lte-3/plugins/select2-bootstrap4-theme/select2-bootstrap4.min.css') ?>">
 
-    <!-- Toastr -->
-    <link rel="stylesheet" href="<?= base_url('public/assets/theme/admin-lte-3/plugins/toastr/toastr.min.css') ?>">
-    <script src="<?= base_url('public/assets/theme/admin-lte-3/plugins/toastr/toastr.min.js') ?>"></script>
-
     <!-- AutoNumeric -->
     <script src="<?= base_url('public/assets/theme/admin-lte-3/plugins/JAutoNumber/autonumeric.js') ?>"></script>
     <?= csrf_meta() ?>
 
-    <!-- In the head section, add CSS -->
-    <link rel="stylesheet" href="<?= base_url('public/assets/plugins/toastr/toastr.min.css') ?>">
+    <!-- Toastr -->
+    <script src="<?= base_url('public/assets/theme/admin-lte-3/plugins/toastr/toastr.min.js') ?>"></script>
+    <link rel="stylesheet" href="<?= base_url('public/assets/theme/admin-lte-3/plugins/toastr/toastr.min.css') ?>">
 </head>
 <body class="hold-transition sidebar-mini">
 <div class="wrapper">
@@ -97,23 +97,24 @@ if (!isset($Pengaturan)) {
 
 <!-- Add this script for toastr notifications -->
 <script>
+$(document).ready(function() {
     // Toastr options
     toastr.options = {
-        "closeButton": true,
-        "debug": false,
-        "newestOnTop": false,
-        "progressBar": true,
-        "positionClass": "toast-top-right",
-        "preventDuplicates": false,
-        "onclick": null,
-        "showDuration": "300",
-        "hideDuration": "1000",
-        "timeOut": "5000",
-        "extendedTimeOut": "1000",
-        "showEasing": "swing",
-        "hideEasing": "linear",
-        "showMethod": "fadeIn",
-        "hideMethod": "fadeOut"
+        closeButton: true,
+        debug: false,
+        newestOnTop: true,
+        progressBar: true,
+        positionClass: "toast-top-right",
+        preventDuplicates: false,
+        onclick: null,
+        showDuration: "300",
+        hideDuration: "1000",
+        timeOut: "5000",
+        extendedTimeOut: "1000",
+        showEasing: "swing",
+        hideEasing: "linear",
+        showMethod: "fadeIn",
+        hideMethod: "fadeOut"
     };
 
     // Flash messages
@@ -132,6 +133,7 @@ if (!isset($Pengaturan)) {
     <?php if (session()->getFlashdata('info')) : ?>
         toastr.info('<?= session()->getFlashdata('info') ?>');
     <?php endif; ?>
+});
 </script>
 </body>
 </html> 

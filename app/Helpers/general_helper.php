@@ -44,6 +44,7 @@ if (!function_exists('isMenuActive')) {
         
         return false;
     }
+}
 
 if (!function_exists('isStockable')) {
     /**
@@ -52,9 +53,11 @@ if (!function_exists('isStockable')) {
      * @param mixed $value Value to check
      * @return string HTML badge element
      */
-    function isStockable($value): string
+    function isStockable($value = '1'): string
     {
-        return br().'<span class="badge badge-success">Stockable</span>';
+        if ($value) {
+            return br().'<span class="badge badge-success">Stockable</span>';
+        }
+        return ''; // Return empty string when not stockable
     }
-}
 } 

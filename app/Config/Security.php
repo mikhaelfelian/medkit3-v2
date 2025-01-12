@@ -118,4 +118,21 @@ class Security extends BaseConfig
      * Length of the CSRF token.
      */
     public int $tokenLength = 32;
+
+    /**
+     * --------------------------------------------------------------------------
+     * CSRF Cookie Secure
+     * --------------------------------------------------------------------------
+     *
+     * Setting for CSRF SameSite cookie token.
+     *
+     * Allowed values are: None - Lax - Strict - ''.
+     *
+     * Defaults to `Lax` as recommended in this link:
+     *
+     * @see https://portswigger.net/web-security/csrf/samesite-cookies
+     *
+     * @deprecated `Config\Cookie` $samesite property is used.
+     */
+    public bool $cookieSecure = false;
 }
