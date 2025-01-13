@@ -89,6 +89,14 @@
                             </a>
                         </li>
                         <li class="nav-item">
+                            <a href="<?= base_url('master/lab') ?>" 
+                               class="nav-link <?= isMenuActive('master/lab') ? 'active' : '' ?>">
+                                <?= nbs(3) ?>
+                                <i class="fas fa-flask nav-icon"></i>
+                                <p>Data Laboratorium</p>
+                            </a>
+                        </li>
+                        <li class="nav-item">
                             <a href="<?= base_url('master/radiologi') ?>" 
                                class="nav-link <?= isMenuActive('master/radiologi') ? 'active' : '' ?>">
                                 <?= nbs(3) ?>
@@ -110,6 +118,23 @@
                                 <?= nbs(3) ?>
                                 <i class="fas fa-clinic-medical nav-icon"></i>
                                 <p>Data Klinik</p>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="<?= base_url('master/penjamin') ?>" 
+                               class="nav-link <?= isMenuActive('master/penjamin') ? 'active' : '' ?>">
+                                <?= nbs(3) ?>
+                                <i class="fas fa-shield-alt nav-icon"></i>
+                                <p>Data Penjamin</p>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="<?= base_url('gelar') ?>" class="nav-link <?= isMenuActive('gelar') ? 'active' : '' ?>">
+                                <?= nbs(3) ?>
+                                <i class="nav-icon fas fa-graduation-cap"></i>
+                                <p>
+                                    Data Gelar
+                                </p>
                             </a>
                         </li>
                     </ul>

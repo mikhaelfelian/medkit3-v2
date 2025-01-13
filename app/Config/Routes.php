@@ -100,6 +100,20 @@ $routes->group('/', ['filter' => 'auth'], function ($routes) {
     $routes->get('/master/tindakan/item_ref_delete/(:num)', 'Tindakan::item_ref_delete/$1');
 });
 
+// Lab routes
+$routes->group('/', ['filter' => 'auth'], function ($routes) {
+    $routes->get('/master/lab', 'Lab::index');
+    $routes->get('/master/lab/create', 'Lab::create');
+    $routes->post('/master/lab/store', 'Lab::store');
+    $routes->get('/master/lab/edit/(:num)', 'Lab::edit/$1');
+    $routes->post('/master/lab/update/(:num)', 'Lab::update/$1');
+    $routes->get('/master/lab/delete/(:num)', 'Lab::delete/$1');
+    $routes->get('/master/lab/trash', 'Lab::trash');
+    $routes->get('/master/lab/restore/(:num)', 'Lab::restore/$1');
+    $routes->get('/master/lab/delete_permanent/(:num)', 'Lab::delete_permanent/$1');
+    $routes->get('/master/lab/export', 'Lab::xls_items');
+});
+
 // Radiologi routes
 $routes->group('/', ['filter' => 'auth'], function ($routes) {
     $routes->get('/master/radiologi', 'Radiologi::index');
@@ -132,6 +146,36 @@ $routes->group('/', ['filter' => 'auth'], function ($routes) {
     $routes->get('/master/bhp/export', 'BHP::xls_items');
 });
 
+// Poli routes
+$routes->group('/', ['filter' => 'auth'], function ($routes) {
+    $routes->get('/master/poli', 'Poli::index');
+    $routes->get('/master/poli/create', 'Poli::create');
+    $routes->post('/master/poli/store', 'Poli::store');
+    $routes->get('/master/poli/edit/(:num)', 'Poli::edit/$1');
+    $routes->post('/master/poli/update/(:num)', 'Poli::update/$1');
+    $routes->get('/master/poli/delete/(:num)', 'Poli::delete/$1');
+});
+
+// Penjamin routes
+$routes->group('/', ['filter' => 'auth'], function ($routes) {
+    $routes->get('/master/penjamin', 'Penjamin::index');
+    $routes->get('/master/penjamin/create', 'Penjamin::create');
+    $routes->post('/master/penjamin/store', 'Penjamin::store');
+    $routes->get('/master/penjamin/edit/(:num)', 'Penjamin::edit/$1');
+    $routes->post('/master/penjamin/update/(:num)', 'Penjamin::update/$1');
+    $routes->get('/master/penjamin/delete/(:num)', 'Penjamin::delete/$1');
+});
+
+// Gelar routes
+$routes->group('/', ['filter' => 'auth'], function ($routes) {
+    $routes->get('/master/gelar', 'Gelar::index');
+    $routes->get('/master/gelar/create', 'Gelar::create');
+    $routes->post('/master/gelar/store', 'Gelar::store');
+    $routes->get('/master/gelar/edit/(:num)', 'Gelar::edit/$1');
+    $routes->post('/master/gelar/update/(:num)', 'Gelar::update/$1');
+    $routes->get('/master/gelar/delete/(:num)', 'Gelar::delete/$1');
+});
+
 // Pengaturan routes
 $routes->group('pengaturan', ['filter' => 'auth'], function ($routes) {
     $routes->get('app', 'Pengaturan::index');
@@ -141,30 +185,4 @@ $routes->group('pengaturan', ['filter' => 'auth'], function ($routes) {
 // Public API routes
 $routes->group('publik', function ($routes) {
     $routes->get('items', 'Publik::getItems');
-});
-
-// BHP routes
-$routes->group('/', ['filter' => 'auth'], function ($routes) {
-    $routes->get('/master/bhp', 'BHP::index');
-    $routes->get('/master/bhp/create', 'BHP::create');
-    $routes->post('/master/bhp/store', 'BHP::store');
-    $routes->get('/master/bhp/edit/(:num)', 'BHP::edit/$1');
-    $routes->post('/master/bhp/update/(:num)', 'BHP::update/$1');
-    $routes->get('/master/bhp/delete/(:num)', 'BHP::delete/$1');
-    $routes->get('/master/bhp/trash', 'BHP::trash');
-    $routes->get('/master/bhp/restore/(:num)', 'BHP::restore/$1');
-    $routes->get('/master/bhp/delete_permanent/(:num)', 'BHP::delete_permanent/$1');
-    $routes->post('/master/bhp/item_ref_save/(:num)', 'BHP::item_ref_save/$1');
-    $routes->get('/master/bhp/item_ref_delete/(:num)', 'BHP::item_ref_delete/$1');
-    $routes->get('/master/bhp/export', 'BHP::xls_items');
-});
-
-// Poli routes
-$routes->group('/', ['filter' => 'auth'], function ($routes) {
-    $routes->get('/master/poli', 'Poli::index');
-    $routes->get('/master/poli/create', 'Poli::create');
-    $routes->post('/master/poli/store', 'Poli::store');
-    $routes->get('/master/poli/edit/(:num)', 'Poli::edit/$1');
-    $routes->post('/master/poli/update/(:num)', 'Poli::update/$1');
-    $routes->get('/master/poli/delete/(:num)', 'Poli::delete/$1');
 });

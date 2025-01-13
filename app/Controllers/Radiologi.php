@@ -150,8 +150,7 @@ class Radiologi extends BaseController
         return view($this->theme->getThemePath() . '/master/radiologi/create', $data);
     }
 
-    public function store()
-    {
+    public function store(){
         // Validation rules
         $rules = [
             env('security.tokenName') => [
@@ -447,7 +446,7 @@ class Radiologi extends BaseController
         $perPage = $this->pengaturan->pagination_limit;
 
         // Get builder instance and convert to array for pagination
-        $builder = $this->itemModel->getRadiologiTrash();
+        $builder = $this->itemModel->getLabTrash();
 
         // Filter by name/code/alias
         $item = $this->request->getVar('item');
@@ -467,7 +466,7 @@ class Radiologi extends BaseController
 
         // Create manual pagination
         $pager = service('pager');
-        $pager->setPath('master/radiologi/trash');
+        $pager->setPath('master/lab/trash');
         $pager->makeLinks($currentPage, $perPage, $total, 'adminlte_pagination');
 
         $data = [
@@ -486,7 +485,7 @@ class Radiologi extends BaseController
             '
         ];
 
-        return view($this->theme->getThemePath() . '/master/radiologi/trash', $data);
+        return view($this->theme->getThemePath() . '/master/lab/trash', $data);
     }
 
     public function restore($id = null)

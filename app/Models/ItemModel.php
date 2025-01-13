@@ -10,7 +10,7 @@ class ItemModel extends Model
     protected $primaryKey = 'id';
     protected $useAutoIncrement = true;
     protected $returnType = 'object';
-    protected $useSoftDeletes = false;
+    protected $useSoftDeletes = true;
     protected $protectFields = true;
     protected $allowedFields = [
         'kode',
@@ -123,14 +123,10 @@ class ItemModel extends Model
 
         $data = [
             'status_hps' => '1',
-            'deleted_at' => date('Y-m-d H:i:s'),
-            'updated_at' => date('Y-m-d H:i:s')
+            'deleted_at' => date('Y-m-d H:i:s')
         ];
 
-        // Use the query builder to ensure timestamps are updated
-        return $this->db->table($this->table)
-            ->where($this->primaryKey, $id)
-            ->update($data);
+        return $this->update($id, $data);
     }
 
     /**
@@ -244,8 +240,45 @@ class ItemModel extends Model
             ->where('tbl_m_item.status_hps', '1');
     }
 
-    public function getRadiologi()
-    {
+    public function getLab(){
+        return $this->select('
+                tbl_m_item.id,
+                tbl_m_item.kode,
+                tbl_m_item.item,
+                tbl_m_item.item_alias,
+                tbl_m_item.item_kand,
+                tbl_m_item.harga_beli,
+                tbl_m_item.harga_jual,
+                tbl_m_item.status,
+                tbl_m_item.status_item,
+                tbl_m_item.status_stok,
+                tbl_m_kategori.kategori,
+                tbl_m_merk.merk
+            ')
+            ->join('tbl_m_kategori', 'tbl_m_kategori.id = tbl_m_item.id_kategori', 'left')
+            ->join('tbl_m_merk', 'tbl_m_merk.id = tbl_m_item.id_merk', 'left')
+            ->where('tbl_m_item.status_item', 3)
+            ->where('tbl_m_item.status_hps', '0');
+    }
+
+    public function getLabTrash(){
+        $builder = $this->db->table($this->table);
+        return $builder->select('
+                tbl_m_item.id,
+                tbl_m_item.kode,
+                tbl_m_item.item,
+                tbl_m_item.item_alias,
+                tbl_m_item.item_kand,
+                tbl_m_item.harga_jual,
+                tbl_m_item.status,
+                tbl_m_item.status_item,
+                tbl_m_item.deleted_at
+            ')
+            ->where('tbl_m_item.status_item', 3)
+            ->where('tbl_m_item.status_hps', '1');
+    }
+
+    public function getRadiologi(){
         return $this->select('
                 tbl_m_item.id,
                 tbl_m_item.kode,
@@ -265,8 +298,7 @@ class ItemModel extends Model
             ->where('tbl_m_item.status_hps', '0');
     }
 
-    public function getRadiologiTrash()
-    {
+    public function getRadiologiTrash(){
         $builder = $this->db->table($this->table);
         return $builder->select('
                 tbl_m_item.id,
