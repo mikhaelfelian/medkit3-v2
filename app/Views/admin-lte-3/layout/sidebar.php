@@ -88,6 +88,14 @@
                                 <p>Data Tindakan</p>
                             </a>
                         </li>
+                        <li class="nav-item">
+                            <a href="<?= base_url('master/radiologi') ?>" 
+                               class="nav-link <?= isMenuActive('master/radiologi') ? 'active' : '' ?>">
+                                <?= nbs(3) ?>
+                                <i class="fas fa-x-ray nav-icon"></i>
+                                <p>Data Radiologi</p>
+                            </a>
+                        </li>
                     </ul>
                 </li>
 

@@ -243,4 +243,43 @@ class ItemModel extends Model
             ->where('tbl_m_item.status_item', 2)
             ->where('tbl_m_item.status_hps', '1');
     }
+
+    public function getRadiologi()
+    {
+        return $this->select('
+                tbl_m_item.id,
+                tbl_m_item.kode,
+                tbl_m_item.item,
+                tbl_m_item.item_alias,
+                tbl_m_item.item_kand,
+                tbl_m_item.harga_jual,
+                tbl_m_item.status,
+                tbl_m_item.status_item,
+                tbl_m_item.status_stok,
+                tbl_m_kategori.kategori,
+                tbl_m_merk.merk
+            ')
+            ->join('tbl_m_kategori', 'tbl_m_kategori.id = tbl_m_item.id_kategori', 'left')
+            ->join('tbl_m_merk', 'tbl_m_merk.id = tbl_m_item.id_merk', 'left')
+            ->where('tbl_m_item.status_item', 4)
+            ->where('tbl_m_item.status_hps', '0');
+    }
+
+    public function getRadiologiTrash()
+    {
+        $builder = $this->db->table($this->table);
+        return $builder->select('
+                tbl_m_item.id,
+                tbl_m_item.kode,
+                tbl_m_item.item,
+                tbl_m_item.item_alias,
+                tbl_m_item.item_kand,
+                tbl_m_item.harga_jual,
+                tbl_m_item.status,
+                tbl_m_item.status_item,
+                tbl_m_item.deleted_at
+            ')
+            ->where('tbl_m_item.status_item', 4)
+            ->where('tbl_m_item.status_hps', '1');
+    }
 }

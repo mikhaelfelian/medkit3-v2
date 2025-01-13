@@ -100,6 +100,22 @@ $routes->group('/', ['filter' => 'auth'], function ($routes) {
     $routes->get('/master/tindakan/item_ref_delete/(:num)', 'Tindakan::item_ref_delete/$1');
 });
 
+// Radiologi routes
+$routes->group('/', ['filter' => 'auth'], function ($routes) {
+    $routes->get('/master/radiologi', 'Radiologi::index');
+    $routes->get('/master/radiologi/create', 'Radiologi::create');
+    $routes->post('/master/radiologi/store', 'Radiologi::store');
+    $routes->get('/master/radiologi/edit/(:num)', 'Radiologi::edit/$1');
+    $routes->post('/master/radiologi/update/(:num)', 'Radiologi::update/$1');
+    $routes->get('/master/radiologi/delete/(:num)', 'Radiologi::delete/$1');
+    $routes->get('/master/radiologi/trash', 'Radiologi::trash');
+    $routes->get('/master/radiologi/restore/(:num)', 'Radiologi::restore/$1');
+    $routes->get('/master/radiologi/delete_permanent/(:num)', 'Radiologi::delete_permanent/$1');
+    $routes->get('/master/radiologi/export', 'Radiologi::xls_items');
+    $routes->post('/master/radiologi/item_ref_save/(:num)', 'Radiologi::item_ref_save/$1');
+    $routes->get('/master/radiologi/item_ref_delete/(:num)', 'Radiologi::item_ref_delete/$1');
+});
+
 // Pengaturan routes
 $routes->group('pengaturan', ['filter' => 'auth'], function ($routes) {
     $routes->get('app', 'Pengaturan::index');
