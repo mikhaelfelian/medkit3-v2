@@ -116,6 +116,22 @@ $routes->group('/', ['filter' => 'auth'], function ($routes) {
     $routes->get('/master/radiologi/item_ref_delete/(:num)', 'Radiologi::item_ref_delete/$1');
 });
 
+// BHP routes
+$routes->group('/', ['filter' => 'auth'], function ($routes) {
+    $routes->get('/master/bhp', 'BHP::index');
+    $routes->get('/master/bhp/create', 'BHP::create');
+    $routes->post('/master/bhp/store', 'BHP::store');
+    $routes->get('/master/bhp/edit/(:num)', 'BHP::edit/$1');
+    $routes->post('/master/bhp/update/(:num)', 'BHP::update/$1');
+    $routes->get('/master/bhp/delete/(:num)', 'BHP::delete/$1');
+    $routes->get('/master/bhp/trash', 'BHP::trash');
+    $routes->get('/master/bhp/restore/(:num)', 'BHP::restore/$1');
+    $routes->get('/master/bhp/delete_permanent/(:num)', 'BHP::delete_permanent/$1');
+    $routes->post('/master/bhp/item_ref_save/(:num)', 'BHP::item_ref_save/$1');
+    $routes->get('/master/bhp/item_ref_delete/(:num)', 'BHP::item_ref_delete/$1');
+    $routes->get('/master/bhp/export', 'BHP::xls_items');
+});
+
 // Pengaturan routes
 $routes->group('pengaturan', ['filter' => 'auth'], function ($routes) {
     $routes->get('app', 'Pengaturan::index');
@@ -125,4 +141,30 @@ $routes->group('pengaturan', ['filter' => 'auth'], function ($routes) {
 // Public API routes
 $routes->group('publik', function ($routes) {
     $routes->get('items', 'Publik::getItems');
+});
+
+// BHP routes
+$routes->group('/', ['filter' => 'auth'], function ($routes) {
+    $routes->get('/master/bhp', 'BHP::index');
+    $routes->get('/master/bhp/create', 'BHP::create');
+    $routes->post('/master/bhp/store', 'BHP::store');
+    $routes->get('/master/bhp/edit/(:num)', 'BHP::edit/$1');
+    $routes->post('/master/bhp/update/(:num)', 'BHP::update/$1');
+    $routes->get('/master/bhp/delete/(:num)', 'BHP::delete/$1');
+    $routes->get('/master/bhp/trash', 'BHP::trash');
+    $routes->get('/master/bhp/restore/(:num)', 'BHP::restore/$1');
+    $routes->get('/master/bhp/delete_permanent/(:num)', 'BHP::delete_permanent/$1');
+    $routes->post('/master/bhp/item_ref_save/(:num)', 'BHP::item_ref_save/$1');
+    $routes->get('/master/bhp/item_ref_delete/(:num)', 'BHP::item_ref_delete/$1');
+    $routes->get('/master/bhp/export', 'BHP::xls_items');
+});
+
+// Poli routes
+$routes->group('/', ['filter' => 'auth'], function ($routes) {
+    $routes->get('/master/poli', 'Poli::index');
+    $routes->get('/master/poli/create', 'Poli::create');
+    $routes->post('/master/poli/store', 'Poli::store');
+    $routes->get('/master/poli/edit/(:num)', 'Poli::edit/$1');
+    $routes->post('/master/poli/update/(:num)', 'Poli::update/$1');
+    $routes->get('/master/poli/delete/(:num)', 'Poli::delete/$1');
 });

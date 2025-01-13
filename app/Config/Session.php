@@ -9,7 +9,7 @@ class Session extends BaseConfig
 {
     public $driver = FileHandler::class;
     
-    public $cookieName = 'ci_session';
+    public $cookieName = 'simedis-sess';
     
     public $expiration = 7200;
     

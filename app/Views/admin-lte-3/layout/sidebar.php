@@ -96,6 +96,22 @@
                                 <p>Data Radiologi</p>
                             </a>
                         </li>
+                        <li class="nav-item">
+                            <a href="<?= base_url('master/bhp') ?>" 
+                               class="nav-link <?= isMenuActive('master/bhp') ? 'active' : '' ?>">
+                                <?= nbs(3) ?>
+                                <i class="fas fa-box-open nav-icon"></i>
+                                <p>Data BHP</p>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="<?= base_url('master/poli') ?>" 
+                               class="nav-link <?= isMenuActive('master/poli') ? 'active' : '' ?>">
+                                <?= nbs(3) ?>
+                                <i class="fas fa-clinic-medical nav-icon"></i>
+                                <p>Data Klinik</p>
+                            </a>
+                        </li>
                     </ul>
                 </li>
 
