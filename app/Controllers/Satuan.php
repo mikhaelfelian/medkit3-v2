@@ -1,26 +1,30 @@
 <?php
 /**
+ * Created by:
+ * Mikhael Felian Waskito - mikhaelfelian@gmail.com
+ * 2025-01-13
+ * 
  * Satuan Controller
  * 
- * Controller for managing units (satuan)
+ * Controller for managing measurement units (satuan)
  * Handles CRUD operations and other related functionalities
- * 
- * @author    Mikhael Felian Waskito <mikhaelfelian@gmail.com>
- * @date      2025-01-12
  */
 
 namespace App\Controllers;
 
 use App\Models\SatuanModel;
+use App\Models\PengaturanModel;
 
 class Satuan extends BaseController
 {
     protected $satuanModel;
     protected $validation;
+    protected $pengaturan;
 
     public function __construct()
     {
         $this->satuanModel = new SatuanModel();
+        $this->pengaturan = new PengaturanModel();
         $this->validation = \Config\Services::validation();
     }
 
@@ -28,39 +32,36 @@ class Satuan extends BaseController
     {
         $currentPage = $this->request->getVar('page_satuan') ?? 1;
         $perPage = 10;
-        $keyword = $this->request->getVar('keyword');
 
-        // Use query builder caching
-        $this->satuanModel->builder()->select('id, satuanKecil, satuanBesar, jml, status');
+        // Start with the model query
+        $query = $this->satuanModel;
 
-        if ($keyword) {
-            $this->satuanModel->groupStart()
-                ->like('satuanKecil', $keyword)
-                ->orLike('satuanBesar', $keyword)
+        // Filter by search term
+        $search = $this->request->getVar('search');
+        if ($search) {
+            $query->groupStart()
+                ->like('satuanKecil', $search)
+                ->orLike('satuanBesar', $search)
                 ->groupEnd();
         }
 
-        // Cache the results
-        $cacheKey = "satuan_page_{$currentPage}_search_{$keyword}";
-        if (!$results = cache($cacheKey)) {
-            $results = [
-                'total' => $this->satuanModel->countAllResults(false),
-                'data' => $this->satuanModel->paginate($perPage, 'satuan')
-            ];
-            cache()->save($cacheKey, $results, 300); // Cache for 5 minutes
+        // Filter by status
+        $selectedStatus = $this->request->getVar('status');
+        if ($selectedStatus !== null && $selectedStatus !== '') {
+            $query->where('status', $selectedStatus);
         }
 
         $data = [
-            'title'         => 'Data Satuan',
-            'Pengaturan'    => $this->pengaturan,
-            'user'          => $this->ionAuth->user()->row(),
-            'satuan'        => $results['data'],
-            'pager'         => $this->satuanModel->pager,
-            'currentPage'   => $currentPage,
-            'perPage'       => $perPage,
-            'total'         => $results['total'],
-            'keyword'       => $keyword,
-            'breadcrumbs'   => '
+            'title'          => 'Data Satuan',
+            'Pengaturan'     => $this->pengaturan,
+            'user'           => $this->ionAuth->user()->row(),
+            'satuan'         => $query->paginate($perPage, 'satuan'),
+            'pager'          => $this->satuanModel->pager,
+            'currentPage'    => $currentPage,
+            'perPage'        => $perPage,
+            'search'         => $search,
+            'selectedStatus' => $selectedStatus,
+            'breadcrumbs'    => '
                 <li class="breadcrumb-item"><a href="' . base_url() . '">Beranda</a></li>
                 <li class="breadcrumb-item">Master</li>
                 <li class="breadcrumb-item active">Satuan</li>
@@ -73,7 +74,7 @@ class Satuan extends BaseController
     public function create()
     {
         $data = [
-            'title'         => 'Form Satuan',
+            'title'         => 'Tambah Satuan',
             'Pengaturan'    => $this->pengaturan,
             'user'          => $this->ionAuth->user()->row(),
             'validation'    => $this->validation,
@@ -90,166 +91,87 @@ class Satuan extends BaseController
 
     public function store()
     {
-        if (!$this->validate([
-            env('security.tokenName', 'csrf_test_name') => 'required',
-            'satuanKecil' => [
-                'rules'  => 'required|min_length[1]|max_length[100]',
+        // Validation rules
+        $rules = [
+            env('security.tokenName') => [
+                'rules' => 'required',
                 'errors' => [
-                    'required'   => 'Satuan Kecil harus diisi',
-                    'min_length' => 'Satuan Kecil minimal 1 karakter',
-                    'max_length' => 'Satuan Kecil maksimal 100 karakter'
+                    'required' => env('csrf.name') . ' harus diisi'
+                ]
+            ],
+            'satuanKecil' => [
+                'rules' => 'required|max_length[50]',
+                'errors' => [
+                    'required' => 'Satuan kecil harus diisi',
+                    'max_length' => 'Satuan kecil maksimal 50 karakter'
                 ]
             ],
             'satuanBesar' => [
-                'rules'  => 'permit_empty|max_length[100]',
+                'rules' => 'required|max_length[50]',
                 'errors' => [
-                    'max_length' => 'Satuan Besar maksimal 100 karakter'
-                ]
-            ],
-            'jml' => [
-                'rules'  => 'required|integer',
-                'errors' => [
-                    'required' => 'Jumlah harus diisi',
-                    'integer'  => 'Jumlah harus berupa angka'
+                    'required' => 'Satuan besar harus diisi',
+                    'max_length' => 'Satuan besar maksimal 50 karakter'
                 ]
             ],
             'status' => [
-                'rules'  => 'permit_empty|in_list[0,1]',
+                'rules' => 'required|in_list[0,1]',
                 'errors' => [
-                    'in_list' => 'Status harus 0 atau 1'
+                    'required' => 'Status harus dipilih',
+                    'in_list' => 'Status tidak valid'
                 ]
             ]
-        ])) {
-            return redirect()->back()->withInput()->with('toastr', [
-                'type' => 'error',
-                'message' => 'Invalid CSRF token'
-            ]);
-        }
-
-        $data = [
-            'satuanKecil' => $this->request->getPost('satuanKecil'),
-            'satuanBesar' => $this->request->getPost('satuanBesar'),
-            'jml'         => $this->request->getPost('jml'),
-            'status'      => $this->request->getPost('status') ?? '1'
         ];
 
-        if ($this->satuanModel->insert($data)) {
-            return redirect()->to('satuan')->with('toast_show', [
-                'type' => 'success',
-                'message' => 'Data berhasil ditambahkan'
-            ]);
+        if (!$this->validate($rules)) {
+            return redirect()->back()
+                ->withInput()
+                ->with('validation_errors', $this->validator->getErrors())
+                ->with('error', 'Validasi gagal. Silakan periksa kembali input Anda.');
         }
 
-        return redirect()->back()->withInput()->with('toast_show', [
-            'type' => 'error',
-            'message' => 'Gagal menambahkan data'
-        ]);
+        try {
+            $data = [
+                'satuanKecil' => $this->request->getPost('satuanKecil'),
+                'satuanBesar' => $this->request->getPost('satuanBesar'),
+                'jml'         => $this->request->getPost('jml'),
+                'status'      => $this->request->getPost('status')
+            ];
+
+            if (!$this->satuanModel->insert($data)) {
+                throw new \Exception('Gagal menyimpan data satuan');
+            }
+
+            return redirect()->to(base_url('master/satuan'))
+                ->with('success', 'Data satuan berhasil ditambahkan');
+
+        } catch (\Exception $e) {
+            log_message('error', '[Satuan::store] ' . $e->getMessage());
+            
+            return redirect()->back()
+                ->withInput()
+                ->with('error', ENVIRONMENT === 'development' ? $e->getMessage() : 'Gagal menyimpan data satuan');
+        }
     }
 
-    public function edit($id = null)
+    public function delete($id)
     {
-        $satuan = $this->satuanModel->find($id);
-        if (!$satuan) {
-            return redirect()->to('satuan')->with('error', 'Data tidak ditemukan');
+        try {
+            if (!$id || !is_numeric($id)) {
+                throw new \Exception('ID satuan tidak valid');
+            }
+
+            if (!$this->satuanModel->delete($id)) {
+                throw new \Exception('Gagal menghapus data satuan');
+            }
+
+            return redirect()->to(base_url('master/satuan'))
+                ->with('success', 'Data satuan berhasil dihapus');
+
+        } catch (\Exception $e) {
+            log_message('error', '[Satuan::delete] ' . $e->getMessage());
+
+            return redirect()->back()
+                ->with('error', ENVIRONMENT === 'development' ? $e->getMessage() : 'Gagal menghapus data satuan');
         }
-
-        $data = [
-            'title'         => 'Form Satuan',
-            'Pengaturan'    => $this->pengaturan,
-            'user'          => $this->ionAuth->user()->row(),
-            'validation'    => $this->validation,
-            'satuan'        => $satuan,
-            'breadcrumbs'   => '
-                <li class="breadcrumb-item"><a href="' . base_url() . '">Beranda</a></li>
-                <li class="breadcrumb-item">Master</li>
-                <li class="breadcrumb-item"><a href="' . base_url('master/satuan') . '">Satuan</a></li>
-                <li class="breadcrumb-item active">Edit</li>
-            '
-        ];
-
-        return view($this->theme->getThemePath() . '/master/satuan/edit', $data);
-    }
-
-    public function update($id = null)
-    {
-        if (!$this->validate([
-            env('security.tokenName', 'csrf_test_name') => 'required',
-            'satuanKecil' => [
-                'rules'  => 'required|min_length[1]|max_length[100]',
-                'errors' => [
-                    'required'   => 'Satuan Kecil harus diisi',
-                    'min_length' => 'Satuan Kecil minimal 1 karakter',
-                    'max_length' => 'Satuan Kecil maksimal 100 karakter'
-                ]
-            ],
-            'satuanBesar' => [
-                'rules'  => 'permit_empty|max_length[100]',
-                'errors' => [
-                    'max_length' => 'Satuan Besar maksimal 100 karakter'
-                ]
-            ],
-            'jml' => [
-                'rules'  => 'required|integer',
-                'errors' => [
-                    'required' => 'Jumlah harus diisi',
-                    'integer'  => 'Jumlah harus berupa angka'
-                ]
-            ],
-            'status' => [
-                'rules'  => 'permit_empty|in_list[0,1]',
-                'errors' => [
-                    'in_list' => 'Status harus 0 atau 1'
-                ]
-            ]
-        ])) {
-            return redirect()->back()->withInput()->with('toastr', [
-                'type' => 'error',
-                'message' => 'Invalid CSRF token'
-            ]);
-        }
-
-        $data = [
-            'satuanKecil' => $this->request->getPost('satuanKecil'),
-            'satuanBesar' => $this->request->getPost('satuanBesar'),
-            'jml'         => $this->request->getPost('jml'),
-            'status'      => $this->request->getPost('status') ?? '1'
-        ];
-
-        if ($this->satuanModel->update($id, $data)) {
-            return redirect()->to('satuan')->with('toast_show', [
-                'type' => 'success',
-                'message' => 'Data berhasil diupdate'
-            ]);
-        }
-
-        return redirect()->back()->withInput()->with('toastr', [
-            'type' => 'error',
-            'message' => 'Gagal mengupdate data'
-        ]);
-    }
-
-    public function delete($id = null)
-    {
-        // Check if ID exists
-        $satuan = $this->satuanModel->find($id);
-        if (!$satuan) {
-            return redirect()->to('satuan')->with('toastr', [
-                'type' => 'error',
-                'message' => 'Data tidak ditemukan'
-            ]);
-        }
-
-        // Try to delete
-        if ($this->satuanModel->delete($id)) {
-            return redirect()->to('satuan')->with('toastr', [
-                'type' => 'success',
-                'message' => 'Data berhasil dihapus'
-            ]);
-        }
-
-        return redirect()->to('satuan')->with('toastr', [
-            'type' => 'error',
-            'message' => 'Gagal menghapus data'
-        ]);
     }
 } 

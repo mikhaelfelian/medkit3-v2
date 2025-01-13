@@ -12,7 +12,12 @@ class SatuanModel extends Model
     protected $returnType       = 'object';
     protected $useSoftDeletes   = false;
     protected $protectFields    = true;
-    protected $allowedFields    = ['kode', 'satuan', 'keterangan', 'status'];
+    protected $allowedFields    = [
+        'satuanKecil',
+        'satuanBesar',
+        'jml',
+        'status'
+    ];
 
     // Dates
     protected $useTimestamps = true;

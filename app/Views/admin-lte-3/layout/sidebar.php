@@ -129,7 +129,7 @@
                             </a>
                         </li>
                         <li class="nav-item">
-                            <a href="<?= base_url('gelar') ?>" class="nav-link <?= isMenuActive('gelar') ? 'active' : '' ?>">
+                            <a href="<?= base_url('master/gelar') ?>" class="nav-link <?= isMenuActive('master/gelar') ? 'active' : '' ?>">
                                 <?= nbs(3) ?>
                                 <i class="nav-icon fas fa-graduation-cap"></i>
                                 <p>

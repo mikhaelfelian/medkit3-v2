@@ -564,8 +564,7 @@ class Radiologi extends BaseController
 
 
 
-    public function item_ref_save($id_item = null)
-    {
+    public function item_ref_save($id_item = null){
         if (!$id_item) {
             return redirect()->back()
                 ->with('error', 'ID tindakan tidak ditemukan');
@@ -604,8 +603,7 @@ class Radiologi extends BaseController
         }
     }
 
-    public function item_ref_delete($id = null)
-    {
+    public function item_ref_delete($id = null){
         if (!$id) {
             return redirect()->back()
                 ->with('error', 'ID referensi tindakan tidak ditemukan');

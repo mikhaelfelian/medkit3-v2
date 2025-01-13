@@ -182,7 +182,7 @@ class Lab extends BaseController
                 ]
             ],
             'harga_jual' => [
-                'rules' => 'required|numeric|greater_than_equal_to[0]',
+                'rules' => 'required',
                 'errors' => [
                     'required'              => 'Harga jual harus diisi',
                     'numeric'               => 'Harga jual harus berupa angka',
@@ -224,7 +224,7 @@ class Lab extends BaseController
                 'harga_beli'  => format_angka_db($this->request->getVar('harga_beli')),
                 'harga_jual'  => format_angka_db($this->request->getVar('harga_jual')),
                 'status'      => $this->request->getPost('status'),
-                'status_stok' => $this->request->getPost('status_stok'),
+                'status_stok' => $this->request->getPost('status_stok') ?? 1,
                 'status_item' => 3, // LABORATORIEM
                 'id_user'     => $this->ionAuth->user()->row()->id
             ];
@@ -298,6 +298,9 @@ class Lab extends BaseController
         $kategoris  = $this->kategoriModel->where('status', '1')->findAll();
         $merks      = $this->merkModel->where('status', '1')->findAll();
         $satuans    = $this->satuanModel->where('status', '1')->findAll();
+        
+        // Get item references
+        $item_refs = $this->itemRefModel->getRefsByItem($id);
 
         $data = [
             'title'         => 'Edit Laboratorium',
@@ -305,6 +308,7 @@ class Lab extends BaseController
             'kategoris'     => $kategoris,
             'merks'         => $merks,
             'satuans'       => $satuans,
+            'item_refs'     => $item_refs,
             'lab'           => $lab,
             'user'          => $this->ionAuth->user()->row(),
             'validation'    => $this->validation,
@@ -351,7 +355,7 @@ class Lab extends BaseController
                 ]
             ],
             'harga_jual' => [
-                'rules' => 'required|numeric|greater_than_equal_to[0]',
+                'rules' => 'required',
                 'errors' => [
                     'required'              => 'Harga jual harus diisi',
                     'numeric'               => 'Harga jual harus berupa angka',
@@ -561,6 +565,73 @@ class Lab extends BaseController
                 ->with('error', ENVIRONMENT === 'development' ? $e->getMessage() : 'Gagal menghapus permanen data pemeriksaan lab');
         }
     }
+    
+
+
+
+
+    public function item_ref_save($id_item = null){
+        if (!$id_item) {
+            return redirect()->back()
+                ->with('error', 'ID tindakan tidak ditemukan');
+        }
+
+        // Start transaction
+        $this->db->transStart();
+
+        try {
+            $data = [
+                'id_item'        => $id_item,
+                'id_item_ref'    => $this->request->getPost('id_item_ref'),
+                'item'           => $this->request->getPost('item_ref'),
+                'jml'            => format_angka_db($this->request->getPost('jml')),
+                'harga'          => format_angka_db($this->request->getPost('harga_item_ref')),
+                'subtotal'       => format_angka_db($this->request->getPost('jml')) * format_angka_db($this->request->getPost('harga_item_ref')),
+                'status'         => '1',
+                'id_user'        => $this->ionAuth->user()->row()->id
+            ];
+
+            if (!$this->itemRefModel->insert($data)) {
+                throw new \Exception('Gagal menyimpan data referensi tindakan');
+            }
+
+            $this->db->transCommit();
+
+            return redirect()->back()
+                ->with('success', 'Berhasil menyimpan data referensi tindakan');
+        } catch (\Exception $e) {
+            $this->db->transRollback();
+            log_message('error', '[Tindakan::item_ref_save] ' . $e->getMessage());
+            
+            return redirect()->back()
+                ->withInput()
+                ->with('error', ENVIRONMENT === 'development' ? $e->getMessage() : 'Gagal menyimpan data referensi tindakan');
+        }
+    }
+
+    public function item_ref_delete($id = null){
+        if (!$id) {
+            return redirect()->back()
+                ->with('error', 'ID referensi tindakan tidak ditemukan');
+        }
+
+        try {
+            if (!$this->itemRefModel->delete($id)) {
+                throw new \Exception('Gagal menghapus data referensi tindakan');
+            }
+
+            return redirect()->back()
+                ->with('success', 'Berhasil menghapus data referensi tindakan');
+
+        } catch (\Exception $e) {
+            log_message('error', '[Tindakan::item_ref_delete] ' . $e->getMessage());
+            
+            return redirect()->back()
+                ->with('error', ENVIRONMENT === 'development' ? $e->getMessage() : 'Gagal menghapus data referensi tindakan');
+        }
+    }
+    
+    
 
     /**
      * Export lab items to Excel

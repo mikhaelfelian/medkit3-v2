@@ -248,7 +248,7 @@
                 <h3 class="card-title">Item Referensi</h3>
             </div>
             <div class="card-body">
-                <?= form_open('master/radiologi/item_ref_save/' . $radiologi->id, ['id' => 'formItemRef']) ?>
+                <?= form_open('master/radiologi/item_ref_save/' . $lab->id, ['id' => 'formItemRef']) ?>
                 <?= form_input([
                     'type'  => 'hidden',
                     'id'    => 'id_item_ref',
@@ -258,7 +258,7 @@
                     'type'  => 'hidden',
                     'id'    => 'id',
                     'name'  => 'id_item', 
-                    'value' => $radiologi->id
+                    'value' => $lab->id
                 ]) ?>
                 <div class="row mb-3">
                     <div class="col-5">
@@ -354,6 +354,8 @@
         </div>
     </div>
 </div>
+
+<?= $this->endSection() ?>
 
 <?= $this->section('js') ?>
 <script>
