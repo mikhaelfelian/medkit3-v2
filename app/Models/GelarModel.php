@@ -14,7 +14,7 @@ class GelarModel extends Model
     protected $table = 'tbl_m_gelar';
     protected $primaryKey = 'id';
     protected $useAutoIncrement = true;
-    protected $returnType = 'array';
+    protected $returnType = 'object';
     protected $useSoftDeletes = false;
     protected $allowedFields = ['gelar', 'keterangan', 'created_at', 'updated_at'];
     protected $useTimestamps = true;

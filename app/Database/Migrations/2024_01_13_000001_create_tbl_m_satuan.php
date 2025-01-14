@@ -39,7 +39,7 @@ class CreateTblMSatuan extends Migration
         ]);
 
         $this->forge->addKey('id', true);
-        $this->forge->createTable('tbl_m_satuan');
+        $this->forge->createTable('tbl_m_satuan', true);
     }
 
     public function down()

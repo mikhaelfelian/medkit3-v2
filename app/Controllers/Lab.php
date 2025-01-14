@@ -15,6 +15,7 @@ namespace App\Controllers;
 use App\Models\ItemModel;
 use App\Models\ItemStokModel;
 use App\Models\ItemRefModel;
+use App\Models\ItemRefInputModel;
 use App\Models\KategoriModel;
 use App\Models\SatuanModel;
 use App\Models\MerkModel;
@@ -29,15 +30,16 @@ class Lab extends BaseController
 
     public function __construct()
     {
-        $this->itemModel        = new ItemModel();
-        $this->itemStokModel    = new ItemStokModel();
-        $this->itemRefModel     = new ItemRefModel();
-        $this->kategoriModel    = new KategoriModel();
-        $this->merkModel        = new MerkModel();
-        $this->satuanModel      = new SatuanModel();
-        $this->gudangModel      = new GudangModel();
-        $this->pengaturan       = new PengaturanModel();
-        $this->validation       = \Config\Services::validation();
+        $this->itemModel         = new ItemModel();
+        $this->itemStokModel     = new ItemStokModel();
+        $this->itemRefModel      = new ItemRefModel();
+        $this->itemRefInputModel = new ItemRefInputModel();
+        $this->kategoriModel     = new KategoriModel();
+        $this->merkModel         = new MerkModel();
+        $this->satuanModel       = new SatuanModel();
+        $this->gudangModel       = new GudangModel();
+        $this->pengaturan        = new PengaturanModel();
+        $this->validation        = \Config\Services::validation();
     }
 
     public function index()
@@ -301,6 +303,9 @@ class Lab extends BaseController
         
         // Get item references
         $item_refs = $this->itemRefModel->getRefsByItem($id);
+        
+        // Get lab reference inputs
+        $lab_refs = $this->itemRefInputModel->getByItemId($id);
 
         $data = [
             'title'         => 'Edit Laboratorium',
@@ -309,6 +314,7 @@ class Lab extends BaseController
             'merks'         => $merks,
             'satuans'       => $satuans,
             'item_refs'     => $item_refs,
+            'lab_refs'      => $lab_refs,
             'lab'           => $lab,
             'user'          => $this->ionAuth->user()->row(),
             'validation'    => $this->validation,
@@ -628,6 +634,120 @@ class Lab extends BaseController
             
             return redirect()->back()
                 ->with('error', ENVIRONMENT === 'development' ? $e->getMessage() : 'Gagal menghapus data referensi tindakan');
+        }
+    }
+
+    /**
+     * Save laboratory item reference input data
+     * 
+     * @param int|null $id The ID of the laboratory item
+     * @return \CodeIgniter\HTTP\RedirectResponse
+     */
+    public function item_lab_save($id = null){
+        if (!$id) {
+            return redirect()->back()
+                ->with('error', 'ID Lab tidak ditemukan');
+        }
+
+        // Validate form data
+        $rules = [
+            'item_pemeriksaan' => [
+                'rules' => 'required',
+                'errors' => [
+                    'required' => 'Nama item pemeriksaan harus diisi'
+                ]
+            ],
+            'nilai' => [
+                'rules' => 'permit_empty',
+                'errors' => []
+            ],
+            'nilai_l1' => [
+                'rules' => 'permit_empty',
+                'errors' => []
+            ],
+            'nilai_l2' => [
+                'rules' => 'permit_empty', 
+                'errors' => []
+            ],
+            'nilai_p1' => [
+                'rules' => 'permit_empty',
+                'errors' => []
+            ],
+            'nilai_p2' => [
+                'rules' => 'permit_empty',
+                'errors' => []
+            ],
+            'satuan' => [
+                'rules' => 'permit_empty',
+                'errors' => []
+            ]
+        ];
+
+        if (!$this->validate($rules)) {
+            return redirect()->back()
+                ->withInput()
+                ->with('error', $this->validator->listErrors());
+        }
+
+        try {            
+            // Get the posted data
+            $data = [
+                'id_item'       => $id,
+                'id_user'       => $this->ionAuth->user()->row()->id,
+                'item_name'     => $this->request->getPost('item_pemeriksaan'),
+                'item_value'    => $this->request->getPost('nilai'),
+                'item_value_l1' => $this->request->getPost('nilai_l1'),
+                'item_value_l2' => $this->request->getPost('nilai_l2'),
+                'item_value_p1' => $this->request->getPost('nilai_p1'),
+                'item_value_p2' => $this->request->getPost('nilai_p2'),
+                'item_satuan'   => $this->request->getPost('satuan')
+            ];
+
+            // Validate required fields
+            if (empty($data['item_name'])) {
+                throw new \Exception('Nama item harus diisi');
+            }
+
+            // Save the data
+            if (!$this->itemRefInputModel->insert($data)) {
+                throw new \Exception('Gagal menyimpan data referensi lab');
+            }
+
+            return redirect()->back()
+                ->with('success', 'Data referensi lab berhasil disimpan');
+
+        } catch (\Exception $e) {
+            log_message('error', '[Lab::item_lab_save] ' . $e->getMessage());
+            
+            return redirect()->back()
+                ->withInput()
+                ->with('error', ENVIRONMENT === 'development' ? $e->getMessage() : 'Gagal menyimpan data referensi lab');
+        }
+    }
+
+    /**
+     * Delete lab reference item
+     */
+    public function item_lab_delete($id = null)
+    {
+        try {
+            if (!$id) {
+                throw new \Exception('ID tidak valid');
+            }
+
+            // Delete the reference item
+            if (!$this->itemRefInputModel->delete($id)) {
+                throw new \Exception('Gagal menghapus data referensi lab');
+            }
+
+            return redirect()->back()
+                ->with('success', 'Data referensi lab berhasil dihapus');
+
+        } catch (\Exception $e) {
+            log_message('error', '[Lab::item_lab_delete] ' . $e->getMessage());
+            
+            return redirect()->back()
+                ->with('error', ENVIRONMENT === 'development' ? $e->getMessage() : 'Gagal menghapus data referensi lab');
         }
     }
     

@@ -9,10 +9,10 @@ class PengaturanSeeder extends Seeder
     public function run()
     {
         $data = [
-            'judul'            => 'MEDKIT 3',
+            'judul'            => 'SIMEDIS',
             'judul_app'        => 'MEDKIT 3',
-            'alamat'           => 'Jl. Example No. 123',
-            'deskripsi'        => 'Sistem Informasi Apotek',
+            'alamat'           => 'Perum Mutiara Pandanaran Blok D11, Mangunharjo, Tembalang, Semarang',
+            'deskripsi'        => 'Sistem Informasi Manajemen Rumah Sakit',
             'kota'             => 'Jakarta',
             'url'              => 'http://localhost/medkit3-v2',
             'theme'            => 'admin-lte-3',
@@ -25,6 +25,11 @@ class PengaturanSeeder extends Seeder
             'ppn'             => 11,
         ];
 
-        $this->db->table('tbl_pengaturan')->insert($data);
+        // Check if data exists
+        $exists = $this->db->table('tbl_pengaturan')->get()->getRow();
+        
+        if (!$exists) {
+            $this->db->table('tbl_pengaturan')->insert($data);
+        }
     }
 } 

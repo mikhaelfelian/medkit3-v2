@@ -51,7 +51,7 @@ class CreateTblMPoli extends Migration
         ]);
 
         $this->forge->addKey('id', true);
-        $this->forge->createTable('tbl_m_poli');
+        $this->forge->createTable('tbl_m_poli', true);
     }
 
     public function down()

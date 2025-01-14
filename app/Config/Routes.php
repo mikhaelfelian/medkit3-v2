@@ -111,6 +111,10 @@ $routes->group('/', ['filter' => 'auth'], function ($routes) {
     $routes->get('/master/lab/trash', 'Lab::trash');
     $routes->get('/master/lab/restore/(:num)', 'Lab::restore/$1');
     $routes->get('/master/lab/delete_permanent/(:num)', 'Lab::delete_permanent/$1');
+    $routes->post('/master/lab/item_ref_save/(:num)', 'Radiologi::item_ref_save/$1');
+    $routes->get('/master/lab/item_ref_delete/(:num)', 'Radiologi::item_ref_delete/$1');
+    $routes->post('/master/lab/item_lab_save/(:num)', 'Lab::item_lab_save/$1');
+    $routes->get('/master/lab/item_lab_delete/(:num)', 'Lab::item_lab_delete/$1');
     $routes->get('/master/lab/export', 'Lab::xls_items');
 });
 
@@ -175,6 +179,17 @@ $routes->group('/', ['filter' => 'auth'], function ($routes) {
     $routes->post('/master/gelar/update/(:num)', 'Gelar::update/$1');
     $routes->get('/master/gelar/delete/(:num)', 'Gelar::delete/$1');
 });
+
+// Pasien routes
+$routes->group('/', ['filter' => 'auth'], function ($routes) {
+    $routes->get('/master/pasien', 'Pasien::index');
+    $routes->get('/master/pasien/create', 'Pasien::create');
+    $routes->post('/master/pasien/store', 'Pasien::store');
+    $routes->get('/master/pasien/edit/(:num)', 'Pasien::edit/$1');
+    $routes->post('/master/pasien/update/(:num)', 'Pasien::update/$1');
+    $routes->get('/master/pasien/delete/(:num)', 'Pasien::delete/$1');
+});
+
 
 // Pengaturan routes
 $routes->group('pengaturan', ['filter' => 'auth'], function ($routes) {

@@ -73,6 +73,6 @@ if (!function_exists('tgl_indo_sys')) {
     function tgl_indo_sys($date)
     {
         if (empty($date)) return '';
-        return date('Y-m-d H:i:s', strtotime($date));
+        return date('Y-m-d', strtotime($date));
     }
 } 

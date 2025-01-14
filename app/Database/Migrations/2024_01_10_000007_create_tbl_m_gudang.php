@@ -51,7 +51,7 @@ class CreateTblMGudang extends Migration
         ]);
         
         $this->forge->addKey('id', true);
-        $this->forge->createTable('tbl_m_gudang');
+        $this->forge->createTable('tbl_m_gudang', true);
     }
 
     public function down()

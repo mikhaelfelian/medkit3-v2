@@ -45,7 +45,7 @@ class CreateTblMMerk extends Migration
         ]);
         
         $this->forge->addKey('id', true);
-        $this->forge->createTable('tbl_m_merk');
+        $this->forge->createTable('tbl_m_merk', true);
     }
 
     public function down()

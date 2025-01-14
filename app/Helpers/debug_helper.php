@@ -8,9 +8,9 @@ if (!function_exists('pre')) {
      * @param bool $die Stop execution after printing
      * @return void
      */
-    function pre($data, bool $die = true)
+    function pre($data, bool $die = false) 
     {
-        echo "<pre style='background: #f4f4f4; padding: 15px; border: 1px solid #ddd; border-radius: 4px; margin: 10px 0; font-family: monospace;'>";
+        echo "<pre>";
         print_r($data);
         echo "</pre>";
         

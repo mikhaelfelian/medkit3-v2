@@ -43,7 +43,7 @@ class Migration_2024_01_13_000002_create_tbl_m_gelar extends Migration
         ]);
         
         $this->forge->addKey('id', true);
-        $this->forge->createTable('tbl_m_gelar');
+        $this->forge->createTable('tbl_m_gelar', true);
     }
 
     public function down()

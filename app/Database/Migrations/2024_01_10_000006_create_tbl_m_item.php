@@ -192,7 +192,7 @@ class CreateTblMItem extends Migration
         ]);
         
         $this->forge->addKey('id', true);
-        $this->forge->createTable('tbl_m_item');
+        $this->forge->createTable('tbl_m_item', true);
     }
 
     public function down()

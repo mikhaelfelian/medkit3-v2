@@ -54,15 +54,15 @@
                         <?php foreach ($gelar as $key => $row): ?>
                             <tr>
                                 <td><?= (($currentPage - 1) * $perPage) + $key + 1 ?></td>
-                                <td><?= esc($row['gelar']) ?></td>
-                                <td><?= esc($row['keterangan']) ?></td>
+                                <td><?= esc($row->gelar) ?></td>
+                                <td><?= esc($row->keterangan) ?></td>
                                 <td>
                                     <div class="btn-group">
-                                        <a href="<?= base_url("master/gelar/edit/{$row['id']}") ?>"
+                                        <a href="<?= base_url("master/gelar/edit/{$row->id}") ?>"
                                             class="btn btn-warning btn-sm rounded-0">
                                             <i class="fas fa-edit"></i>
                                         </a>
-                                        <a href="<?= base_url("master/gelar/delete/{$row['id']}") ?>"
+                                        <a href="<?= base_url("master/gelar/delete/{$row->id}") ?>"
                                             class="btn btn-danger btn-sm rounded-0"
                                             onclick="return confirm('Hapus data ini?')">
                                             <i class="fas fa-trash"></i>

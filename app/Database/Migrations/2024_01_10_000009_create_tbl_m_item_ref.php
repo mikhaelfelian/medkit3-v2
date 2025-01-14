@@ -91,7 +91,7 @@ class Migration_Create_tbl_m_item_ref extends Migration
         $this->forge->addKey('id_item_ref');
         $this->forge->addKey('id_satuan');
         
-        $this->forge->createTable('tbl_m_item_ref');
+        $this->forge->createTable('tbl_m_item_ref', true);
         
         $this->db->query('ALTER TABLE tbl_m_item_ref ADD CONSTRAINT fk_item_ref_item 
             FOREIGN KEY (id_item) REFERENCES tbl_m_item(id) 

@@ -67,7 +67,7 @@ class CreateTblMItemStok extends Migration
         $this->forge->addForeignKey('id_item', 'tbl_m_item', 'id', 'CASCADE', 'CASCADE');
         $this->forge->addForeignKey('id_gudang', 'tbl_m_gudang', 'id', 'CASCADE', 'CASCADE');
         
-        $this->forge->createTable('tbl_m_item_stok');
+        $this->forge->createTable('tbl_m_item_stok', true);
     }
 
     public function down()

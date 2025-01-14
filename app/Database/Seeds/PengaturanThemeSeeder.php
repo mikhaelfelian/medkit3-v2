@@ -18,8 +18,18 @@ class PengaturanThemeSeeder extends Seeder
                 'path'          => 'admin-lte-3',
                 'status'        => 1,
             ];
+            
+            // Check if theme already exists
+            $exists = $this->db->table('tbl_pengaturan_theme')
+                ->where('id_pengaturan', $data['id_pengaturan'])
+                ->where('path', $data['path'])
+                ->get()
+                ->getRow();
 
-            $this->db->table('tbl_pengaturan_theme')->insert($data);
+            // Only insert if theme doesn't exist
+            if (!$exists) {
+                $this->db->table('tbl_pengaturan_theme')->insert($data);
+            }
         }
     }
 } 

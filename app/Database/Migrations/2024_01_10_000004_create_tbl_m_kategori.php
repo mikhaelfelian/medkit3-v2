@@ -8,6 +8,11 @@ class CreateTblMKategori extends Migration
 {
     public function up()
     {
+        // Skip if table already exists
+        if ($this->db->tableExists('tbl_m_kategori')) {
+            return;
+        }
+
         $this->forge->addField([
             'id' => [
                 'type'           => 'INT',
@@ -44,16 +49,12 @@ class CreateTblMKategori extends Migration
             ]
         ]);
         
-        // Add Primary Key
-        $this->forge->addPrimaryKey('id');
-        
-        // Create Table
+        $this->forge->addKey('id', true);
         $this->forge->createTable('tbl_m_kategori', true);
     }
 
     public function down()
     {
-        // Drop Table
         $this->forge->dropTable('tbl_m_kategori', true);
     }
 } 
