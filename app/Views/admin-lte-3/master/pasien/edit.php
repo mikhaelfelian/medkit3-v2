@@ -4,14 +4,13 @@
  * Mikhael Felian Waskito - mikhaelfelian@gmail.com
  * 2025-01-14
  * 
- * Pasien Create View
+ * Pasien Edit View
  */
 ?>
 <?= $this->extend(theme_path('main')) ?>
 
 <?= $this->section('content') ?>
-<?= form_open('pasien/store', ['method' => 'POST']) ?>
-
+<?= form_open('master/pasien/update/' . $pasien->id, ['method' => 'POST']) ?>
 <div class="row">
     <div class="col-md-3">
         <div class="card card-default">
@@ -29,8 +28,8 @@
                 </div>
             </div>
             <div class="card-footer p-0">
-                <button type="button" onclick="takeSnapshot()" class="btn btn-primary btn-flat btn-block"><i
-                        class="fa fa-camera"></i> Ambil Gambar
+                <button type="button" onclick="takeSnapshot()" class="btn btn-primary btn-flat btn-block">
+                    <i class="fa fa-camera"></i> Ambil Gambar
                 </button>
             </div>
         </div>
@@ -49,9 +48,34 @@
                 </div>
             </div>
             <div class="card-footer p-0">
-                <button type="button" onclick="takeKtpSnapshot()" class="btn btn-primary btn-flat btn-block"><i
-                        class="fa fa-camera"></i> Ambil Gambar
+                <button type="button" onclick="takeKtpSnapshot()" class="btn btn-primary btn-flat btn-block">
+                    <i class="fa fa-camera"></i> Ambil Gambar
                 </button>
+            </div>
+        </div>
+
+        <div class="card card-primary card-outline rounded-0">
+            <div class="card-header">
+                <h3 class="card-title">Foto Pasien</h3>
+            </div>
+            <div class="card-body box-profile rounded-0">
+                <div class="text-center">
+                    <img class="img-thumbnail img-fluid img-lg"
+                        src="<?= !empty($pasien->file_foto) ? base_url($pasien->file_foto) : base_url('assets/theme/admin-lte-3/dist/img/icon_putra.png') ?>"
+                        alt="User profile picture" style="width: 256px; height: 192px;">
+                </div>
+            </div>
+        </div>
+        <div class="card card-primary card-outline rounded-0">
+            <div class="card-header">
+                <h3 class="card-title">Foto Identitas</h3>
+            </div>
+            <div class="card-body box-profile rounded-0">
+                <div class="text-center">
+                    <img class="img-thumbnail img-fluid img-lg"
+                        src="<?= !empty($pasien->file_ktp) ? base_url($pasien->file_ktp) : base_url('assets/theme/admin-lte-3/dist/img/icon_putra.png') ?>"
+                        alt="User profile picture" style="width: 256px; height: 192px;">
+                </div>
             </div>
         </div>
     </div>
@@ -73,7 +97,7 @@
                         'class' => 'form-control rounded-0',
                         'id' => 'no_rm',
                         'name' => 'no_rm',
-                        'value' => $pasien,
+                        'value' => $pasien->kode,
                         'readonly' => true,
                         'required' => true
                     ]) ?>
@@ -88,7 +112,7 @@
                         'name' => 'nik',
                         'maxlength' => 16,
                         'placeholder' => 'Masukkan NIK',
-                        'value' => old('nik')
+                        'value' => old('nik', $pasien->nik)
                     ]) ?>
                     <?php if (session('validation_errors.nik')): ?>
                         <div class="invalid-feedback">
@@ -104,7 +128,7 @@
                             <?= form_dropdown(
                                 'id_gelar',
                                 ['' => 'Pilih Gelar'] + array_column($gelars, 'gelar', 'id'),
-                                old('id_gelar'),
+                                old('id_gelar', $pasien->id_gelar),
                                 'class="form-control select2 rounded-0 ' . (session('validation_errors.id_gelar') ? 'is-invalid' : '') . '"'
                             ) ?>
                             <?php if (session('validation_errors.id_gelar')): ?>
@@ -122,7 +146,7 @@
                                 'class' => 'form-control rounded-0 ' . (session('validation_errors.nama') ? 'is-invalid' : ''),
                                 'id' => 'nama',
                                 'name' => 'nama',
-                                'value' => old('nama'),
+                                'value' => old('nama', $pasien->nama),
                                 'placeholder' => 'Masukkan nama lengkap'
                             ]) ?>
                             <?php if (session('validation_errors.nama')): ?>
@@ -138,7 +162,7 @@
                             <?= form_dropdown(
                                 'jns_klm',
                                 ['' => 'Pilih Jenis Kelamin', 'L' => 'Laki-laki', 'P' => 'Perempuan'],
-                                old('jns_klm'),
+                                old('jns_klm', $pasien->jns_klm),
                                 'class="form-control rounded-0 ' . (session('validation_errors.jns_klm') ? 'is-invalid' : '') . '"'
                             ) ?>
                             <?php if (session('validation_errors.jns_klm')): ?>
@@ -158,7 +182,7 @@
                                 'class' => 'form-control rounded-0 ' . (session('validation_errors.tmp_lahir') ? 'is-invalid' : ''),
                                 'id' => 'tmp_lahir',
                                 'name' => 'tmp_lahir',
-                                'value' => old('tmp_lahir'),
+                                'value' => old('tmp_lahir', $pasien->tmp_lahir),
                                 'placeholder' => 'Masukkan tempat lahir'
                             ]) ?>
                             <?php if (session('validation_errors.tmp_lahir')): ?>
@@ -176,7 +200,7 @@
                                 'class' => 'form-control rounded-0 ' . (session('validation_errors.tgl_lahir') ? 'is-invalid' : ''),
                                 'id' => 'tgl_lahir',
                                 'name' => 'tgl_lahir',
-                                'value' => old('tgl_lahir'),
+                                'value' => old('tgl_lahir', $pasien->tgl_lahir),
                                 'placeholder' => 'yyyy-mm-dd'
                             ]) ?>
                             <?php if (session('validation_errors.tgl_lahir')): ?>
@@ -196,7 +220,7 @@
                                 'id' => 'alamat',
                                 'name' => 'alamat',
                                 'rows' => 3,
-                                'value' => old('alamat'),
+                                'value' => old('alamat', $pasien->alamat),
                                 'placeholder' => 'Masukkan alamat lengkap'
                             ]) ?>
                             <?php if (session('validation_errors.alamat')): ?>
@@ -214,6 +238,7 @@
                                 'id' => 'alamat_domisili',
                                 'name' => 'alamat_domisili',
                                 'rows' => 3,
+                                'value' => old('alamat_domisili', $pasien->alamat_domisili),
                                 'placeholder' => 'Masukkan alamat domisili'
                             ]) ?>
                         </div>
@@ -229,6 +254,7 @@
                                 'class' => 'form-control rounded-0',
                                 'id' => 'rt',
                                 'name' => 'rt',
+                                'value' => old('rt', $pasien->rt),
                                 'maxlength' => 3,
                                 'placeholder' => 'RT'
                             ]) ?>
@@ -242,6 +268,7 @@
                                 'class' => 'form-control rounded-0',
                                 'id' => 'rw',
                                 'name' => 'rw',
+                                'value' => old('rw', $pasien->rw),
                                 'maxlength' => 3,
                                 'placeholder' => 'RW'
                             ]) ?>
@@ -255,6 +282,7 @@
                                 'class' => 'form-control rounded-0',
                                 'id' => 'kelurahan',
                                 'name' => 'kelurahan',
+                                'value' => old('kelurahan', $pasien->kelurahan),
                                 'placeholder' => 'Masukkan kelurahan'
                             ]) ?>
                         </div>
@@ -270,6 +298,7 @@
                                 'class' => 'form-control rounded-0',
                                 'id' => 'kecamatan',
                                 'name' => 'kecamatan',
+                                'value' => old('kecamatan', $pasien->kecamatan),
                                 'placeholder' => 'Masukkan kecamatan'
                             ]) ?>
                         </div>
@@ -282,6 +311,7 @@
                                 'class' => 'form-control rounded-0',
                                 'id' => 'kota',
                                 'name' => 'kota',
+                                'value' => old('kota', $pasien->kota),
                                 'placeholder' => 'Masukkan kota'
                             ]) ?>
                         </div>
@@ -290,14 +320,20 @@
                 <div class="row">
                     <div class="col-md-6">
                         <div class="form-group">
-                            <?= form_label('No HP', 'no_hp') ?>
+                            <?= form_label('No HP <span class="text-danger">*</span>', 'no_hp') ?>
                             <?= form_input([
                                 'type' => 'text',
-                                'class' => 'form-control rounded-0',
+                                'class' => 'form-control rounded-0 ' . (session('validation_errors.no_hp') ? 'is-invalid' : ''),
                                 'id' => 'no_hp',
                                 'name' => 'no_hp',
+                                'value' => old('no_hp', $pasien->no_hp),
                                 'placeholder' => 'Masukkan nomor HP'
                             ]) ?>
+                            <?php if (session('validation_errors.no_hp')): ?>
+                                <div class="invalid-feedback">
+                                    <?= session('validation_errors.no_hp') ?>
+                                </div>
+                            <?php endif; ?>
                         </div>
                     </div>
                     <div class="col-md-6">
@@ -308,6 +344,7 @@
                                 'class' => 'form-control rounded-0',
                                 'id' => 'pekerjaan',
                                 'name' => 'pekerjaan',
+                                'value' => old('pekerjaan', $pasien->pekerjaan),
                                 'placeholder' => 'Masukkan pekerjaan'
                             ]) ?>
                         </div>

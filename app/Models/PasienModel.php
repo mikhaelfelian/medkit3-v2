@@ -132,32 +132,44 @@ class PasienModel extends Model
 
     /**
      * Generate unique patient code
-     * Format: P<Ym><number><random>
-     * Example: P250100001999
+     * Format: <prefix><YM><order5><random4>
+     * Example: ES25014560046 where:
+     * ES   = prefix
+     * 2501 = year and month (2025-01)
+     * 456 = random 3 digits
+     * 046 = order number (resets every month)
+     * 
+     * @return string
      */
     public function generateKode()
     {
-        $prefix = 'P';
-        $yearMonth = date('Ym');
-        
+        $prefix     = '';
+        $yearMonth  = date('ym'); // Get current year and month (2501 for 2025-01)
+        $random     = sprintf('%02d', rand(1, 99)); // Generate 4 digit random number
+
+        // Get last order number for current month
         $lastKode = $this->db->table($this->table)
-            ->select('kode')
-            ->like('kode', $prefix . $yearMonth, 'after')
-            ->orderBy('kode', 'DESC')
+            ->select('COUNT(created_at) AS kode')
+            ->where('YEAR(created_at)', date('Y')) // Match year part
+            ->where('MONTH(created_at)', date('m')) // Match month part
+            ->orderBy('created_at', 'DESC')
             ->limit(1)
             ->get()
             ->getRow();
 
         if ($lastKode) {
-            $lastNumber = (int) substr($lastKode->kode, 7, 5);
-            $newNumber = $lastNumber + 1;
+            // Extract the last 3 digits (order number)
+            $lastOrder  = $lastKode->kode; // (int) substr($lastKode->kode, -2);
+            $newOrder   = $lastOrder + 1;
         } else {
-            $newNumber = 1;
+            $newOrder   = 1;
         }
 
-        $randomNum = sprintf('%03d', rand(100, 900));
-        
-        return $prefix . $yearMonth . str_pad($newNumber, 5, '0', STR_PAD_LEFT) . $randomNum;
+        // Format order number to 3 digits with leading zeros
+        $orderNumber = str_pad($newOrder, 3, '0', STR_PAD_LEFT);
+
+        // Combine all parts
+        return $prefix . $yearMonth . $orderNumber . $random;
     }
 
     /**
