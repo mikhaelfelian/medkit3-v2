@@ -25,163 +25,166 @@ class PasienModel extends Model
         'nama', 'nama_pgl', 'tgl_lahir', 'tmp_lahir', 'jns_klm',
         'no_hp', 'alamat', 'alamat_domisili', 'rt', 'rw',
         'kelurahan', 'kecamatan', 'kota', 'pekerjaan',
-        'file_ktp', 'file_foto', 'status', 'status_hps'
+        'file_ktp', 'file_foto', 'status', 'status_hps',
+        'deleted_at'
     ];
 
     // Dates
-    protected $useTimestamps = true;
+    protected $useTimestamps = false;
     protected $dateFormat    = 'datetime';
     protected $createdField  = 'created_at';
     protected $updatedField  = 'updated_at';
     protected $deletedField  = 'deleted_at';
 
-    // Soft Deletes
-    protected $softDelete = true;
-
-    public function __construct()
+    /**
+     * Get base query with gelar join
+     */
+    protected function getBaseQuery()
     {
-        parent::__construct();
-        $this->builder = $this->db->table($this->table);
-        $this->builder->select('tbl_m_pasien.*, tbl_m_gelar.gelar')
-            ->join('tbl_m_gelar', 'tbl_m_gelar.id = tbl_m_pasien.id_gelar', 'left')
-            ->where('tbl_m_pasien.status_hps', '0') // Only show non-deleted records
-            ->orderBy('tbl_m_pasien.id', 'DESC');
+        return $this->select('tbl_m_pasien.*, tbl_m_gelar.gelar')
+                    ->join('tbl_m_gelar', 'tbl_m_gelar.id = tbl_m_pasien.id_gelar', 'left');
     }
 
     /**
-     * Override delete method to handle both status_hps and deleted_at
+     * Override find to include gelar data
+     */
+    public function find($id = null)
+    {
+        if ($id === null) {
+            return null;
+        }
+
+        // Reset any existing query
+        $this->builder()->resetQuery();
+        
+        return $this->db->table($this->table . ' p')
+                       ->select('p.*, g.gelar')
+                       ->join('tbl_m_gelar g', 'g.id = p.id_gelar', 'left')
+                       ->where('p.id', $id)
+                       ->get()
+                       ->getRow();
+    }
+
+    /**
+     * Override findAll to exclude soft deleted records
+     */
+    public function findAll(?int $limit = null, int $offset = 0)
+    {
+        // Reset any existing query
+        $this->builder()->resetQuery();
+        
+        return $this->db->table($this->table . ' p')
+                       ->select('p.*, g.gelar')
+                       ->join('tbl_m_gelar g', 'g.id = p.id_gelar', 'left')
+                       ->where('p.status_hps', '0')
+                       ->get($limit, $offset)
+                       ->getResult();
+    }
+
+    /**
+     * Implement soft delete
      */
     public function delete($id = null, bool $purge = false)
     {
-        $this->db->transBegin();
-
-        try {
-            $data = [
-                'status_hps' => '1',
-                'deleted_at' => date('Y-m-d H:i:s')
-            ];
-
-            $this->update($id, $data);
-            
-            $this->db->transCommit();
-            return true;
-
-        } catch (\Exception $e) {
-            $this->db->transRollback();
-            log_message('error', '[PasienModel::delete] ' . $e->getMessage());
+        if ($id === null) {
             return false;
         }
+
+        // Use raw SQL to avoid Time class
+        $sql = "UPDATE {$this->table} 
+                SET status_hps = '1', 
+                    deleted_at = NOW() 
+                WHERE id = ?";
+                
+        return $this->db->query($sql, [$id]);
     }
 
     /**
-     * Restore a soft deleted record
+     * Count trashed records
      */
-    public function restore($id)
+    public function countTrash(): int
     {
-        $this->db->transBegin();
-
-        try {
-            $data = [
-                'status_hps' => '0',
-                'deleted_at' => null
-            ];
-
-            $this->update($id, $data);
-            
-            $this->db->transCommit();
-            return true;
-
-        } catch (\Exception $e) {
-            $this->db->transRollback();
-            log_message('error', '[PasienModel::restore] ' . $e->getMessage());
-            return false;
-        }
+        return $this->where('status_hps', '1')->countAllResults();
     }
 
     /**
-     * Get only trashed records
+     * Get paginated trashed records
      */
-    public function onlyDeleted()
+    public function paginateTrash(int $perPage, int $currentPage = 1)
     {
-        return $this->where('status_hps', '1')
-                    ->where('deleted_at IS NOT NULL');
+        // Reset any existing query
+        $this->builder()->resetQuery();
+
+        // Initialize pager
+        $this->pager = service('pager');
+        
+        $builder = $this->db->table($this->table . ' p')
+                           ->select('p.*, g.gelar')
+                           ->join('tbl_m_gelar g', 'g.id = p.id_gelar', 'left')
+                           ->where('p.status_hps', '1')
+                           ->orderBy('p.id', 'DESC');
+
+        // Get total count
+        $total = $builder->countAllResults(false);
+
+        // Calculate offset
+        $offset = ($currentPage - 1) * $perPage;
+
+        // Get paginated results
+        $data = $builder->get($perPage, $offset)->getResult();
+
+        // Set up pagination
+        $this->pager->makeLinks($currentPage, $perPage, $total, 'adminlte_pagination', 0, 'pasien');
+
+        return $data;
     }
 
     /**
-     * Get patient with related data
-     * 
-     * @param int|null $id The ID of the patient
-     * @return \CodeIgniter\Database\BaseBuilder
-     */
-    public function getPasien($id = null)
-    {
-        $builder = $this->db->table($this->table)
-            ->select('tbl_m_pasien.*, tbl_m_gelar.gelar')
-            ->join('tbl_m_gelar', 'tbl_m_gelar.id = tbl_m_pasien.id_gelar', 'left')
-            ->where('tbl_m_pasien.status_hps', '0')
-            ->orderBy('tbl_m_pasien.id', 'DESC');
-
-        if ($id !== null) {
-            return $builder->where('tbl_m_pasien.id', $id)
-                         ->get()
-                         ->getRow();
-        }
-
-        return $builder;
-    }
-
-    /**
-     * Generate unique patient code
-     * Format: <prefix><YM><order5><random4>
-     * Example: ES25014560046 where:
-     * ES   = prefix
-     * 2501 = year and month (2025-01)
-     * 456 = random 3 digits
-     * 046 = order number (resets every month)
-     * 
-     * @return string
+     * Generate new patient code
      */
     public function generateKode()
     {
-        $prefix     = '';
-        $yearMonth  = date('ym'); // Get current year and month (2501 for 2025-01)
-        $random     = sprintf('%02d', rand(1, 99)); // Generate 4 digit random number
+        $lastKode = $this->select('kode')
+                        ->orderBy('id', 'DESC')
+                        ->first();
 
-        // Get last order number for current month
-        $lastKode = $this->db->table($this->table)
-            ->select('COUNT(created_at) AS kode')
-            ->where('YEAR(created_at)', date('Y')) // Match year part
-            ->where('MONTH(created_at)', date('m')) // Match month part
-            ->orderBy('created_at', 'DESC')
-            ->limit(1)
-            ->get()
-            ->getRow();
-
-        if ($lastKode) {
-            // Extract the last 3 digits (order number)
-            $lastOrder  = $lastKode->kode; // (int) substr($lastKode->kode, -2);
-            $newOrder   = $lastOrder + 1;
-        } else {
-            $newOrder   = 1;
+        if (!$lastKode) {
+            return '000001';
         }
 
-        // Format order number to 3 digits with leading zeros
-        $orderNumber = str_pad($newOrder, 3, '0', STR_PAD_LEFT);
-
-        // Combine all parts
-        return $prefix . $yearMonth . $orderNumber . $random;
+        return str_pad((int)$lastKode->kode + 1, 6, '0', STR_PAD_LEFT);
     }
 
     /**
-     * Get count of trashed records
-     * 
-     * @return int
+     * Restore trashed record
      */
-    public function getTrashCount()
+    public function restore($id)
     {
-        return $this->db->table($this->table)
-                       ->where('status_hps', '1')
-                       ->where('deleted_at IS NOT NULL')
-                       ->countAllResults();
+        if ($id === null) {
+            return false;
+        }
+
+        // Use raw SQL to avoid Time class
+        $sql = "UPDATE {$this->table} 
+                SET status_hps = '0', 
+                    deleted_at = NULL 
+                WHERE id = ?";
+                
+        return $this->db->query($sql, [$id]);
+    }
+
+    /**
+     * Check if patient has associated user account
+     */
+    public function hasUserAccount($id_user)
+    {
+        if (!$id_user) {
+            return false;
+        }
+
+        $db = \Config\Database::connect();
+        return $db->table('tbl_ion_users')
+                 ->where('id', $id_user)
+                 ->countAllResults() > 0;
     }
 } 

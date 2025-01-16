@@ -8,6 +8,7 @@ use CodeIgniter\HTTP\IncomingRequest;
 use CodeIgniter\HTTP\RequestInterface;
 use CodeIgniter\HTTP\ResponseInterface;
 use Psr\Log\LoggerInterface;
+use CodeIgniter\I18n\Time;
 
 /**
  * Class BaseController
@@ -48,10 +49,24 @@ abstract class BaseController extends Controller
     protected $helpers = ['tanggalan', 'general', 'theme'];
 
     /**
+     * Data array for views
+     */
+    protected $data = [];
+
+    /**
      * Be sure to declare properties for any property fetch you initialized.
      * The creation of dynamic property is deprecated in PHP 8.2.
      */
     // protected $session;
+
+    protected $theDate;
+    protected $theTime;
+
+    public function __construct()
+    {
+        $this->theDate = new Time();
+        $this->theTime = now('Asia/Jakarta');
+    }
 
     /**
      * @return void
@@ -61,18 +76,31 @@ abstract class BaseController extends Controller
         // Do Not Edit This Line
         parent::initController($request, $response, $logger);
 
+        // Set timezone first
+        if (function_exists('date_default_timezone_set')) {
+            date_default_timezone_set('Asia/Jakarta');
+        }
+
+        // Load helpers
+        helper(['form', 'url', 'html', 'theme']);
+        
+        
         // Add validation
-        $this->validation = \Config\Services::validation();
+        $this->validation           = \Config\Services::validation();
 
         // Load database and auth
-        $this->db = \Config\Database::connect();
-        $this->ionAuth = new \IonAuth\Libraries\IonAuth();
-        $this->session = \Config\Services::session();
+        $this->db                   = \Config\Database::connect();
+        $this->ionAuth              = new \IonAuth\Libraries\IonAuth();
+        $this->session              = \Config\Services::session();
 
         // Load settings and theme
-        $SQLSetting = new \App\Models\PengaturanModel();
-        $this->pengaturan = $SQLSetting->asObject()->where('id', 1)->first();
-        $this->theme = new \App\Models\PengaturanThemeModel();
+        $SQLSetting                 = new \App\Models\PengaturanModel();
+        $this->pengaturan           = $SQLSetting->asObject()->where('id', 1)->first();
+        $this->theme                = new \App\Models\PengaturanThemeModel();
+
+        // Set default view data
+        $this->data['user']         = $this->ionAuth->user()->row();
+        $this->data['Pengaturan']   = $this->pengaturan;
 
         // Check if this is a protected page
         $router = service('router');
@@ -80,5 +108,16 @@ abstract class BaseController extends Controller
         if (in_array($router->controllerName(), $protected) && !$this->ionAuth->loggedIn()) {
             return redirect()->to('/auth/login');
         }
+    }
+
+    /**
+     * Override view() to automatically include default data
+     */
+    protected function view(string $name, array $data = [], array $options = []): string
+    {
+        // Merge default data with passed data
+        $data = array_merge($this->data, $data);
+        
+        return view($name, $data, $options);
     }
 }

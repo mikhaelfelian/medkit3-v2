@@ -60,4 +60,24 @@ if (!function_exists('isStockable')) {
         }
         return ''; // Return empty string when not stockable
     }
-} 
+}
+
+if (!function_exists('jns_klm')) {
+    /**
+     * Get gender description based on the provided code
+     * 
+     * @param string $code Gender code
+     * @return string Gender description
+     */
+    function jns_klm(string $code): string
+    {
+        $genders = [
+            'L' => 'Laki-laki',
+            'P' => 'Perempuan',
+            'B' => 'Banci',
+            'G' => 'Gay'
+        ];
+
+        return $genders[$code] ?? 'Unknown';
+    }
+}

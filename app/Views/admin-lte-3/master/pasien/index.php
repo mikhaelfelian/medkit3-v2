@@ -22,7 +22,8 @@
                     <i class="fas fa-file-excel"></i> Export Excel
                 </a>
                 <a href="<?= base_url('master/pasien/trash') ?>" class="btn btn-sm btn-danger rounded-0">
-                    <i class="fas fa-trash"></i> Sampah (<?= $trashCount ?>)
+                    <i class="fas fa-trash"></i> Sampah
+                    <span class="badge badge-light"><?= $trashCount ?></span>
                 </a>
             </div>
             <div class="col-md-6">
@@ -31,16 +32,36 @@
     </div>
     <div class="card-body">
         <div class="table-responsive mt-3">
+            <?= form_open('master/pasien', ['method' => 'get']) ?>
             <table class="table table-striped table-hover">
                 <thead>
                     <tr>
                         <th>No</th>
-                        <th>Kode</th>
-                        <th>NIK</th>
-                        <th>Nama</th>
-                        <th>No HP</th>
-                        <th>Alamat</th>
-                        <th>Aksi</th>
+                        <th class="text-left">No. RM</th>
+                        <th class="text-left">Nama</th>
+                        <th class="text-center">L/P</th>
+                        <th class="text-center">No HP</th>
+                        <th class="text-center">Aksi</th>
+                    </tr>
+                    <tr>
+                        <th></th>
+                        <th class="text-left">
+                            <?= form_input(['name' => 'no_rm', 'placeholder' => 'No. RM ...', 'value' => $search, 'class' => 'form-control form-control rounded-0']) ?>
+                        </th>
+                        <th class="text-left">
+                            <?= form_input(['name' => 'pasien', 'placeholder' => 'Pasien ...', 'value' => $search, 'class' => 'form-control form-control rounded-0']) ?>
+                        </th>
+                        <th class="text-center">
+                            <?= form_dropdown('jns_klm', ['' => '- Pilih -', 'L' => 'Laki-laki', 'P' => 'Perempuan'], $search, ['class' => 'form-control form-control rounded-0']) ?>
+                        </th>
+                        <th class="text-center">
+                            <?= form_input(['name' => 'no_hp', 'placeholder' => 'No HP ...', 'value' => $search, 'class' => 'form-control form-control rounded-0']) ?>
+                        </th>
+                        <th class="text-center">
+                            <button type="submit" class="btn btn-sm btn-primary rounded-0">
+                                <i class="fas fa-filter"></i>
+                            </button>
+                        </th>
                     </tr>
                 </thead>
                 <tbody>
@@ -50,13 +71,17 @@
                         foreach ($pasiens as $index => $pasien):
                             ?>
                             <tr>
-                                <td><?= $start + $index ?></td>
-                                <td><?= esc($pasien->kode) ?></td>
-                                <td><?= esc($pasien->nik) ?></td>
-                                <td><?= esc($pasien->nama) ?></td>
-                                <td><?= esc($pasien->no_hp) ?></td>
-                                <td><?= esc($pasien->alamat) ?></td>
-                                <td>
+                                <td class="text-center"><?= $start + $index ?>.</td>
+                                <td class="text-left"><?= esc($pasien->kode) ?></td>
+                                <td class="text-left">
+                                    <b><?= esc($pasien->nama) ?></b><?= br() ?>
+                                    <small><?= esc($pasien->nik) ?></small><?= br() ?>
+                                    <small><?= usia_lkp($pasien->tgl_lahir) ?></small><?= br() ?>
+                                    <small><i><?= esc($pasien->alamat) ?></i></small>
+                                </td>
+                                <td class="text-center"><?= jns_klm($pasien->jns_klm) ?></td>
+                                <td class="text-center"><?= esc($pasien->no_hp) ?></td>
+                                <td class="text-center">
                                     <div class="btn-group">
                                         <a href="<?= base_url("master/pasien/detail/{$pasien->id}") ?>"
                                             class="btn btn-info btn-sm rounded-0">
@@ -82,6 +107,7 @@
                     <?php endif; ?>
                 </tbody>
             </table>
+            <?= form_close() ?>
         </div>
     </div>
     <div class="card-footer">

@@ -103,15 +103,31 @@ class Auth extends BaseController
             return redirect()->back();
         }
 
+        # Check if user exists first
+        if (!$this->ionAuth->usernameCheck($user)) {
+            session()->setFlashdata('toastr', [
+                'type' => 'error', 
+                'message' => 'ID Pengguna atau Kata Sandi salah!'
+            ]);
+            return redirect()->back();
+        }
+
+        # Try to login
         $inget_ya = ($inga == '1' ? TRUE : FALSE);
         $login = $this->ionAuth->login($user, $pass, $inget_ya);
                     
         if(!$login) {
-            session()->setFlashdata('toastr', ['type' => 'error', 'message' => 'ID atau Kata sandi tidak valid!']);
+            session()->setFlashdata('toastr', [
+                'type' => 'error', 
+                'message' => 'ID Pengguna atau Kata Sandi salah!'
+            ]);
             return redirect()->back();
         }
 
-        session()->setFlashdata('toastr', ['type' => 'success', 'message' => 'Login berhasil!']);
+        session()->setFlashdata('toastr', [
+            'type' => 'success', 
+            'message' => 'Login berhasil!'
+        ]);
         return redirect()->to('dashboard');
     }
 

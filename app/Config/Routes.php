@@ -187,9 +187,15 @@ $routes->group('/', ['filter' => 'auth'], function ($routes) {
     $routes->post('/master/pasien/store', 'Pasien::store');
     $routes->get('/master/pasien/edit/(:num)', 'Pasien::edit/$1');
     $routes->post('/master/pasien/update/(:num)', 'Pasien::update/$1');
+    $routes->get('/master/pasien/detail/(:num)', 'Pasien::detail/$1');
     $routes->get('/master/pasien/delete/(:num)', 'Pasien::delete/$1');
+    $routes->get('/master/pasien/trash', 'Pasien::trash');
+    $routes->get('/master/pasien/restore/(:num)', 'Pasien::restore/$1');
+    $routes->get('/master/pasien/delete_permanent/(:num)', 'Pasien::delete_permanent/$1');
+    $routes->get('/master/pasien/reset_user/(:num)', 'Pasien::resetUser/$1');
+    $routes->get('/master/pasien/create_user/(:num)', 'Pasien::createUser/$1');
+    $routes->get('/master/pasien/delete_photo/(:num)', 'Pasien::deletePhoto/$1');
 });
-
 
 // Pengaturan routes
 $routes->group('pengaturan', ['filter' => 'auth'], function ($routes) {

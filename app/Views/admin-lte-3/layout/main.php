@@ -1,8 +1,8 @@
 <?php
-// Ensure required variables are set
-if (!isset($user)) {
-    throw new \RuntimeException('User data not passed to view');
-}
+// // Ensure required variables are set
+// if (!isset($user)) {
+//     throw new \RuntimeException('User data not passed to view');
+// }
 if (!isset($Pengaturan)) {
     throw new \RuntimeException('Settings data not passed to view');
 }

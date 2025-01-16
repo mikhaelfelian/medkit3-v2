@@ -1,4 +1,5 @@
 <?php
+date_default_timezone_set('Asia/Jakarta');
 /**
  * Front Controller
  * Redirect all requests to public/index.php
