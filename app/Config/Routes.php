@@ -197,6 +197,17 @@ $routes->group('/', ['filter' => 'auth'], function ($routes) {
     $routes->get('/master/pasien/delete_photo/(:num)', 'Pasien::deletePhoto/$1');
 });
 
+// Karyawan Routes
+$routes->group('master', ['namespace' => 'App\Controllers', 'filter' => 'auth'], function($routes) {
+    $routes->get('karyawan', 'Karyawan::index');
+    $routes->get('karyawan/create', 'Karyawan::create');
+    $routes->post('karyawan/store', 'Karyawan::store');
+    $routes->get('karyawan/edit/(:num)', 'Karyawan::edit/$1');
+    $routes->post('karyawan/update/(:num)', 'Karyawan::update/$1');
+    $routes->get('karyawan/delete/(:num)', 'Karyawan::delete/$1');
+    $routes->get('karyawan/detail/(:num)', 'Karyawan::detail/$1');
+});
+
 // Pengaturan routes
 $routes->group('pengaturan', ['filter' => 'auth'], function ($routes) {
     $routes->get('app', 'Pengaturan::index');

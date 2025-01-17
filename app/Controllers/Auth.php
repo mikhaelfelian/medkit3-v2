@@ -94,41 +94,49 @@ class Auth extends BaseController
         
         # Simpan config validasi
         $validasi->setRules($aturan);
+
+        $cek = $this->ionAuth->usernameCheck($user);
         
-        # Jalankan validasi
-        if(!$this->validate($aturan)){
-            $errors = $validasi->getErrors();
-            $error_message = implode('<br>', $errors);
-            session()->setFlashdata('toastr', ['type' => 'error', 'message' => $error_message]);
-            return redirect()->back();
-        }
+        // # Jalankan validasi
+        // if(!$this->validate($aturan)){
+        //     $errors = $validasi->getErrors();
+        //     $error_message = implode('<br>', $errors);
+        //     session()->setFlashdata('toastr', ['type' => 'error', 'message' => $error_message]);
+        //     return redirect()->back();
+        // }
 
         # Check if user exists first
-        if (!$this->ionAuth->usernameCheck($user)) {
-            session()->setFlashdata('toastr', [
-                'type' => 'error', 
-                'message' => 'ID Pengguna atau Kata Sandi salah!'
-            ]);
-            return redirect()->back();
+        if (!$cek) {
+            return redirect()->back()->with('error', 'ID Pengguna atau Kata Sandi salah!');
+        }else{
+            // # Try to login
+            $inget_ya = ($inga == '1' ? TRUE : FALSE);
+            $login = $this->ionAuth->login($user, $pass, $inget_ya);
+
+            if(!$login) {
+                return redirect()->back()->with('error', 'ID Pengguna atau Kata Sandi salah!');
+            }else{
+                return redirect()->to('/dashboard')->with('success', 'Login berhasil!');
+            }
         }
 
-        # Try to login
-        $inget_ya = ($inga == '1' ? TRUE : FALSE);
-        $login = $this->ionAuth->login($user, $pass, $inget_ya);
+        // # Try to login
+        // $inget_ya = ($inga == '1' ? TRUE : FALSE);
+        // $login = $this->ionAuth->login($user, $pass, $inget_ya);
                     
-        if(!$login) {
-            session()->setFlashdata('toastr', [
-                'type' => 'error', 
-                'message' => 'ID Pengguna atau Kata Sandi salah!'
-            ]);
-            return redirect()->back();
-        }
+        // if(!$login) {
+        //     session()->setFlashdata('toastr', [
+        //         'type' => 'error', 
+        //         'message' => 'ID Pengguna atau Kata Sandi salah!'
+        //     ]);
+        //     return redirect()->back();
+        // }
 
-        session()->setFlashdata('toastr', [
-            'type' => 'success', 
-            'message' => 'Login berhasil!'
-        ]);
-        return redirect()->to('dashboard');
+        // session()->setFlashdata('toastr', [
+        //     'type' => 'success', 
+        //     'message' => 'Login berhasil!'
+        // ]);
+        // return redirect()->to('dashboard');
     }
 
     public function logout()

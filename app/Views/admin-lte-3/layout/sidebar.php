@@ -149,6 +149,16 @@
                                 </p>
                             </a>
                         </li>
+                        <li class="nav-item">
+                            <a href="<?= base_url('master/karyawan') ?>"
+                                class="nav-link <?= isMenuActive('master/karyawan') ? 'active' : '' ?>">
+                                <?= nbs(3) ?>
+                                <i class="nav-icon fas fa-user-tie"></i>
+                                <p>
+                                    Data Karyawan
+                                </p>
+                            </a>
+                        </li>
                     </ul>
                 </li>
 
