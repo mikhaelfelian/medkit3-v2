@@ -25,9 +25,9 @@ CREATE TABLE IF NOT EXISTS `migrations` (
   `time` int(11) NOT NULL,
   `batch` int(11) unsigned NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=26 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=39 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
--- Dumping data for table db_medkit3v2.migrations: ~11 rows (approximately)
+-- Dumping data for table db_medkit3v2.migrations: ~25 rows (approximately)
 DELETE FROM `migrations`;
 INSERT INTO `migrations` (`id`, `version`, `class`, `group`, `namespace`, `time`, `batch`) VALUES
 	(13, '2024-01-03-000001', 'App\\Database\\Migrations\\CreatePengaturanTable', 'default', 'App', 1736405633, 1),
@@ -42,7 +42,19 @@ INSERT INTO `migrations` (`id`, `version`, `class`, `group`, `namespace`, `time`
 	(22, '2024_01_10_000009', 'App\\Database\\Migrations\\Migration_Create_tbl_m_item_ref', 'default', 'App', 1736526666, 9),
 	(23, '2024_01_12_000001', 'App\\Database\\Migrations\\CreateTblMPoli', 'default', 'App', 1736761838, 10),
 	(24, '2024_01_13_000001', 'App\\Database\\Migrations\\CreateTblMPenjamin', 'default', 'App', 1736764479, 11),
-	(25, '2024_01_13_000002', 'App\\Database\\Migrations\\Migration_2024_01_13_000002_create_tbl_m_gelar', 'default', 'App', 1736771549, 12);
+	(25, '2024_01_13_000002', 'App\\Database\\Migrations\\Migration_2024_01_13_000002_create_tbl_m_gelar', 'default', 'App', 1736771549, 12),
+	(26, '2024-01-01-000001', 'App\\Database\\Migrations\\CreatePengaturanTable', 'default', 'App', 1737073846, 13),
+	(27, '2024-01-01-000002', 'App\\Database\\Migrations\\CreatePengaturanThemeTable', 'default', 'App', 1737073846, 13),
+	(28, '2024_01_13_000001', 'App\\Database\\Migrations\\CreateTblMSatuan', 'default', 'App', 1737073846, 13),
+	(29, '2024_01_14_000002', 'App\\Database\\Migrations\\CreateTblMItemRefInput', 'default', 'App', 1737073846, 13),
+	(30, '2025_01_14_000001', 'App\\Database\\Migrations\\CreateTblMPasien', 'default', 'App', 1737073846, 13),
+	(31, '2025_01_17_000001', 'App\\Database\\Migrations\\CreateTblMKaryawan', 'default', 'App', 1737073846, 13),
+	(32, '2025_01_18_000001', 'App\\Database\\Migrations\\CreateTblMSupplier', 'default', 'App', 1737194316, 14),
+	(33, '2025_01_18_000002', 'App\\Database\\Migrations\\CreateTblMIcd', 'default', 'App', 1737197359, 15),
+	(34, '2025_01_18_000003', 'App\\Database\\Migrations\\CreateTblMKamar', 'default', 'App', 1737198994, 16),
+	(35, '2025_01_18_000004', 'App\\Database\\Migrations\\CreateTblMPlatform', 'default', 'App', 1737201692, 17),
+	(37, '2025_01_19_000001', 'App\\Database\\Migrations\\CreateTblMItemBatch', 'default', 'App', 1737216749, 18),
+	(38, '2025_01_19_000002', 'App\\Database\\Migrations\\Migration_Create_tbl_m_item_hist', 'default', 'App', 1737218388, 19);
 
 -- Dumping structure for table db_medkit3v2.tbl_ion_groups
 DROP TABLE IF EXISTS `tbl_ion_groups`;
@@ -115,12 +127,12 @@ CREATE TABLE IF NOT EXISTS `tbl_ion_users` (
   UNIQUE KEY `activation_selector` (`activation_selector`),
   UNIQUE KEY `forgotten_password_selector` (`forgotten_password_selector`),
   UNIQUE KEY `remember_selector` (`remember_selector`)
-) ENGINE=InnoDB AUTO_INCREMENT=19 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=20 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci COMMENT='Table untuk menyimpan user login';
 
--- Dumping data for table db_medkit3v2.tbl_ion_users: ~18 rows (approximately)
+-- Dumping data for table db_medkit3v2.tbl_ion_users: ~19 rows (approximately)
 DELETE FROM `tbl_ion_users`;
 INSERT INTO `tbl_ion_users` (`id`, `ip_address`, `username`, `password`, `email`, `activation_selector`, `activation_code`, `forgotten_password_selector`, `forgotten_password_code`, `forgotten_password_time`, `remember_selector`, `remember_code`, `created_on`, `last_login`, `active`, `first_name`, `last_name`, `company`, `phone`) VALUES
-	(1, '127.0.0.1', 'root', '$2y$10$gQoEoZYp8Rz2iK9m.c1nZOQ3mJy53.Bb89WoV4m9/RxUTRVpY2FGW', 'root@app.com', NULL, NULL, NULL, NULL, NULL, NULL, NULL, 1268889823, 1736849384, 1, 'Root', 'Admin', 'ADMIN', '0'),
+	(1, '127.0.0.1', 'root', '$2y$10$gQoEoZYp8Rz2iK9m.c1nZOQ3mJy53.Bb89WoV4m9/RxUTRVpY2FGW', 'root@app.com', NULL, NULL, NULL, NULL, NULL, '684778eed99de95739a333ab1a267599841a1a0d', '$2y$10$2DI5RcdV4ePsRnPQ9zAcAeGQ.6/dJp57R4P/4BXUIC9DQF025nZGe', 1268889823, 1737214050, 1, 'Root', 'Admin', 'ADMIN', '0'),
 	(2, '127.0.0.1', 'superadmin', '$2y$10$gQoEoZYp8Rz2iK9m.c1nZOQ3mJy53.Bb89WoV4m9/RxUTRVpY2FGW', 'superadmin@app.com', NULL, NULL, NULL, NULL, NULL, NULL, NULL, 1268889823, 1268889823, 1, 'Super', 'Admin', 'ADMIN', '0'),
 	(3, '127.0.0.1', 'manager', '$2y$10$YpTvAzjvC5BEr1tdFOg3wOoZPgk90zfHHOoNOsG7f.J8qWWHVnkZe', 'manager@app.com', NULL, NULL, NULL, NULL, NULL, NULL, NULL, 1268889823, 1268889823, 1, 'Manager', 'User', 'ADMIN', '0'),
 	(4, '127.0.0.1', 'supervisor', '$2y$10$YpTvAzjvC5BEr1tdFOg3wOoZPgk90zfHHOoNOsG7f.J8qWWHVnkZe', 'supervisor@app.com', NULL, NULL, NULL, NULL, NULL, NULL, NULL, 1268889823, 1268889823, 1, 'Supervisor', 'User', 'ADMIN', '0'),
@@ -137,7 +149,8 @@ INSERT INTO `tbl_ion_users` (`id`, `ip_address`, `username`, `password`, `email`
 	(15, '127.0.0.1', 'analis_user', '$2y$10$YpTvAzjvC5BEr1tdFOg3wOoZPgk90zfHHOoNOsG7f.J8qWWHVnkZe', 'analis.user@app.com', NULL, NULL, NULL, NULL, NULL, NULL, NULL, 1268889823, 1268889823, 1, 'Analis', 'User', 'ADMIN', '0'),
 	(16, '127.0.0.1', 'kasir', '$2y$10$YpTvAzjvC5BEr1tdFOg3wOoZPgk90zfHHOoNOsG7f.J8qWWHVnkZe', 'kasir@app.com', NULL, NULL, NULL, NULL, NULL, NULL, NULL, 1268889823, 1268889823, 1, 'Kasir', 'User', 'ADMIN', '0'),
 	(17, '127.0.0.1', 'pasien', '$2y$10$YpTvAzjvC5BEr1tdFOg3wOoZPgk90zfHHOoNOsG7f.J8qWWHVnkZe', 'pasien@app.com', NULL, NULL, NULL, NULL, NULL, NULL, NULL, 1268889823, 1268889823, 1, 'Pasien', 'User', 'ADMIN', '0'),
-	(18, '127.0.0.1', 'non.entry', '$2y$10$YpTvAzjvC5BEr1tdFOg3wOoZPgk90zfHHOoNOsG7f.J8qWWHVnkZe', 'non.entry@app.com', NULL, NULL, NULL, NULL, NULL, NULL, NULL, 1268889823, 1268889823, 1, 'Non', 'Entry', 'ADMIN', '0');
+	(18, '127.0.0.1', 'non.entry', '$2y$10$YpTvAzjvC5BEr1tdFOg3wOoZPgk90zfHHOoNOsG7f.J8qWWHVnkZe', 'non.entry@app.com', NULL, NULL, NULL, NULL, NULL, NULL, NULL, 1268889823, 1268889823, 1, 'Non', 'Entry', 'ADMIN', '0'),
+	(19, '::1', '250100131', '$2y$10$YsytDQVBH7POUtg/Pdo3o.1hDquTzrNYH5UMF.gVdYrwzKJWjJc36', '250100131@app.com', NULL, NULL, NULL, NULL, NULL, NULL, NULL, 1737192396, NULL, 1, 'TN. MIKHAEL FELIAN WASKITO', NULL, NULL, '085741220427');
 
 -- Dumping structure for table db_medkit3v2.tbl_ion_users_groups
 DROP TABLE IF EXISTS `tbl_ion_users_groups`;
@@ -151,7 +164,7 @@ CREATE TABLE IF NOT EXISTS `tbl_ion_users_groups` (
   KEY `tbl_ion_users_groups_group_id_foreign` (`group_id`),
   CONSTRAINT `tbl_ion_users_groups_group_id_foreign` FOREIGN KEY (`group_id`) REFERENCES `tbl_ion_groups` (`id`) ON DELETE CASCADE ON UPDATE NO ACTION,
   CONSTRAINT `tbl_ion_users_groups_user_id_foreign` FOREIGN KEY (`user_id`) REFERENCES `tbl_ion_users` (`id`) ON DELETE CASCADE ON UPDATE NO ACTION
-) ENGINE=InnoDB AUTO_INCREMENT=19 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=20 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci COMMENT='Table berelasi ke ion_users dan ion_groups';
 
 -- Dumping data for table db_medkit3v2.tbl_ion_users_groups: ~18 rows (approximately)
 DELETE FROM `tbl_ion_users_groups`;
@@ -173,7 +186,8 @@ INSERT INTO `tbl_ion_users_groups` (`id`, `user_id`, `group_id`, `access`) VALUE
 	(15, 15, 15, NULL),
 	(16, 16, 16, NULL),
 	(17, 17, 17, NULL),
-	(18, 18, 18, NULL);
+	(18, 18, 18, NULL),
+	(19, 19, 17, NULL);
 
 -- Dumping structure for table db_medkit3v2.tbl_m_gelar
 DROP TABLE IF EXISTS `tbl_m_gelar`;
@@ -184,7 +198,7 @@ CREATE TABLE IF NOT EXISTS `tbl_m_gelar` (
   `gelar` varchar(50) DEFAULT NULL,
   `keterangan` varchar(50) DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci COMMENT='Table untuk menyimpan gelar seperti\r\nTN, NY, dll';
 
 -- Dumping data for table db_medkit3v2.tbl_m_gelar: ~4 rows (approximately)
 DELETE FROM `tbl_m_gelar`;
@@ -206,13 +220,29 @@ CREATE TABLE IF NOT EXISTS `tbl_m_gudang` (
   `status` enum('0','1') DEFAULT NULL COMMENT '1 = aktif\\r\\n0 = Non Aktif',
   `status_gd` enum('0','1') DEFAULT '0' COMMENT '1 = Gudang Utama\\r\\n0 = Bukan Gudang Utama',
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci COMMENT='Table untuk menyimpan gudang';
 
 -- Dumping data for table db_medkit3v2.tbl_m_gudang: ~2 rows (approximately)
 DELETE FROM `tbl_m_gudang`;
 INSERT INTO `tbl_m_gudang` (`id`, `created_at`, `updated_at`, `kode`, `gudang`, `keterangan`, `status`, `status_gd`) VALUES
 	(1, '2025-01-10 14:39:25', '2025-01-14 09:38:20', 'GDG-001', 'Gudang Utama', 'TES', '1', '1'),
 	(2, '2025-01-10 14:39:38', '2025-01-14 09:38:36', 'GDG-002', 'Gudang Atass', '-', '1', '0');
+
+-- Dumping structure for table db_medkit3v2.tbl_m_icd
+DROP TABLE IF EXISTS `tbl_m_icd`;
+CREATE TABLE IF NOT EXISTS `tbl_m_icd` (
+  `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
+  `created_at` datetime NOT NULL DEFAULT current_timestamp(),
+  `updated_at` datetime DEFAULT NULL,
+  `kode` varchar(100) DEFAULT NULL,
+  `icd` text DEFAULT NULL,
+  `diagnosa_en` text DEFAULT NULL,
+  `diagnosa_id` text DEFAULT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci COMMENT='Table untuk menyimpan data tentang ICD 10 (Daftar Penyakit).\r\nsesuai satu sehat';
+
+-- Dumping data for table db_medkit3v2.tbl_m_icd: ~0 rows (approximately)
+DELETE FROM `tbl_m_icd`;
 
 -- Dumping structure for table db_medkit3v2.tbl_m_item
 DROP TABLE IF EXISTS `tbl_m_item`;
@@ -250,7 +280,7 @@ CREATE TABLE IF NOT EXISTS `tbl_m_item` (
   `status_hps` enum('0','1') DEFAULT '0' COMMENT 'Status Item terhapus (soft deleted)',
   `status_item` int(11) DEFAULT 0 COMMENT '1=obat;2=tindakan;3=lab;4=radiologi;5=bhp;',
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=12 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=12 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci COMMENT='Table untuk menyimpan semua item';
 
 -- Dumping data for table db_medkit3v2.tbl_m_item: ~8 rows (approximately)
 DELETE FROM `tbl_m_item`;
@@ -263,6 +293,75 @@ INSERT INTO `tbl_m_item` (`id`, `id_satuan`, `id_kategori`, `id_kategori_lab`, `
 	(6, 0, 9, 0, 0, 0, 0, 1, '2025-01-13 15:30:26', '2025-01-13 08:30:26', NULL, 'TND25012200002', NULL, 'ADMINISTRASI PASIEN Inh MC', NULL, '', NULL, 0, 0, NULL, 6000.00, '', 0.00, 0.00, '', 0.00, 0.00, '1', '0', '0', '0', 2),
 	(7, 0, 9, 0, 0, 0, 0, 1, '2025-01-13 15:48:50', '2025-01-13 08:48:50', NULL, 'TND25015900002', NULL, 'EKG', NULL, '', NULL, 0, 0, NULL, 59000.00, '', 0.00, 0.00, '', 0.00, 0.00, '1', '0', '0', '0', 2),
 	(11, 1, 12, 0, 0, 0, 1, 1, '2025-01-13 15:57:58', '2025-01-13 08:58:36', NULL, 'LAB25011800001', NULL, 'ANTI CHLAMYDIA IGG', NULL, '', NULL, 0, 0, 111.00, 1375000.00, '', 0.00, 0.00, '', 0.00, 0.00, '1', NULL, '0', '0', 3);
+
+-- Dumping structure for table db_medkit3v2.tbl_m_item_batch
+DROP TABLE IF EXISTS `tbl_m_item_batch`;
+CREATE TABLE IF NOT EXISTS `tbl_m_item_batch` (
+  `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
+  `id_item` int(11) unsigned NOT NULL,
+  `id_gudang` int(11) unsigned DEFAULT 1,
+  `id_pembelian` int(11) DEFAULT NULL,
+  `id_pembelian_det` int(11) DEFAULT NULL,
+  `id_user` int(11) DEFAULT 0,
+  `created_at` datetime DEFAULT NULL,
+  `updated_at` datetime DEFAULT NULL,
+  `tgl_terima` datetime DEFAULT NULL,
+  `tgl_ed` varchar(50) DEFAULT NULL,
+  `kode` varchar(50) DEFAULT NULL,
+  `kode_batch` varchar(50) DEFAULT NULL,
+  `item` varchar(256) DEFAULT NULL,
+  `jml` int(11) DEFAULT 0,
+  `jml_keluar` int(11) DEFAULT 0,
+  `jml_sisa` int(11) DEFAULT 0,
+  `status` enum('0','1') DEFAULT '1',
+  PRIMARY KEY (`id`),
+  KEY `tbl_m_item_batch_id_item_foreign` (`id_item`),
+  KEY `tbl_m_item_batch_id_gudang_foreign` (`id_gudang`),
+  CONSTRAINT `tbl_m_item_batch_id_gudang_foreign` FOREIGN KEY (`id_gudang`) REFERENCES `tbl_m_gudang` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
+  CONSTRAINT `tbl_m_item_batch_id_item_foreign` FOREIGN KEY (`id_item`) REFERENCES `tbl_m_item` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci COMMENT='Table untuk menyimpan item batch';
+
+-- Dumping data for table db_medkit3v2.tbl_m_item_batch: ~0 rows (approximately)
+DELETE FROM `tbl_m_item_batch`;
+
+-- Dumping structure for table db_medkit3v2.tbl_m_item_hist
+DROP TABLE IF EXISTS `tbl_m_item_hist`;
+CREATE TABLE IF NOT EXISTS `tbl_m_item_hist` (
+  `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
+  `id_item` int(11) unsigned DEFAULT NULL,
+  `id_satuan` int(11) DEFAULT 0,
+  `id_gudang` int(11) unsigned DEFAULT NULL,
+  `id_user` int(11) DEFAULT 0,
+  `id_pelanggan` int(11) DEFAULT 0,
+  `id_supplier` int(11) DEFAULT 0,
+  `id_penjualan` int(11) DEFAULT 0,
+  `id_pembelian` int(11) DEFAULT 0,
+  `id_pembelian_det` int(11) DEFAULT 0,
+  `id_so` int(11) DEFAULT 0,
+  `created_at` datetime DEFAULT NULL,
+  `updated_at` datetime DEFAULT NULL,
+  `tgl_masuk` datetime DEFAULT NULL,
+  `tgl_ed` date DEFAULT NULL,
+  `no_nota` varchar(100) DEFAULT NULL,
+  `kode` varchar(100) DEFAULT NULL,
+  `kode_batch` varchar(100) DEFAULT NULL,
+  `item` varchar(100) DEFAULT NULL,
+  `keterangan` longtext DEFAULT NULL,
+  `nominal` decimal(10,2) DEFAULT 0.00,
+  `jml` int(11) DEFAULT 0,
+  `jml_satuan` int(11) DEFAULT 1,
+  `satuan` varchar(50) DEFAULT NULL,
+  `status` enum('1','2','3','4','5','6','7','8') DEFAULT NULL COMMENT '1 = Stok Masuk Pembelian\\r\\n2 = Stok Masuk\\r\\n3 = Stok Masuk Retur Jual\\r\\n4 = Stok Keluar Penjualan\\r\\n5 = Stok Keluar Retur Beli\\r\\n6 = SO\\r\\n7 = Stok Keluar\\r\\n8 = Mutasi Antar Gd',
+  `sp` enum('0','1') DEFAULT '0',
+  PRIMARY KEY (`id`),
+  KEY `tbl_m_item_hist_id_item_foreign` (`id_item`),
+  KEY `tbl_m_item_hist_id_gudang_foreign` (`id_gudang`),
+  CONSTRAINT `tbl_m_item_hist_id_gudang_foreign` FOREIGN KEY (`id_gudang`) REFERENCES `tbl_m_gudang` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
+  CONSTRAINT `tbl_m_item_hist_id_item_foreign` FOREIGN KEY (`id_item`) REFERENCES `tbl_m_item` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci COMMENT='Table untuk menyimpan item stok histories';
+
+-- Dumping data for table db_medkit3v2.tbl_m_item_hist: ~0 rows (approximately)
+DELETE FROM `tbl_m_item_hist`;
 
 -- Dumping structure for table db_medkit3v2.tbl_m_item_ref
 DROP TABLE IF EXISTS `tbl_m_item_ref`;
@@ -285,10 +384,35 @@ CREATE TABLE IF NOT EXISTS `tbl_m_item_ref` (
   KEY `id_item_ref` (`id_item_ref`),
   KEY `id_satuan` (`id_satuan`),
   CONSTRAINT `fk_item_ref_item` FOREIGN KEY (`id_item`) REFERENCES `tbl_m_item` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci COMMENT='Table untuk menyimpan refrensi Item\r\n(Item Ngelink)';
 
 -- Dumping data for table db_medkit3v2.tbl_m_item_ref: ~0 rows (approximately)
 DELETE FROM `tbl_m_item_ref`;
+
+-- Dumping structure for table db_medkit3v2.tbl_m_item_ref_input
+DROP TABLE IF EXISTS `tbl_m_item_ref_input`;
+CREATE TABLE IF NOT EXISTS `tbl_m_item_ref_input` (
+  `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
+  `id_item` int(11) unsigned NOT NULL DEFAULT 0,
+  `id_user` int(11) unsigned DEFAULT 0,
+  `created_at` datetime DEFAULT NULL,
+  `updated_at` datetime DEFAULT NULL,
+  `item_name` varchar(160) DEFAULT NULL,
+  `item_value` text DEFAULT NULL,
+  `item_value_l1` text DEFAULT NULL,
+  `item_value_l2` text DEFAULT NULL,
+  `item_value_p1` text DEFAULT NULL,
+  `item_value_p2` text DEFAULT NULL,
+  `item_satuan` varchar(100) DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  KEY `fk_item_ref_input_item` (`id_item`),
+  CONSTRAINT `fk_item_ref_input_item` FOREIGN KEY (`id_item`) REFERENCES `tbl_m_item` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=latin1 COLLATE=latin1_swedish_ci COMMENT='Table berelasi ke tbl_m_item,\r\nUntuk menyimpan refrensi input lab';
+
+-- Dumping data for table db_medkit3v2.tbl_m_item_ref_input: ~0 rows (approximately)
+DELETE FROM `tbl_m_item_ref_input`;
+INSERT INTO `tbl_m_item_ref_input` (`id`, `id_item`, `id_user`, `created_at`, `updated_at`, `item_name`, `item_value`, `item_value_l1`, `item_value_l2`, `item_value_p1`, `item_value_p2`, `item_satuan`) VALUES
+	(1, 11, 1, '2025-01-14 11:34:35', '2025-01-14 11:34:35', 'Anti HBS', 'Negatif', 'Negatif', 'Negatif', 'Negatif', 'Negatif', 'Gr');
 
 -- Dumping structure for table db_medkit3v2.tbl_m_item_stok
 DROP TABLE IF EXISTS `tbl_m_item_stok`;
@@ -307,7 +431,7 @@ CREATE TABLE IF NOT EXISTS `tbl_m_item_stok` (
   KEY `tbl_m_item_stok_id_gudang_foreign` (`id_gudang`),
   CONSTRAINT `tbl_m_item_stok_id_gudang_foreign` FOREIGN KEY (`id_gudang`) REFERENCES `tbl_m_gudang` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
   CONSTRAINT `tbl_m_item_stok_id_item_foreign` FOREIGN KEY (`id_item`) REFERENCES `tbl_m_item` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=11 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=11 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci COMMENT='Table untuk menyimpan data stok';
 
 -- Dumping data for table db_medkit3v2.tbl_m_item_stok: ~10 rows (approximately)
 DELETE FROM `tbl_m_item_stok`;
@@ -323,6 +447,68 @@ INSERT INTO `tbl_m_item_stok` (`id`, `id_item`, `id_satuan`, `id_gudang`, `id_us
 	(9, 11, 1, 1, 1, '2025-01-13 08:57:58', '2025-01-13 15:57:58', 0, '1'),
 	(10, 11, 1, 2, 1, '2025-01-13 08:57:58', '2025-01-13 15:57:58', 0, '1');
 
+-- Dumping structure for table db_medkit3v2.tbl_m_kamar
+DROP TABLE IF EXISTS `tbl_m_kamar`;
+CREATE TABLE IF NOT EXISTS `tbl_m_kamar` (
+  `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
+  `created_at` datetime DEFAULT NULL,
+  `updated_at` datetime DEFAULT NULL,
+  `kode` varchar(50) DEFAULT NULL,
+  `kamar` varchar(50) DEFAULT NULL,
+  `jml` int(11) DEFAULT 0,
+  `jml_max` int(11) DEFAULT 0,
+  `status` enum('0','1') DEFAULT '0',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci COMMENT='Table untuk menyimpan data kamar/ruangan';
+
+-- Dumping data for table db_medkit3v2.tbl_m_kamar: ~2 rows (approximately)
+DELETE FROM `tbl_m_kamar`;
+INSERT INTO `tbl_m_kamar` (`id`, `created_at`, `updated_at`, `kode`, `kamar`, `jml`, `jml_max`, `status`) VALUES
+	(2, '2025-01-18 22:36:43', '2025-01-18 22:36:43', 'KMR0001', 'VIP', 0, 6, '1'),
+	(3, '2025-01-18 22:36:57', '2025-01-18 22:36:57', 'KMR0002', 'Kelas 1', 0, 12, '1'),
+	(4, '2025-01-18 22:37:06', '2025-01-18 22:37:23', 'KMR0003', 'Kelas 2', 0, 4, '1');
+
+-- Dumping structure for table db_medkit3v2.tbl_m_karyawan
+DROP TABLE IF EXISTS `tbl_m_karyawan`;
+CREATE TABLE IF NOT EXISTS `tbl_m_karyawan` (
+  `id` int(4) unsigned NOT NULL AUTO_INCREMENT,
+  `id_user` int(4) DEFAULT 0,
+  `id_poli` int(4) DEFAULT 0,
+  `id_user_group` int(4) DEFAULT 0,
+  `created_at` datetime DEFAULT NULL,
+  `updated_at` datetime DEFAULT NULL,
+  `kode` varchar(10) DEFAULT NULL,
+  `nik` varchar(100) DEFAULT NULL,
+  `sip` varchar(100) DEFAULT NULL,
+  `str` varchar(100) DEFAULT NULL,
+  `no_ijin` varchar(100) DEFAULT NULL,
+  `nama_dpn` varchar(100) DEFAULT NULL,
+  `nama` varchar(100) DEFAULT NULL,
+  `nama_blk` varchar(100) DEFAULT NULL,
+  `nama_pgl` varchar(100) DEFAULT NULL,
+  `tmp_lahir` varchar(100) DEFAULT NULL,
+  `tgl_lahir` date DEFAULT NULL,
+  `alamat` text DEFAULT NULL,
+  `alamat_domisili` text DEFAULT NULL,
+  `rt` varchar(3) DEFAULT NULL,
+  `rw` varchar(3) DEFAULT NULL,
+  `kelurahan` varchar(50) DEFAULT NULL,
+  `kecamatan` varchar(50) DEFAULT NULL,
+  `kota` varchar(50) DEFAULT NULL,
+  `jns_klm` enum('L','P') DEFAULT NULL,
+  `jabatan` varchar(100) DEFAULT NULL,
+  `no_hp` varchar(20) DEFAULT NULL,
+  `file_foto` varchar(160) DEFAULT NULL,
+  `status` int(11) DEFAULT NULL COMMENT '1=perawat\\r\\n2=dokter\\r\\n3=kasir\\r\\n4=analis\\r\\n5=radiografer\\r\\n6=farmasi',
+  `status_aps` enum('0','1') DEFAULT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci COMMENT='Table untuk data karyawan';
+
+-- Dumping data for table db_medkit3v2.tbl_m_karyawan: ~0 rows (approximately)
+DELETE FROM `tbl_m_karyawan`;
+INSERT INTO `tbl_m_karyawan` (`id`, `id_user`, `id_poli`, `id_user_group`, `created_at`, `updated_at`, `kode`, `nik`, `sip`, `str`, `no_ijin`, `nama_dpn`, `nama`, `nama_blk`, `nama_pgl`, `tmp_lahir`, `tgl_lahir`, `alamat`, `alamat_domisili`, `rt`, `rw`, `kelurahan`, `kecamatan`, `kota`, `jns_klm`, `jabatan`, `no_hp`, `file_foto`, `status`, `status_aps`) VALUES
+	(1, 0, 0, 7, '2025-01-18 16:16:18', '2025-01-18 16:36:57', 'KRY0001', '3374071502920002', '1234567890', '1234567890', NULL, 'dr', 'Randi Kurniawan', 'Sp.PD,FINASIM', 'dr. Randi Kurniawan, Sp.PD,FINASIM', 'Semarang', '1993-02-19', 'TESTING ALAMAT KTP', 'TESTING ALAMAT DOMISILI', '011', '002', 'MUGASSARI', 'SEAMARANG SELATAN', 'SEMARANG', 'L', 'Dokter', '085741220427', NULL, NULL, '0');
+
 -- Dumping structure for table db_medkit3v2.tbl_m_kategori
 DROP TABLE IF EXISTS `tbl_m_kategori`;
 CREATE TABLE IF NOT EXISTS `tbl_m_kategori` (
@@ -334,12 +520,12 @@ CREATE TABLE IF NOT EXISTS `tbl_m_kategori` (
   `keterangan` text DEFAULT NULL,
   `status` enum('0','1') NOT NULL DEFAULT '0',
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=22 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=22 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci COMMENT='Table untuk data kategori';
 
--- Dumping data for table db_medkit3v2.tbl_m_kategori: ~21 rows (approximately)
+-- Dumping data for table db_medkit3v2.tbl_m_kategori: ~20 rows (approximately)
 DELETE FROM `tbl_m_kategori`;
 INSERT INTO `tbl_m_kategori` (`id`, `created_at`, `updated_at`, `kode`, `kategori`, `keterangan`, `status`) VALUES
-	(2, '2019-08-16 07:47:22', NULL, 'KTG-001', 'Bahan Habis Pakai', NULL, '1'),
+	(2, '2019-08-16 07:47:22', '2025-01-17 14:01:31', 'KTG-001', 'Bahan Habis Pakai', '', '1'),
 	(3, '2022-07-21 20:43:16', NULL, 'KTG-002', 'Jasa', NULL, '1'),
 	(4, '2022-08-20 10:49:40', NULL, 'KTG-003', 'Asuhan Keperawatan', NULL, '1'),
 	(5, '2022-09-06 21:35:20', NULL, 'KTG-004', 'Tindakan Perawatan', NULL, '1'),
@@ -371,12 +557,52 @@ CREATE TABLE IF NOT EXISTS `tbl_m_merk` (
   `keterangan` text DEFAULT NULL,
   `status` enum('0','1') DEFAULT '0',
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci COMMENT='Table untuk data merk';
 
--- Dumping data for table db_medkit3v2.tbl_m_merk: ~2 rows (approximately)
+-- Dumping data for table db_medkit3v2.tbl_m_merk: ~0 rows (approximately)
 DELETE FROM `tbl_m_merk`;
 INSERT INTO `tbl_m_merk` (`id`, `created_at`, `updated_at`, `kode`, `merk`, `keterangan`, `status`) VALUES
 	(1, '2025-01-10 12:17:01', '2025-01-11 14:15:20', 'MRK-001', 'DEFAULT', '-', '1');
+
+-- Dumping structure for table db_medkit3v2.tbl_m_pasien
+DROP TABLE IF EXISTS `tbl_m_pasien`;
+CREATE TABLE IF NOT EXISTS `tbl_m_pasien` (
+  `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
+  `id_gelar` int(11) unsigned NOT NULL DEFAULT 0,
+  `id_pekerjaan` int(11) unsigned DEFAULT 0,
+  `id_user` int(11) unsigned DEFAULT 0,
+  `created_at` timestamp NULL DEFAULT NULL,
+  `updated_at` timestamp NULL DEFAULT NULL,
+  `deleted_at` timestamp NULL DEFAULT NULL,
+  `kode` varchar(20) NOT NULL,
+  `nik` varchar(16) NOT NULL,
+  `nama` varchar(160) NOT NULL,
+  `nama_pgl` varchar(160) DEFAULT NULL,
+  `tgl_lahir` date DEFAULT NULL,
+  `tmp_lahir` varchar(160) DEFAULT NULL,
+  `jns_klm` enum('L','P') DEFAULT NULL,
+  `no_hp` varchar(15) DEFAULT NULL,
+  `alamat` text DEFAULT NULL,
+  `alamat_domisili` text DEFAULT NULL,
+  `rt` varchar(3) DEFAULT NULL,
+  `rw` varchar(3) DEFAULT NULL,
+  `kelurahan` varchar(50) DEFAULT NULL,
+  `kecamatan` varchar(50) DEFAULT NULL,
+  `kota` varchar(50) DEFAULT NULL,
+  `pekerjaan` varchar(100) DEFAULT NULL,
+  `file_ktp` varchar(160) DEFAULT NULL,
+  `file_foto` varchar(160) DEFAULT NULL,
+  `status` enum('0','1') DEFAULT NULL,
+  `status_hps` enum('0','1') DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  KEY `fk_pasien_gelar` (`id_gelar`),
+  CONSTRAINT `fk_pasien_gelar` FOREIGN KEY (`id_gelar`) REFERENCES `tbl_m_gelar` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci COMMENT='Table untuk menyimpan pasien';
+
+-- Dumping data for table db_medkit3v2.tbl_m_pasien: ~0 rows (approximately)
+DELETE FROM `tbl_m_pasien`;
+INSERT INTO `tbl_m_pasien` (`id`, `id_gelar`, `id_pekerjaan`, `id_user`, `created_at`, `updated_at`, `deleted_at`, `kode`, `nik`, `nama`, `nama_pgl`, `tgl_lahir`, `tmp_lahir`, `jns_klm`, `no_hp`, `alamat`, `alamat_domisili`, `rt`, `rw`, `kelurahan`, `kecamatan`, `kota`, `pekerjaan`, `file_ktp`, `file_foto`, `status`, `status_hps`) VALUES
+	(2, 5, 0, 19, NULL, NULL, NULL, '250100131', '3374071502920002', 'MIKHAEL FELIAN WASKITO', 'TN. MIKHAEL FELIAN WASKITO', '1992-02-15', 'Semarang', 'L', '085741220427', 'Perum Mutiara Pandanaran Blok D11, Mangunharjo, Tembalang, Kota Semarang', 'TES', '011', '001', '', 'TEMBALANG', 'Semarang', '', 'public/file/pasien/250100131/ktp_250100131.png', 'public/file/pasien/250100131/profile_250100131.png', '1', '0');
 
 -- Dumping structure for table db_medkit3v2.tbl_m_penjamin
 DROP TABLE IF EXISTS `tbl_m_penjamin`;
@@ -389,14 +615,31 @@ CREATE TABLE IF NOT EXISTS `tbl_m_penjamin` (
   `persen` decimal(10,2) DEFAULT 0.00,
   `status` enum('0','1') DEFAULT '0',
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci COMMENT='Table untuk menyimpan penjamin';
 
--- Dumping data for table db_medkit3v2.tbl_m_penjamin: ~4 rows (approximately)
+-- Dumping data for table db_medkit3v2.tbl_m_penjamin: ~3 rows (approximately)
 DELETE FROM `tbl_m_penjamin`;
 INSERT INTO `tbl_m_penjamin` (`id`, `created_at`, `updated_at`, `kode`, `penjamin`, `persen`, `status`) VALUES
 	(1, '2023-07-04 21:57:40', '2025-01-13 17:35:56', 'PJM250101', 'UMUM', 0.00, '1'),
 	(2, '2023-07-04 21:58:14', '2025-01-13 12:33:10', 'PJM250102', 'ASURANSI', 1.10, '1'),
 	(3, '2023-07-04 21:58:47', '2025-01-14 09:37:35', 'PJM250103', 'BPJS Kesehatan', 0.00, '1');
+
+-- Dumping structure for table db_medkit3v2.tbl_m_platform
+DROP TABLE IF EXISTS `tbl_m_platform`;
+CREATE TABLE IF NOT EXISTS `tbl_m_platform` (
+  `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
+  `created_at` datetime DEFAULT NULL,
+  `updated_at` datetime DEFAULT NULL,
+  `kode` varchar(160) DEFAULT NULL,
+  `platform` varchar(160) DEFAULT NULL,
+  `keterangan` text DEFAULT NULL,
+  `persen` decimal(10,1) DEFAULT NULL,
+  `status` enum('0','1') DEFAULT '1',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci COMMENT='Platform Pembayaran';
+
+-- Dumping data for table db_medkit3v2.tbl_m_platform: ~0 rows (approximately)
+DELETE FROM `tbl_m_platform`;
 
 -- Dumping structure for table db_medkit3v2.tbl_m_poli
 DROP TABLE IF EXISTS `tbl_m_poli`;
@@ -410,9 +653,9 @@ CREATE TABLE IF NOT EXISTS `tbl_m_poli` (
   `post_location` varchar(100) DEFAULT NULL,
   `status` enum('0','1') DEFAULT '0',
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=23 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=23 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci COMMENT='Table untuk menyimpan data Poliklinik';
 
--- Dumping data for table db_medkit3v2.tbl_m_poli: ~23 rows (approximately)
+-- Dumping data for table db_medkit3v2.tbl_m_poli: ~22 rows (approximately)
 DELETE FROM `tbl_m_poli`;
 INSERT INTO `tbl_m_poli` (`id`, `created_at`, `updated_at`, `kode`, `poli`, `keterangan`, `post_location`, `status`) VALUES
 	(1, '2019-08-14 09:55:31', '2022-09-08 10:00:20', 'PL2512001', 'POLI UMUM', '-', 'e8d008ac-a3e8-4d45-af9f-d8050f76ffe8', '1'),
@@ -420,7 +663,7 @@ INSERT INTO `tbl_m_poli` (`id`, `created_at`, `updated_at`, `kode`, `poli`, `ket
 	(3, '2022-09-08 09:58:28', '2025-01-13 10:30:43', 'PL2512003', 'RRI Drive Thru', '-', '', '0'),
 	(4, '2022-04-19 13:48:41', NULL, 'PL2512004', 'POLI IGD', NULL, NULL, '1'),
 	(5, '2022-04-19 13:48:45', NULL, 'PL2512005', 'POLI ANAK', NULL, '63b582b6-ef6c-4309-a942-7c9f18deab24', '1'),
-	(6, '2022-04-19 13:48:46', NULL, 'PL2512006', 'POLI OBGYN', NULL, '46dbd957-2f6f-44c1-ba38-cd2520026ff7', '1'),
+	(6, '2022-04-19 13:48:46', '2025-01-18 17:12:21', 'PL2512006', 'POLI OBGYN', '', '46dbd957-2f6f-44c1-ba38-cd2520026ff7', '1'),
 	(7, '2022-04-19 13:48:48', NULL, 'PL2512007', 'POLI RADIOLOGI', NULL, NULL, '1'),
 	(8, '2022-04-19 13:48:50', NULL, 'PL2512008', 'POLI THT', NULL, 'd6e82a1f-b695-4432-8896-4efc107a5fea', '1'),
 	(9, '2022-04-19 13:49:44', NULL, 'PL2512009', 'POLI DALAM', NULL, 'c8f822af-3e66-4816-871e-4ddd4d16067a', '1'),
@@ -449,7 +692,7 @@ CREATE TABLE IF NOT EXISTS `tbl_m_satuan` (
   `jml` int(11) DEFAULT NULL,
   `status` enum('1','0') CHARACTER SET latin1 COLLATE latin1_general_ci DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci COMMENT='Table untuk menyimpan multi satuan';
 
 -- Dumping data for table db_medkit3v2.tbl_m_satuan: ~4 rows (approximately)
 DELETE FROM `tbl_m_satuan`;
@@ -458,6 +701,35 @@ INSERT INTO `tbl_m_satuan` (`id`, `created_at`, `updated_at`, `satuanKecil`, `sa
 	(2, '2025-01-05 23:37:14', '2025-01-05 23:37:14', 'PCS', 'BOX', 10, '1'),
 	(3, '2025-01-05 23:37:28', '2025-01-06 08:37:21', 'PCS', 'DOS', 15, '1'),
 	(4, '2025-01-13 15:47:59', '2025-01-13 15:47:59', 'LOT', 'LOT', 1, '1');
+
+-- Dumping structure for table db_medkit3v2.tbl_m_supplier
+DROP TABLE IF EXISTS `tbl_m_supplier`;
+CREATE TABLE IF NOT EXISTS `tbl_m_supplier` (
+  `id` int(4) unsigned NOT NULL AUTO_INCREMENT,
+  `created_at` datetime DEFAULT NULL,
+  `updated_at` datetime DEFAULT NULL,
+  `kode` varchar(50) DEFAULT NULL,
+  `nama` varchar(100) DEFAULT NULL,
+  `npwp` varchar(100) DEFAULT NULL,
+  `alamat` text DEFAULT NULL,
+  `rt` varchar(50) DEFAULT NULL,
+  `rw` varchar(50) DEFAULT NULL,
+  `kecamatan` varchar(50) DEFAULT NULL,
+  `kelurahan` varchar(50) DEFAULT NULL,
+  `kota` varchar(100) DEFAULT NULL,
+  `no_tlp` varchar(20) DEFAULT NULL,
+  `no_hp` varchar(20) DEFAULT NULL,
+  `tipe` enum('0','1','2') DEFAULT '0' COMMENT '1= Instansi; 2=Personal',
+  `status` enum('0','1') DEFAULT '0',
+  `status_hps` enum('0','1') DEFAULT '0',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- Dumping data for table db_medkit3v2.tbl_m_supplier: ~2 rows (approximately)
+DELETE FROM `tbl_m_supplier`;
+INSERT INTO `tbl_m_supplier` (`id`, `created_at`, `updated_at`, `kode`, `nama`, `npwp`, `alamat`, `rt`, `rw`, `kecamatan`, `kelurahan`, `kota`, `no_tlp`, `no_hp`, `tipe`, `status`, `status_hps`) VALUES
+	(1, '2025-01-18 17:22:28', '2025-01-18 17:38:32', 'SUP0001', 'COSMOS BIN SULEMAN KONTOL', 'dsadsads', 'Perum Mutiara Pandanaran Blok D11, Mangunharjo, Tembalang, KOta Semarang', '111', '11', 'SDSADASD', '', 'Semarang', '085741220427', '085741220427', '1', '1', '1'),
+	(2, '2025-01-18 17:38:49', '2025-01-18 17:38:56', 'SUP0002', 'fdsfdsfd', 'fdsfdsf', 'dsfdsfds', 'fdfdsf', 'dfdsfdsfds', 'fdfdsf', 'fdsfd', 'dsfdsfds', 'f', '', '', '1', '1');
 
 -- Dumping structure for table db_medkit3v2.tbl_pengaturan
 DROP TABLE IF EXISTS `tbl_pengaturan`;
@@ -514,14 +786,38 @@ CREATE TABLE IF NOT EXISTS `tbl_sessions` (
   KEY `ci_sessions_timestamp` (`timestamp`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_swedish_ci;
 
--- Dumping data for table db_medkit3v2.tbl_sessions: ~5 rows (approximately)
+-- Dumping data for table db_medkit3v2.tbl_sessions: ~29 rows (approximately)
 DELETE FROM `tbl_sessions`;
 INSERT INTO `tbl_sessions` (`id`, `ip_address`, `timestamp`, `data`) VALUES
 	('simedis-sess:nq6koqmh0clqn1mtb8436abiagmirl82', '::1', '2025-01-13 16:15:52', _binary 0x5f5f63695f6c6173745f726567656e65726174657c693a313733363738343732353b73696d656469735f746f6b656e7c733a33323a226630373836396539343735663465386632386435653531313461306636613964223b5f63695f70726576696f75735f75726c7c733a34363a22687474703a2f2f6c6f63616c686f73742f6d65646b6974332d76322f6d61737465722f6c61622f656469742f3131223b6964656e746974797c733a343a22726f6f74223b757365726e616d657c733a343a22726f6f74223b656d61696c7c733a31323a22726f6f74406170702e636f6d223b757365725f69647c733a313a2231223b6f6c645f6c6173745f6c6f67696e7c733a31303a2231373336373436373135223b6c6173745f636865636b7c693a313733363736303135353b),
 	('simedis-sess:g98vbfpm7i05sok5jee240u4u16pcmqm', '::1', '2025-01-14 09:37:14', _binary 0x5f5f63695f6c6173745f726567656e65726174657c693a313733363834373433343b73696d656469735f746f6b656e7c733a33323a223466633932373130306130643833396665396132636136383936613866353930223b5f63695f70726576696f75735f75726c7c733a33383a22687474703a2f2f6c6f63616c686f73742f6d65646b6974332d76322f617574682f6c6f67696e223b6964656e746974797c733a343a22726f6f74223b757365726e616d657c733a343a22726f6f74223b656d61696c7c733a31323a22726f6f74406170702e636f6d223b757365725f69647c733a313a2231223b6f6c645f6c6173745f6c6f67696e7c733a31303a2231373336373630313535223b6c6173745f636865636b7c693a313733363834373433343b),
 	('simedis-sess:2398a935e9gbc4ndpcl0pl3nn7ml0jro', '::1', '2025-01-14 10:09:36', _binary 0x5f5f63695f6c6173745f726567656e65726174657c693a313733363834393337353b73696d656469735f746f6b656e7c733a33323a226164393038643432316265633733633035633731353461363436666434316338223b5f63695f70726576696f75735f75726c7c733a34303a22687474703a2f2f6c6f63616c686f73742f6d65646b6974332d76322f6d61737465722f67656c6172223b6964656e746974797c733a343a22726f6f74223b757365726e616d657c733a343a22726f6f74223b656d61696c7c733a31323a22726f6f74406170702e636f6d223b757365725f69647c733a313a2231223b6f6c645f6c6173745f6c6f67696e7c733a31303a2231373336373630313535223b6c6173745f636865636b7c693a313733363834373433343b),
 	('simedis-sess:b0jfogaue4vc13d66lta94l8fnkambas', '::1', '2025-01-14 10:09:44', _binary 0x5f5f63695f6c6173745f726567656e65726174657c693a313733363834393338343b73696d656469735f746f6b656e7c733a33323a223635333732393935383562333539346431383935623566343130363165363063223b5f63695f70726576696f75735f75726c7c733a33383a22687474703a2f2f6c6f63616c686f73742f6d65646b6974332d76322f617574682f6c6f67696e223b6964656e746974797c733a343a22726f6f74223b757365726e616d657c733a343a22726f6f74223b656d61696c7c733a31323a22726f6f74406170702e636f6d223b757365725f69647c733a313a2231223b6f6c645f6c6173745f6c6f67696e7c733a31303a2231373336383437343334223b6c6173745f636865636b7c693a313733363834393338343b),
-	('simedis-sess:285tn76fckcaigp01a23tabgirkdplcl', '::1', '2025-01-14 10:22:49', _binary 0x5f5f63695f6c6173745f726567656e65726174657c693a313733363835303033333b73696d656469735f746f6b656e7c733a33323a223635333732393935383562333539346431383935623566343130363165363063223b5f63695f70726576696f75735f75726c7c733a34363a22687474703a2f2f6c6f63616c686f73742f6d65646b6974332d76322f6d61737465722f6c61622f656469742f3131223b6964656e746974797c733a343a22726f6f74223b757365726e616d657c733a343a22726f6f74223b656d61696c7c733a31323a22726f6f74406170702e636f6d223b757365725f69647c733a313a2231223b6f6c645f6c6173745f6c6f67696e7c733a31303a2231373336383437343334223b6c6173745f636865636b7c693a313733363834393338343b);
+	('simedis-sess:285tn76fckcaigp01a23tabgirkdplcl', '::1', '2025-01-14 10:22:49', _binary 0x5f5f63695f6c6173745f726567656e65726174657c693a313733363835303033333b73696d656469735f746f6b656e7c733a33323a223635333732393935383562333539346431383935623566343130363165363063223b5f63695f70726576696f75735f75726c7c733a34363a22687474703a2f2f6c6f63616c686f73742f6d65646b6974332d76322f6d61737465722f6c61622f656469742f3131223b6964656e746974797c733a343a22726f6f74223b757365726e616d657c733a343a22726f6f74223b656d61696c7c733a31323a22726f6f74406170702e636f6d223b757365725f69647c733a313a2231223b6f6c645f6c6173745f6c6f67696e7c733a31303a2231373336383437343334223b6c6173745f636865636b7c693a313733363834393338343b),
+	('simedis-sess:7l3r4cd83i7chfpah04vrd7p370g9plo', '::1', '2025-01-16 10:12:13', _binary 0x5f5f63695f6c6173745f726567656e65726174657c693a313733373032323333333b73696d656469735f746f6b656e7c733a33323a223438333130323561373835623366646634663735653562333233323633306330223b5f63695f70726576696f75735f75726c7c733a32383a22687474703a2f2f6c6f63616c686f73742f6d65646b6974332d76322f223b6964656e746974797c733a343a22726f6f74223b757365726e616d657c733a343a22726f6f74223b656d61696c7c733a31323a22726f6f74406170702e636f6d223b757365725f69647c733a313a2231223b6f6c645f6c6173745f6c6f67696e7c733a31303a2231373336383439333834223b6c6173745f636865636b7c693a313733373032323333333b),
+	('simedis-sess:df8f33tvho31g3tpgnt7ck6g0pfgu559', '::1', '2025-01-16 10:12:34', _binary 0x5f5f63695f6c6173745f726567656e65726174657c693a313733373032323333333b73696d656469735f746f6b656e7c733a33323a223438333130323561373835623366646634663735653562333233323633306330223b5f63695f70726576696f75735f75726c7c733a34313a22687474703a2f2f6c6f63616c686f73742f6d65646b6974332d76322f6d61737465722f70617369656e223b6964656e746974797c733a343a22726f6f74223b757365726e616d657c733a343a22726f6f74223b656d61696c7c733a31323a22726f6f74406170702e636f6d223b757365725f69647c733a313a2231223b6f6c645f6c6173745f6c6f67696e7c733a31303a2231373336383439333834223b6c6173745f636865636b7c693a313733373032323333333b),
+	('simedis-sess:6fvapplsbh8o0ood0uc4jrpluvob1l35', '::1', '2025-01-16 15:44:41', _binary 0x5f5f63695f6c6173745f726567656e65726174657c693a313733373034323238313b73696d656469735f746f6b656e7c733a33323a223061373765316663376230393339336534346234383037343339393161613135223b5f63695f70726576696f75735f75726c7c733a32383a22687474703a2f2f6c6f63616c686f73742f6d65646b6974332d76322f223b6964656e746974797c733a343a22726f6f74223b757365726e616d657c733a343a22726f6f74223b656d61696c7c733a31323a22726f6f74406170702e636f6d223b757365725f69647c733a313a2231223b6f6c645f6c6173745f6c6f67696e7c733a31303a2231373337303232333333223b6c6173745f636865636b7c693a313733373034323238313b),
+	('simedis-sess:dko14u9lpgnqb7a89f5uif9hak07281s', '::1', '2025-01-16 16:05:40', _binary 0x5f5f63695f6c6173745f726567656e65726174657c693a313733373034333533383b73696d656469735f746f6b656e7c733a33323a226333303166663064393863303230356531373431666165396233303863333261223b5f63695f70726576696f75735f75726c7c733a32383a22687474703a2f2f6c6f63616c686f73742f6d65646b6974332d76322f223b746f617374727c613a323a7b733a343a2274797065223b733a353a226572726f72223b733a373a226d657373616765223b733a33343a2249442050656e6767756e612061746175204b6174612053616e64692073616c616821223b7d5f5f63695f766172737c613a313a7b733a363a22746f61737472223b733a333a226f6c64223b7d),
+	('simedis-sess:a8kg6fbi5pf9uu6bao7taft17rpjbbp2', '::1', '2025-01-16 16:37:23', _binary 0x5f5f63695f6c6173745f726567656e65726174657c693a313733373034353234303b73696d656469735f746f6b656e7c733a33323a223931363362376238633861326131343039313461373265313630663432353334223b5f63695f70726576696f75735f75726c7c733a35303a22687474703a2f2f6c6f63616c686f73742f6d65646b6974332d76322f6d61737465722f70617369656e2f64657461696c2f31223b6964656e746974797c733a343a22726f6f74223b757365726e616d657c733a343a22726f6f74223b656d61696c7c733a31323a22726f6f74406170702e636f6d223b757365725f69647c733a313a2231223b6f6c645f6c6173745f6c6f67696e7c733a31303a2231373337303232333333223b6c6173745f636865636b7c693a313733373034323238313b),
+	('simedis-sess:01mevllkilqb16opl0umsfiffgarcnj3', '::1', '2025-01-16 16:45:48', _binary 0x5f5f63695f6c6173745f726567656e65726174657c693a313733373034353934383b73696d656469735f746f6b656e7c733a33323a223466396432323664373939343262633239353438316138653137626363636261223b5f63695f70726576696f75735f75726c7c733a33383a22687474703a2f2f6c6f63616c686f73742f6d65646b6974332d76322f617574682f6c6f67696e223b6964656e746974797c733a343a22726f6f74223b757365726e616d657c733a343a22726f6f74223b656d61696c7c733a31323a22726f6f74406170702e636f6d223b757365725f69647c733a313a2231223b6f6c645f6c6173745f6c6f67696e7c733a31303a2231373337303432323831223b6c6173745f636865636b7c693a313733373034353934383b),
+	('simedis-sess:93tm9bt6gioo4ghepr2p1s4accfhh9tr', '::1', '2025-01-16 17:17:54', _binary 0x5f5f63695f6c6173745f726567656e65726174657c693a313733373034373837343b73696d656469735f746f6b656e7c733a33323a223466396432323664373939343262633239353438316138653137626363636261223b5f63695f70726576696f75735f75726c7c733a34313a22687474703a2f2f6c6f63616c686f73742f6d65646b6974332d76322f6d61737465722f70617369656e223b6964656e746974797c733a343a22726f6f74223b757365726e616d657c733a343a22726f6f74223b656d61696c7c733a31323a22726f6f74406170702e636f6d223b757365725f69647c733a313a2231223b6f6c645f6c6173745f6c6f67696e7c733a31303a2231373337303432323831223b6c6173745f636865636b7c693a313733373034353934383b),
+	('simedis-sess:5444a9t76trecd85u64bm2prsfio3ic8', '::1', '2025-01-17 00:23:59', _binary 0x5f5f63695f6c6173745f726567656e65726174657c693a313733373037333433393b73696d656469735f746f6b656e7c733a33323a226639376265623666616566333134346137303461623139303166633131636431223b5f63695f70726576696f75735f75726c7c733a32383a22687474703a2f2f6c6f63616c686f73742f6d65646b6974332d76322f223b6964656e746974797c733a343a22726f6f74223b757365726e616d657c733a343a22726f6f74223b656d61696c7c733a31323a22726f6f74406170702e636f6d223b757365725f69647c733a313a2231223b6f6c645f6c6173745f6c6f67696e7c733a31303a2231373337303435393438223b6c6173745f636865636b7c693a313733373037333433393b),
+	('simedis-sess:d362l417hq78hat4b1b8jqfk489c13li', '::1', '2025-01-17 01:35:21', _binary 0x5f5f63695f6c6173745f726567656e65726174657c693a313733373037373732313b73696d656469735f746f6b656e7c733a33323a226639376265623666616566333134346137303461623139303166633131636431223b5f63695f70726576696f75735f75726c7c733a34383a22687474703a2f2f6c6f63616c686f73742f6d65646b6974332d76322f6d61737465722f70617369656e2f637265617465223b6964656e746974797c733a343a22726f6f74223b757365726e616d657c733a343a22726f6f74223b656d61696c7c733a31323a22726f6f74406170702e636f6d223b757365725f69647c733a313a2231223b6f6c645f6c6173745f6c6f67696e7c733a31303a2231373337303435393438223b6c6173745f636865636b7c693a313733373037333433393b),
+	('simedis-sess:erpac8ln8f71t39933t85qv0b36hoso4', '::1', '2025-01-17 07:01:05', _binary 0x5f5f63695f6c6173745f726567656e65726174657c693a313733373039373236353b73696d656469735f746f6b656e7c733a33323a226539623631646137643063613139353435386530643661613963616534353462223b5f63695f70726576696f75735f75726c7c733a32383a22687474703a2f2f6c6f63616c686f73742f6d65646b6974332d76322f223b6964656e746974797c733a343a22726f6f74223b757365726e616d657c733a343a22726f6f74223b656d61696c7c733a31323a22726f6f74406170702e636f6d223b757365725f69647c733a313a2231223b6f6c645f6c6173745f6c6f67696e7c733a31303a2231373337303733343339223b6c6173745f636865636b7c693a313733373039373236353b),
+	('simedis-sess:l940lih9ob8699c2qtbbfcrs6gp21u8s', '::1', '2025-01-17 07:01:31', _binary 0x5f5f63695f6c6173745f726567656e65726174657c693a313733373039373236353b73696d656469735f746f6b656e7c733a33323a223632613532386466616333613832346138326562363363383334333466396662223b5f63695f70726576696f75735f75726c7c733a34333a22687474703a2f2f6c6f63616c686f73742f6d65646b6974332d76322f6d61737465722f6b617465676f7269223b6964656e746974797c733a343a22726f6f74223b757365726e616d657c733a343a22726f6f74223b656d61696c7c733a31323a22726f6f74406170702e636f6d223b757365725f69647c733a313a2231223b6f6c645f6c6173745f6c6f67696e7c733a31303a2231373337303733343339223b6c6173745f636865636b7c693a313733373039373236353b737563636573737c733a33303a2244617461206b617465676f726920626572686173696c2064697562616821223b5f5f63695f766172737c613a313a7b733a373a2273756363657373223b733a333a226f6c64223b7d),
+	('simedis-sess:0mh8dfis2hps16mnelfvb40mp47hq9ne', '::1', '2025-01-17 07:06:18', _binary 0x5f5f63695f6c6173745f726567656e65726174657c693a313733373039373537383b73696d656469735f746f6b656e7c733a33323a223634393538633837393231373764396239633330363363646139633964646261223b5f63695f70726576696f75735f75726c7c733a33383a22687474703a2f2f6c6f63616c686f73742f6d65646b6974332d76322f617574682f6c6f67696e223b6964656e746974797c733a343a22726f6f74223b757365726e616d657c733a343a22726f6f74223b656d61696c7c733a31323a22726f6f74406170702e636f6d223b757365725f69647c733a313a2231223b6f6c645f6c6173745f6c6f67696e7c733a31303a2231373337303937323635223b6c6173745f636865636b7c693a313733373039373537373b),
+	('simedis-sess:v6ob766kqkcinrgkc5sesba618dtg6m0', '::1', '2025-01-17 07:06:18', _binary 0x5f5f63695f6c6173745f726567656e65726174657c693a313733373039373537383b73696d656469735f746f6b656e7c733a33323a223634393538633837393231373764396239633330363363646139633964646261223b5f63695f70726576696f75735f75726c7c733a33373a22687474703a2f2f6c6f63616c686f73742f6d65646b6974332d76322f64617368626f617264223b6964656e746974797c733a343a22726f6f74223b757365726e616d657c733a343a22726f6f74223b656d61696c7c733a31323a22726f6f74406170702e636f6d223b757365725f69647c733a313a2231223b6f6c645f6c6173745f6c6f67696e7c733a31303a2231373337303937323635223b6c6173745f636865636b7c693a313733373039373537373b737563636573737c733a31353a224c6f67696e20626572686173696c21223b5f5f63695f766172737c613a313a7b733a373a2273756363657373223b733a333a226f6c64223b7d),
+	('simedis-sess:0esgjd5q52vbacibft33qo40smrjv8bj', '::1', '2025-01-17 09:26:22', _binary 0x5f5f63695f6c6173745f726567656e65726174657c693a313733373130353938323b73696d656469735f746f6b656e7c733a33323a223332323239653635383034656538383238393366333462653038613263643538223b5f63695f70726576696f75735f75726c7c733a33383a22687474703a2f2f6c6f63616c686f73742f6d65646b6974332d76322f617574682f6c6f67696e223b6964656e746974797c733a343a22726f6f74223b757365726e616d657c733a343a22726f6f74223b656d61696c7c733a31323a22726f6f74406170702e636f6d223b757365725f69647c733a313a2231223b6f6c645f6c6173745f6c6f67696e7c733a31303a2231373337303937353737223b6c6173745f636865636b7c693a313733373130353938323b),
+	('simedis-sess:4tp4843hfa38d1fmf3b432b3mpf99r40', '::1', '2025-01-17 09:26:34', _binary 0x5f5f63695f6c6173745f726567656e65726174657c693a313733373130353938323b73696d656469735f746f6b656e7c733a33323a223332323239653635383034656538383238393366333462653038613263643538223b5f63695f70726576696f75735f75726c7c733a34333a22687474703a2f2f6c6f63616c686f73742f6d65646b6974332d76322f6d61737465722f6b6172796177616e223b6964656e746974797c733a343a22726f6f74223b757365726e616d657c733a343a22726f6f74223b656d61696c7c733a31323a22726f6f74406170702e636f6d223b757365725f69647c733a313a2231223b6f6c645f6c6173745f6c6f67696e7c733a31303a2231373337303937353737223b6c6173745f636865636b7c693a313733373130353938323b),
+	('simedis-sess:861ovcrh89m3sqsklup84hm5flic55go', '::1', '2025-01-17 12:17:35', _binary 0x5f5f63695f6c6173745f726567656e65726174657c693a313733373131363235353b73696d656469735f746f6b656e7c733a33323a223236373363636132663964316136663032666163326230626462303033646535223b5f63695f70726576696f75735f75726c7c733a33383a22687474703a2f2f6c6f63616c686f73742f6d65646b6974332d76322f617574682f6c6f67696e223b6964656e746974797c733a343a22726f6f74223b757365726e616d657c733a343a22726f6f74223b656d61696c7c733a31323a22726f6f74406170702e636f6d223b757365725f69647c733a313a2231223b6f6c645f6c6173745f6c6f67696e7c733a31303a2231373337313035393832223b6c6173745f636865636b7c693a313733373131363235353b),
+	('simedis-sess:e7l592b1roq66nb3vc0ecm5m8qs5u57h', '::1', '2025-01-17 12:36:21', _binary 0x5f5f63695f6c6173745f726567656e65726174657c693a313733373131373236383b73696d656469735f746f6b656e7c733a33323a223236373363636132663964316136663032666163326230626462303033646535223b5f63695f70726576696f75735f75726c7c733a35303a22687474703a2f2f6c6f63616c686f73742f6d65646b6974332d76322f6d61737465722f6b6172796177616e2f637265617465223b6964656e746974797c733a343a22726f6f74223b757365726e616d657c733a343a22726f6f74223b656d61696c7c733a31323a22726f6f74406170702e636f6d223b757365725f69647c733a313a2231223b6f6c645f6c6173745f6c6f67696e7c733a31303a2231373337313035393832223b6c6173745f636865636b7c693a313733373131363235353b),
+	('simedis-sess:pmap5mlgb7k88bmb4cbp0o2b4gf9gp5a', '::1', '2025-01-17 17:00:38', _binary 0x5f5f63695f6c6173745f726567656e65726174657c693a313733373133333232363b73696d656469735f746f6b656e7c733a33323a226361373736663366313636353437333662356137616136346634333338303837223b5f63695f70726576696f75735f75726c7c733a33383a22687474703a2f2f6c6f63616c686f73742f6d65646b6974332d76322f617574682f6c6f67696e223b6572726f727c733a33343a2249442050656e6767756e612061746175204b6174612053616e64692073616c616821223b5f5f63695f766172737c613a313a7b733a353a226572726f72223b733a333a226f6c64223b7d),
+	('simedis-sess:rm32jsp3sl647htfvo56tjvvvm142k81', '::1', '2025-01-18 02:44:06', _binary 0x5f5f63695f6c6173745f726567656e65726174657c693a313733373136383234363b73696d656469735f746f6b656e7c733a33323a223730653438643331613235333561363835356233623632643138383662313231223b5f63695f70726576696f75735f75726c7c733a33383a22687474703a2f2f6c6f63616c686f73742f6d65646b6974332d76322f617574682f6c6f67696e223b6964656e746974797c733a343a22726f6f74223b757365726e616d657c733a343a22726f6f74223b656d61696c7c733a31323a22726f6f74406170702e636f6d223b757365725f69647c733a313a2231223b6f6c645f6c6173745f6c6f67696e7c733a31303a2231373337313136323535223b6c6173745f636865636b7c693a313733373136383234363b),
+	('simedis-sess:u062k7064lou0uh1ami7c0bc20samh4a', '::1', '2025-01-18 04:22:19', _binary 0x5f5f63695f6c6173745f726567656e65726174657c693a313733373137343133393b73696d656469735f746f6b656e7c733a33323a223736663239373038653165653134666435313066643834323534363536303662223b5f63695f70726576696f75735f75726c7c733a35303a22687474703a2f2f6c6f63616c686f73742f6d65646b6974332d76322f6d61737465722f6b6172796177616e2f637265617465223b6964656e746974797c733a343a22726f6f74223b757365726e616d657c733a343a22726f6f74223b656d61696c7c733a31323a22726f6f74406170702e636f6d223b757365725f69647c733a313a2231223b6f6c645f6c6173745f6c6f67696e7c733a31303a2231373337313136323535223b6c6173745f636865636b7c693a313733373136383234363b),
+	('simedis-sess:f3m057831q8t6vdu5mamhu01anna0p7l', '::1', '2025-01-18 06:33:19', _binary 0x5f5f63695f6c6173745f726567656e65726174657c693a313733373138313939393b73696d656469735f746f6b656e7c733a33323a223130383839383938353336643231373963636233643834663661353636366436223b5f63695f70726576696f75735f75726c7c733a33383a22687474703a2f2f6c6f63616c686f73742f6d65646b6974332d76322f617574682f6c6f67696e223b6964656e746974797c733a343a22726f6f74223b757365726e616d657c733a343a22726f6f74223b656d61696c7c733a31323a22726f6f74406170702e636f6d223b757365725f69647c733a313a2231223b6f6c645f6c6173745f6c6f67696e7c733a31303a2231373337313638323436223b6c6173745f636865636b7c693a313733373138313939393b),
+	('simedis-sess:6vckkmgr2ouo48hp96i9eb65ofn46dj9', '::1', '2025-01-18 12:02:27', _binary 0x5f5f63695f6c6173745f726567656e65726174657c693a313733373230313638333b73696d656469735f746f6b656e7c733a33323a223832613234363733643731663965303066616464353166336664613030376664223b5f63695f70726576696f75735f75726c7c733a33373a22687474703a2f2f6c6f63616c686f73742f6d65646b6974332d76322f64617368626f617264223b6964656e746974797c733a343a22726f6f74223b757365726e616d657c733a343a22726f6f74223b656d61696c7c733a31323a22726f6f74406170702e636f6d223b757365725f69647c733a313a2231223b6f6c645f6c6173745f6c6f67696e7c733a31303a2231373337313638323436223b6c6173745f636865636b7c693a313733373138313939393b),
+	('simedis-sess:1jo2n3rmv5cn1t05firfgfi3hj07acnc', '::1', '2025-01-18 15:27:30', _binary 0x5f5f63695f6c6173745f726567656e65726174657c693a313733373231343035303b73696d656469735f746f6b656e7c733a33323a223338653530636533363034396632343636663964356431653134386566393265223b5f63695f70726576696f75735f75726c7c733a33383a22687474703a2f2f6c6f63616c686f73742f6d65646b6974332d76322f617574682f6c6f67696e223b6964656e746974797c733a343a22726f6f74223b757365726e616d657c733a343a22726f6f74223b656d61696c7c733a31323a22726f6f74406170702e636f6d223b757365725f69647c733a313a2231223b6f6c645f6c6173745f6c6f67696e7c733a31303a2231373337313831393939223b6c6173745f636865636b7c693a313733373231343035303b),
+	('simedis-sess:fgjucjcbnn4u4l86b8d8v19uvi74980r', '::1', '2025-01-18 16:09:30', _binary 0x5f5f63695f6c6173745f726567656e65726174657c693a313733373231363537303b73696d656469735f746f6b656e7c733a33323a226235393362336161623031326661656661663463333862616363366536613936223b5f63695f70726576696f75735f75726c7c733a34363a22687474703a2f2f6c6f63616c686f73742f6d65646b6974332d76322f6d61737465722f6f6261742f656469742f31223b6964656e746974797c733a343a22726f6f74223b757365726e616d657c733a343a22726f6f74223b656d61696c7c733a31323a22726f6f74406170702e636f6d223b757365725f69647c733a313a2231223b6f6c645f6c6173745f6c6f67696e7c733a31303a2231373337313831393939223b6c6173745f636865636b7c693a313733373231343035303b);
 
 /*!40103 SET TIME_ZONE=IFNULL(@OLD_TIME_ZONE, 'system') */;
 /*!40101 SET SQL_MODE=IFNULL(@OLD_SQL_MODE, '') */;

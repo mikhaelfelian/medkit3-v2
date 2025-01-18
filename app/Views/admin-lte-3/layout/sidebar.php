@@ -199,6 +199,53 @@
                         </li>
                     </ul>
                 </li>
+                
+                <!-- Gudang -->
+                <li class="nav-item <?php echo strpos($_SERVER['REQUEST_URI'], 'stock') !== false ? 'menu-open' : ''; ?>">
+                    <a href="#" class="nav-link <?php echo strpos($_SERVER['REQUEST_URI'], 'stock') !== false ? 'active' : ''; ?>">
+                        <i class="nav-icon fas fa-warehouse"></i>
+                        <p>
+                            Gudang
+                            <i class="right fas fa-angle-left"></i>
+                        </p>
+                    </a>
+                    <ul class="nav nav-treeview">
+                        <li class="nav-header"><?= nbs() ?>PENERIMAAN</li>
+                        <li class="nav-item">
+                            <a href="<?php echo base_url('stock/penerimaan'); ?>" 
+                                class="nav-link <?php echo strpos($_SERVER['REQUEST_URI'], 'stock/penerimaan') !== false ? 'active' : ''; ?>">
+                                <?= nbs(2) ?>
+                                <i class="fas fa-file-invoice nav-icon"></i>
+                                <p>Stok Masuk</p>
+                            </a>
+                        </li>
+                        <li class="nav-header"><?= nbs() ?>INVENTORI</li>
+                        <li class="nav-item">
+                            <a href="<?php echo base_url('stock/items'); ?>" 
+                                class="nav-link <?php echo strpos($_SERVER['REQUEST_URI'], 'stock/items') !== false ? 'active' : ''; ?>">
+                                <?= nbs(2) ?>
+                                <i class="fas fa-boxes nav-icon"></i>
+                                <p>Data Stok</p>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="<?php echo base_url('stock/transfer'); ?>" 
+                                class="nav-link <?php echo strpos($_SERVER['REQUEST_URI'], 'stock/transfer') !== false && strpos($_SERVER['REQUEST_URI'], 'stock/transfer_lists') === false ? 'active' : ''; ?>">
+                                <?= nbs(2) ?>
+                                <i class="fas fa-exchange-alt nav-icon"></i>
+                                <p>Mutasi Stok</p>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="<?php echo base_url('stock/transfer_lists'); ?>" 
+                                class="nav-link <?php echo strpos($_SERVER['REQUEST_URI'], 'stock/transfer_lists') !== false ? 'active' : ''; ?>">
+                                <?= nbs(2) ?>
+                                <i class="fas fa-history nav-icon"></i>
+                                <p>Riwayat Mutasi</p>
+                            </a>
+                        </li>
+                    </ul>
+                </li>
 
                 <!-- Settings -->
                 <li class="nav-item has-treeview <?= isMenuActive('pengaturan') ? 'menu-open' : '' ?>">

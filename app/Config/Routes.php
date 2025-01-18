@@ -262,3 +262,10 @@ $routes->group('master', ['namespace' => 'App\Controllers', 'filter' => 'auth'],
     $routes->get('platform/delete/(:num)', 'Platform::delete/$1');
     $routes->get('platform/detail/(:num)', 'Platform::detail/$1');
 });
+
+// Stock Routes
+$routes->group('stock', ['namespace' => 'App\Controllers', 'filter' => 'auth'], function($routes) {
+    $routes->get('items', 'Stock::items');
+    $routes->get('items/history/(:num)', 'Stock::history/$1');
+    $routes->get('items/detail/(:num)', 'Stock::detail/$1');
+});
