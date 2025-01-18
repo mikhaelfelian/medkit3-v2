@@ -122,14 +122,6 @@
                             </a>
                         </li>
                         <li class="nav-item">
-                            <a href="<?= base_url('master/penjamin') ?>"
-                                class="nav-link <?= isMenuActive('master/penjamin') ? 'active' : '' ?>">
-                                <?= nbs(3) ?>
-                                <i class="fas fa-shield-alt nav-icon"></i>
-                                <p>Data Penjamin</p>
-                            </a>
-                        </li>
-                        <li class="nav-item">
                             <a href="<?= base_url('master/gelar') ?>"
                                 class="nav-link <?= isMenuActive('master/gelar') ? 'active' : '' ?>">
                                 <?= nbs(3) ?>
@@ -157,6 +149,52 @@
                                 <p>
                                     Data Karyawan
                                 </p>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="<?= base_url('master/supplier') ?>"
+                                class="nav-link <?= isMenuActive('master/supplier') ? 'active' : '' ?>">
+                                <?= nbs(3) ?>
+                                <i class="nav-icon fas fa-truck"></i>
+                                <p>
+                                    Data Supplier
+                                </p>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="<?= base_url('master/icd') ?>"
+                                class="nav-link <?= isMenuActive('master/icd') ? 'active' : '' ?>">
+                                <?= nbs(3) ?>
+                                <i class="nav-icon fas fa-notes-medical"></i>
+                                <p>
+                                    Data ICD
+                                </p>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="<?= base_url('master/kamar') ?>"
+                                class="nav-link <?= isMenuActive('master/kamar') ? 'active' : '' ?>">
+                                <?= nbs(3) ?>
+                                <i class="nav-icon fas fa-bed"></i>
+                                <p>
+                                    Data Kamar
+                                </p>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="<?= base_url('master/penjamin') ?>"
+                                class="nav-link <?= isMenuActive('master/penjamin') ? 'active' : '' ?>">
+                                <?= nbs(3) ?>
+                                <i class="fas fa-shield-alt nav-icon"></i>
+                                <p>Data Penjamin</p>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="<?= base_url('master/platform') ?>"
+                                class="nav-link <?= isMenuActive('master/platform') ? 'active' : '' ?>">
+                                <?= nbs(3) ?>
+                                <i class="fas fa-credit-card nav-icon"></i>
+                                <p>Data Platform</p>
                             </a>
                         </li>
                     </ul>

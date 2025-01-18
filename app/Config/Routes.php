@@ -208,6 +208,28 @@ $routes->group('master', ['namespace' => 'App\Controllers', 'filter' => 'auth'],
     $routes->get('karyawan/detail/(:num)', 'Karyawan::detail/$1');
 });
 
+// Supplier Routes
+$routes->group('master', ['namespace' => 'App\Controllers', 'filter' => 'auth'], function($routes) {
+    $routes->get('supplier', 'Supplier::index');
+    $routes->get('supplier/create', 'Supplier::create');
+    $routes->post('supplier/store', 'Supplier::store');
+    $routes->get('supplier/edit/(:num)', 'Supplier::edit/$1');
+    $routes->post('supplier/update/(:num)', 'Supplier::update/$1');
+    $routes->get('supplier/delete/(:num)', 'Supplier::delete/$1');
+    $routes->get('supplier/detail/(:num)', 'Supplier::detail/$1');
+});
+
+// ICD Routes
+$routes->group('master', ['namespace' => 'App\Controllers', 'filter' => 'auth'], function($routes) {
+    $routes->get('icd', 'Icd::index');
+    $routes->get('icd/create', 'Icd::create');
+    $routes->post('icd/store', 'Icd::store');
+    $routes->get('icd/edit/(:num)', 'Icd::edit/$1');
+    $routes->post('icd/update/(:num)', 'Icd::update/$1');
+    $routes->get('icd/delete/(:num)', 'Icd::delete/$1');
+    $routes->get('icd/detail/(:num)', 'Icd::detail/$1');
+});
+
 // Pengaturan routes
 $routes->group('pengaturan', ['filter' => 'auth'], function ($routes) {
     $routes->get('app', 'Pengaturan::index');
@@ -217,4 +239,26 @@ $routes->group('pengaturan', ['filter' => 'auth'], function ($routes) {
 // Public API routes
 $routes->group('publik', function ($routes) {
     $routes->get('items', 'Publik::getItems');
+});
+
+// Kamar Routes
+$routes->group('master', ['namespace' => 'App\Controllers', 'filter' => 'auth'], function($routes) {
+    $routes->get('kamar', 'Kamar::index');
+    $routes->get('kamar/create', 'Kamar::create');
+    $routes->post('kamar/store', 'Kamar::store');
+    $routes->get('kamar/edit/(:num)', 'Kamar::edit/$1');
+    $routes->post('kamar/update/(:num)', 'Kamar::update/$1');
+    $routes->get('kamar/delete/(:num)', 'Kamar::delete/$1');
+    $routes->get('kamar/detail/(:num)', 'Kamar::detail/$1');
+});
+
+// Platform Routes
+$routes->group('master', ['namespace' => 'App\Controllers', 'filter' => 'auth'], function($routes) {
+    $routes->get('platform', 'Platform::index');
+    $routes->get('platform/create', 'Platform::create');
+    $routes->post('platform/store', 'Platform::store');
+    $routes->get('platform/edit/(:num)', 'Platform::edit/$1');
+    $routes->post('platform/update/(:num)', 'Platform::update/$1');
+    $routes->get('platform/delete/(:num)', 'Platform::delete/$1');
+    $routes->get('platform/detail/(:num)', 'Platform::detail/$1');
 });

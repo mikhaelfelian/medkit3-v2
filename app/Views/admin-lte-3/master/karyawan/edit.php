@@ -2,9 +2,9 @@
 /**
  * Created by:
  * Mikhael Felian Waskito - mikhaelfelian@gmail.com
- * 2025-01-17
+ * 2025-01-18
  * 
- * Karyawan Create View
+ * Karyawan Edit View
  */
 ?>
 <?= $this->extend(theme_path('main')) ?>
@@ -12,10 +12,10 @@
 <?= $this->section('content') ?>
 <div class="row">
     <div class="col-12">
-        <?= form_open('master/karyawan/store') ?>
+        <?= form_open('master/karyawan/update/' . $karyawan->id) ?>
         <div class="card rounded-0">
             <div class="card-header">
-                <h3 class="card-title">Form Data Karyawan</h3>
+                <h3 class="card-title">Form Edit Karyawan</h3>
             </div>
             <div class="card-body">
                 <div class="row">
@@ -27,7 +27,7 @@
                                 'name' => 'kode',
                                 'type' => 'text',
                                 'class' => 'form-control rounded-0',
-                                'value' => $kode,
+                                'value' => $karyawan->kode,
                                 'readonly' => true
                             ]) ?>
                         </div>
@@ -41,7 +41,7 @@
                                     'type' => 'text',
                                     'class' => 'form-control rounded-0 ' . ($validation->hasError('nik') ? 'is-invalid' : ''),
                                     'placeholder' => 'Nomor Identitas...',
-                                    'value' => old('nik')
+                                    'value' => old('nik', $karyawan->nik)
                                 ]) ?>
                                 <div class="invalid-feedback">
                                     <?= $validation->getError('nik') ?>
@@ -58,7 +58,7 @@
                                         'type' => 'text',
                                         'class' => 'form-control rounded-0',
                                         'placeholder' => 'dr.',
-                                        'value' => old('nama_dpn')
+                                        'value' => old('nama_dpn', $karyawan->nama_dpn)
                                     ]) ?>
                                 </div>
                             </div>
@@ -70,7 +70,7 @@
                                         'type' => 'text',
                                         'class' => 'form-control rounded-0 ' . ($validation->hasError('nama') ? 'is-invalid' : ''),
                                         'placeholder' => 'John Doe...',
-                                        'value' => old('nama')
+                                        'value' => old('nama', $karyawan->nama)
                                     ]) ?>
                                     <div class="invalid-feedback">
                                         <?= $validation->getError('nama') ?>
@@ -85,7 +85,7 @@
                                         'type' => 'text',
                                         'class' => 'form-control rounded-0',
                                         'placeholder' => 'Sp.PD',
-                                        'value' => old('nama_blk')
+                                        'value' => old('nama_blk', $karyawan->nama_blk)
                                     ]) ?>
                                 </div>
                             </div>
@@ -100,7 +100,7 @@
                                         'type' => 'text',
                                         'class' => 'form-control rounded-0 ' . ($validation->hasError('tmp_lahir') ? 'is-invalid' : ''),
                                         'placeholder' => 'Semarang...',
-                                        'value' => old('tmp_lahir')
+                                        'value' => old('tmp_lahir', $karyawan->tmp_lahir)
                                     ]) ?>
                                     <div class="invalid-feedback">
                                         <?= $validation->getError('tmp_lahir') ?>
@@ -114,7 +114,7 @@
                                         'name' => 'tgl_lahir',
                                         'type' => 'date',
                                         'class' => 'form-control rounded-0 ' . ($validation->hasError('tgl_lahir') ? 'is-invalid' : ''),
-                                        'value' => old('tgl_lahir')
+                                        'value' => old('tgl_lahir', $karyawan->tgl_lahir)
                                     ]) ?>
                                     <div class="invalid-feedback">
                                         <?= $validation->getError('tgl_lahir') ?>
@@ -132,7 +132,7 @@
                                             'L' => 'Laki-laki',
                                             'P' => 'Perempuan'
                                         ],
-                                        old('jns_klm'),
+                                        old('jns_klm', $karyawan->jns_klm),
                                         'class="form-control rounded-0 ' . ($validation->hasError('jns_klm') ? 'is-invalid' : '') . '"'
                                     ) ?>
                                     <div class="invalid-feedback">
@@ -149,7 +149,7 @@
                                 'class' => 'form-control rounded-0',
                                 'rows' => 5,
                                 'placeholder' => 'Mohon diisi alamat lengkap sesuai ktp...',
-                                'value' => old('alamat')
+                                'value' => old('alamat', $karyawan->alamat)
                             ]) ?>
                         </div>
                         <div class="row">
@@ -162,7 +162,8 @@
                                         'id' => 'rt',
                                         'name' => 'rt',
                                         'maxlength' => 3,
-                                        'placeholder' => 'RT'
+                                        'placeholder' => 'RT',
+                                        'value' => old('rt', $karyawan->rt)
                                     ]) ?>
                                 </div>
                             </div>
@@ -175,7 +176,8 @@
                                         'id' => 'rw',
                                         'name' => 'rw',
                                         'maxlength' => 3,
-                                        'placeholder' => 'RW'
+                                        'placeholder' => 'RW',
+                                        'value' => old('rw', $karyawan->rw)
                                     ]) ?>
                                 </div>
                             </div>
@@ -187,7 +189,8 @@
                                         'class' => 'form-control rounded-0',
                                         'id' => 'kelurahan',
                                         'name' => 'kelurahan',
-                                        'placeholder' => 'Masukkan kelurahan'
+                                        'placeholder' => 'Masukkan kelurahan',
+                                        'value' => old('kelurahan', $karyawan->kelurahan)
                                     ]) ?>
                                 </div>
                             </div>
@@ -201,7 +204,8 @@
                                         'class' => 'form-control rounded-0',
                                         'id' => 'kecamatan',
                                         'name' => 'kecamatan',
-                                        'placeholder' => 'Masukkan kecamatan'
+                                        'placeholder' => 'Masukkan kecamatan',
+                                        'value' => old('kecamatan', $karyawan->kecamatan)
                                     ]) ?>
                                 </div>
                             </div>
@@ -213,7 +217,8 @@
                                         'class' => 'form-control rounded-0',
                                         'id' => 'kota',
                                         'name' => 'kota',
-                                        'placeholder' => 'Masukkan kota'
+                                        'placeholder' => 'Masukkan kota',
+                                        'value' => old('kota', $karyawan->kota)
                                     ]) ?>
                                 </div>
                             </div>
@@ -228,7 +233,7 @@
                                 'type' => 'text',
                                 'class' => 'form-control rounded-0',
                                 'placeholder' => 'Nomor SIP...',
-                                'value' => old('sip')
+                                'value' => old('sip', $karyawan->sip)
                             ]) ?>
                         </div>
                         <!-- STR -->
@@ -239,7 +244,7 @@
                                 'type' => 'text',
                                 'class' => 'form-control rounded-0',
                                 'placeholder' => 'Nomor STR...',
-                                'value' => old('str')
+                                'value' => old('str', $karyawan->str)
                             ]) ?>
                         </div>
                         <!-- Jabatan -->
@@ -248,14 +253,15 @@
                             <select name="id_user_group" class="form-control rounded-0">
                                 <option value="">- Pilih -</option>
                                 <?php foreach ($jabatans as $jabatan): ?>
-                                    <option value="<?= $jabatan->id ?>"><?= $jabatan->description ?></option>
+                                    <option value="<?= $jabatan->id ?>" <?= $karyawan->id_user_group == $jabatan->id ? 'selected' : '' ?>>
+                                        <?= $jabatan->description ?>
+                                    </option>
                                 <?php endforeach; ?>
                             </select>
                             <div class="invalid-feedback">
                                 <?= $validation->getError('jabatan') ?>
                             </div>
                         </div>
-
                         <!-- No HP -->
                         <div class="form-group">
                             <label>No. HP <span class="text-danger">*</span></label>
@@ -264,7 +270,7 @@
                                 'type' => 'text',
                                 'class' => 'form-control rounded-0 ' . ($validation->hasError('no_hp') ? 'is-invalid' : ''),
                                 'placeholder' => 'Nomor kontak WA karyawan / keluarga terdekat...',
-                                'value' => old('no_hp')
+                                'value' => old('no_hp', $karyawan->no_hp)
                             ]) ?>
                             <div class="invalid-feedback">
                                 <?= $validation->getError('no_hp') ?>
@@ -278,7 +284,7 @@
                                 'class' => 'form-control rounded-0',
                                 'rows' => 5,
                                 'placeholder' => 'Mohon diisi alamat lengkap sesuai domisili...',
-                                'value' => old('alamat_domisili')
+                                'value' => old('alamat_domisili', $karyawan->alamat_domisili)
                             ]) ?>
                         </div>
                     </div>
@@ -289,7 +295,7 @@
                     <i class="fas fa-arrow-left"></i> Kembali
                 </a>
                 <button type="submit" class="btn btn-primary rounded-0 float-right">
-                    <i class="fas fa-save"></i> Simpan
+                    <i class="fas fa-save"></i> Update
                 </button>
             </div>
         </div>

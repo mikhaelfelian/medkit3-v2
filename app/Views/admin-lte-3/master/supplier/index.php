@@ -2,9 +2,9 @@
 /**
  * Created by:
  * Mikhael Felian Waskito - mikhaelfelian@gmail.com
- * 2025-01-17
+ * 2025-01-18
  * 
- * Karyawan Index View
+ * Supplier Index View
  */
 ?>
 <?= $this->extend(theme_path('main')) ?>
@@ -14,10 +14,10 @@
     <div class="card-header">
         <div class="row">
             <div class="col-md-6">
-                <a href="<?= base_url('master/karyawan/create') ?>" class="btn btn-sm btn-primary rounded-0">
+                <a href="<?= base_url('master/supplier/create') ?>" class="btn btn-sm btn-primary rounded-0">
                     <i class="fas fa-plus"></i> Tambah Data
                 </a>
-                <a href="<?= base_url('master/karyawan/export') ?>?<?= $_SERVER['QUERY_STRING'] ?>"
+                <a href="<?= base_url('master/supplier/export') ?>?<?= $_SERVER['QUERY_STRING'] ?>"
                     class="btn btn-sm btn-success rounded-0">
                     <i class="fas fa-file-excel"></i> Export Excel
                 </a>
@@ -26,16 +26,16 @@
     </div>
     <div class="card-body">
         <div class="table-responsive">
-            <?= form_open('master/karyawan', ['method' => 'get']) ?>
+            <?= form_open('master/supplier', ['method' => 'get']) ?>
             <table class="table table-striped table-hover">
                 <thead>
                     <tr>
-                        <th>No</th>
-                        <th class="text-left">Kode</th>
-                        <th class="text-left">Nama</th>
-                        <th class="text-center">L/P</th>
-                        <th class="text-center">Jabatan</th>
-                        <th class="text-center">Aksi</th>
+                        <th width="5%">No</th>
+                        <th width="10%">Kode</th>
+                        <th width="35%">Nama</th>
+                        <th width="15%" class="text-center">Tipe</th>
+                        <th width="15%" class="text-center">Status</th>
+                        <th width="20%" class="text-center">Aksi</th>
                     </tr>
                     <tr>
                         <th></th>
@@ -48,7 +48,18 @@
                             ]) ?>
                         </th>
                         <th></th>
-                        <th></th>
+                        <th class="text-center">
+                            <?= form_dropdown(
+                                'tipe',
+                                [
+                                    '' => '- Semua -',
+                                    '1' => 'Instansi',
+                                    '2' => 'Personal'
+                                ],
+                                $selectedTipe,
+                                'class="form-control form-control-sm rounded-0"'
+                            ) ?>
+                        </th>
                         <th></th>
                         <th class="text-center">
                             <button type="submit" class="btn btn-sm btn-primary rounded-0">
@@ -58,33 +69,32 @@
                     </tr>
                 </thead>
                 <tbody>
-                    <?php if (!empty($karyawans)): ?>
+                    <?php if (!empty($suppliers)): ?>
                         <?php
                         $no = ($perPage * ($currentPage - 1)) + 1;
-                        foreach ($karyawans as $karyawan):
+                        foreach ($suppliers as $supplier):
                             ?>
                             <tr>
-                                <td class="text-center" width="3%"><?= $no++ ?>.</td>
-                                <td width="15%"><?= esc($karyawan->kode) ?></td>
-                                <td width="40%">
-                                    <b><?= esc($karyawan->nama_pgl) ?></b><br>
-                                    <small><?= esc($karyawan->nik) ?></small><?= br() ?>
-                                    <small><?= usia_lkp($karyawan->tgl_lahir) ?></small><?= br() ?>
-                                    <small><i><?= esc($karyawan->alamat) ?></i></small><?= br() ?>
+                                <td class="text-center"><?= $no++ ?>.</td>
+                                <td><?= esc($supplier->kode) ?></td>
+                                <td>
+                                    <b><?= esc($supplier->nama) ?></b><br>
+                                    <small><?= esc($supplier->npwp) ?></small><?= br() ?>
+                                    <small><i><?= esc($supplier->alamat) ?></i></small>
                                 </td>
-                                <td class="text-center" width="10%"><?= jns_klm($karyawan->jns_klm) ?></td>
-                                <td class="text-center" width="10%"><?= esc($karyawan->jabatan) ?></td>
-                                <td class="text-center" width="10%">
+                                <td class="text-center"><?= $getTipeLabel($supplier->tipe) ?></td>
+                                <td class="text-center"><?= $getStatusLabel($supplier->status) ?></td>
+                                <td class="text-center">
                                     <div class="btn-group">
-                                        <a href="<?= base_url("master/karyawan/detail/{$karyawan->id}") ?>"
+                                        <a href="<?= base_url("master/supplier/detail/{$supplier->id}") ?>"
                                             class="btn btn-info btn-sm rounded-0">
                                             <i class="fas fa-eye"></i>
                                         </a>
-                                        <a href="<?= base_url("master/karyawan/edit/{$karyawan->id}") ?>"
+                                        <a href="<?= base_url("master/supplier/edit/{$supplier->id}") ?>"
                                             class="btn btn-warning btn-sm rounded-0">
                                             <i class="fas fa-edit"></i>
                                         </a>
-                                        <a href="<?= base_url("master/karyawan/delete/{$karyawan->id}") ?>"
+                                        <a href="<?= base_url("master/supplier/delete/{$supplier->id}") ?>"
                                             class="btn btn-danger btn-sm rounded-0"
                                             onclick="return confirm('Apakah anda yakin ingin menghapus data ini?')">
                                             <i class="fas fa-trash"></i>
@@ -95,7 +105,7 @@
                         <?php endforeach; ?>
                     <?php else: ?>
                         <tr>
-                            <td colspan="7" class="text-center">Tidak ada data</td>
+                            <td colspan="6" class="text-center">Tidak ada data</td>
                         </tr>
                     <?php endif; ?>
                 </tbody>
@@ -104,7 +114,7 @@
         </div>
     </div>
     <div class="card-footer">
-        <?= $pager->links('karyawan', 'adminlte_pagination') ?>
+        <?= $pager->links('supplier', 'adminlte_pagination') ?>
     </div>
 </div>
-<?= $this->endSection() ?>
+<?= $this->endSection() ?> 
