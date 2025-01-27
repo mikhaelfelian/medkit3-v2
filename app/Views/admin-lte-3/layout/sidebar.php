@@ -222,7 +222,7 @@
                             <a href="<?= base_url('transaksi/po') ?>"
                                 class="nav-link <?= isMenuActive('transaksi/po') ? 'active' : '' ?>">
                                 <?= nbs(3) ?>
-                                <i class="fas fa-file-alt nav-icon"></i>
+                                <i class="fas fa-list nav-icon"></i>
                                 <p>Data Purchase Order</p>
                             </a>
                         </li>
