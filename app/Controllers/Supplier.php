@@ -35,7 +35,7 @@ class Supplier extends BaseController
         // Start with the model query
         $query = $this->supplierModel;
 
-        // Only show non-deleted suppliers
+        // Only show non-deleted suppliers (active records)
         $query->where('status_hps', '0');
 
         // Filter by name/code/npwp
@@ -54,14 +54,21 @@ class Supplier extends BaseController
             $query->where('tipe', $selectedTipe);
         }
 
+        // Get total records for pagination
+        $total = $query->countAllResults(false);
+
         $data = [
             'title'          => 'Data Supplier',
+            'Pengaturan'     => $this->pengaturan,
+            'user'           => $this->ionAuth->user()->row(),
             'suppliers'      => $query->paginate($perPage, 'supplier'),
             'pager'          => $this->supplierModel->pager,
             'currentPage'    => $currentPage,
             'perPage'        => $perPage,
+            'total'          => $total,
             'search'         => $search,
             'selectedTipe'   => $selectedTipe,
+            'selectedStatus' => null,  // Set to null since we're not using status filter
             'getTipeLabel'   => function($tipe) {
                 return $this->supplierModel->getTipeLabel($tipe);
             },
@@ -72,10 +79,11 @@ class Supplier extends BaseController
                 <li class="breadcrumb-item"><a href="' . base_url() . '">Beranda</a></li>
                 <li class="breadcrumb-item">Master</li>
                 <li class="breadcrumb-item active">Supplier</li>
-            '
+            ',
+            'trashCount'     => $this->supplierModel->onlyDeleted()->countAllResults()
         ];
 
-        return $this->view($this->theme->getThemePath() . '/master/supplier/index', $data);
+        return view('admin-lte-3/master/supplier/index', $data);
     }
 
     /**
@@ -85,6 +93,8 @@ class Supplier extends BaseController
     {
         $data = [
             'title'       => 'Tambah Supplier',
+            'Pengaturan'     => $this->pengaturan,
+            'user'           => $this->ionAuth->user()->row(),
             'validation'  => $this->validation,
             'kode'        => $this->supplierModel->generateKode(),
             'breadcrumbs' => '
@@ -153,6 +163,8 @@ class Supplier extends BaseController
 
         $data = [
             'title'       => 'Edit Supplier',
+            'Pengaturan'     => $this->pengaturan,
+            'user'           => $this->ionAuth->user()->row(),
             'validation'  => $this->validation,
             'supplier'    => $supplier,
             'breadcrumbs' => '
@@ -223,6 +235,8 @@ class Supplier extends BaseController
 
         $data = [
             'title'       => 'Detail Supplier',
+            'Pengaturan'     => $this->pengaturan,
+            'user'           => $this->ionAuth->user()->row(),
             'supplier'    => $supplier,
             'getTipeLabel'   => function($tipe) {
                 return $this->supplierModel->getTipeLabel($tipe);
@@ -269,5 +283,56 @@ class Supplier extends BaseController
             return redirect()->back()
                            ->with('error', 'Gagal menghapus data supplier');
         }
+    }
+
+    /**
+     * Display list of trashed suppliers
+     */
+    public function trash()
+    {
+        $filters = [
+            'status' => $this->request->getGet('status'),
+            'tipe'   => $this->request->getGet('tipe'),
+            'q'      => $this->request->getGet('q')
+        ];
+
+        $query = $this->supplierModel->onlyDeleted();
+
+        // Apply filters
+        if (!empty($filters['q'])) {
+            $query->groupStart()
+                ->like('nama', $filters['q'])
+                ->orLike('kode', $filters['q'])
+                ->orLike('npwp', $filters['q'])
+                ->groupEnd();
+        }
+
+        if (!empty($filters['tipe'])) {
+            $query->where('tipe', $filters['tipe']);
+        }
+
+        if (isset($filters['status']) && $filters['status'] !== '') {
+            $query->where('status', $filters['status']);
+        }
+
+        $data = [
+            'title'         => 'Data Sampah Supplier',
+            'Pengaturan'    => $this->pengaturan,
+            'user'          => $this->ionAuth->user()->row(),
+            'suppliers'     => $query->paginate(10, 'suppliers'),
+            'pager'         => $this->supplierModel->pager,
+            'selectedTipe'  => $filters['tipe'],
+            'selectedStatus'=> $filters['status'],
+            'search'        => $filters['q'],
+            'trashCount'    => $this->supplierModel->onlyDeleted()->countAllResults(),
+            'getTipeLabel'  => function($tipe) {
+                return $this->supplierModel->getTipeLabel($tipe);
+            },
+            'getStatusLabel' => function($status) {
+                return $this->supplierModel->getStatusLabel($status);
+            }
+        ];
+
+        return view('admin-lte-3/master/supplier/trash', $data);
     }
 } 

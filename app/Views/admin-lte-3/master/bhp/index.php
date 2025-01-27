@@ -89,7 +89,7 @@
                             <th>
                                 <button type="submit" class="btn btn-sm btn-primary rounded-0">
                                     <i class="fas fa-filter"></i>
-                                </button>2
+                                </button>
                             </th>
                         </tr>
                     </thead>

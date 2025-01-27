@@ -100,6 +100,7 @@ class Autoload extends AutoloadConfig
         'toastr',
         'general',
         'debug',
-        'angka'
+        'angka',
+        'tanggalan'
     ];
 }

@@ -2,9 +2,9 @@
 /**
  * Created by:
  * Mikhael Felian Waskito - mikhaelfelian@gmail.com
- * 2025-01-18
+ * 2025-01-21
  * 
- * Supplier Index View
+ * Supplier Trash View
  */
 ?>
 <?= $this->extend(theme_path('main')) ?>
@@ -14,22 +14,21 @@
     <div class="card-header">
         <div class="row">
             <div class="col-md-6">
-                <a href="<?= base_url('master/supplier/create') ?>" class="btn btn-sm btn-primary rounded-0">
-                    <i class="fas fa-plus"></i> Tambah Data
+                <a href="<?= base_url('master/supplier') ?>" class="btn btn-sm btn-secondary rounded-0">
+                    <i class="fas fa-arrow-left"></i> Kembali
                 </a>
-                <a href="<?= base_url('master/supplier/trash') ?>" class="btn btn-sm btn-danger rounded-0">
-                    <i class="fas fa-trash"></i> Sampah (<?= $trashCount ?>)
-                </a>
-                <a href="<?= base_url('master/supplier/export') ?>?<?= $_SERVER['QUERY_STRING'] ?>"
-                    class="btn btn-sm btn-success rounded-0">
-                    <i class="fas fa-file-excel"></i> Export Excel
-                </a>
+                <button type="button" class="btn btn-sm btn-danger rounded-0" onclick="restoreAll()">
+                    <i class="fas fa-trash-restore"></i> Pulihkan Semua
+                </button>
+                <button type="button" class="btn btn-sm btn-danger rounded-0" onclick="deleteAllPermanent()">
+                    <i class="fas fa-trash"></i> Hapus Permanen Semua
+                </button>
             </div>
         </div>
     </div>
     <div class="card-body">
         <div class="table-responsive">
-            <?= form_open('master/supplier', ['method' => 'get']) ?>
+            <?= form_open('master/supplier/trash', ['method' => 'get']) ?>
             <table class="table table-striped table-hover">
                 <thead>
                     <tr>
@@ -66,58 +65,64 @@
                         <th></th>
                         <th class="text-center">
                             <button type="submit" class="btn btn-sm btn-primary rounded-0">
-                                <i class="fas fa-filter"></i>
+                                <i class="fas fa-search"></i>
                             </button>
                         </th>
                     </tr>
                 </thead>
                 <tbody>
                     <?php if (!empty($suppliers)): ?>
-                        <?php
-                        $no = ($perPage * ($currentPage - 1)) + 1;
-                        foreach ($suppliers as $supplier):
-                            ?>
+                        <?php $no = 1; foreach ($suppliers as $supplier): ?>
                             <tr>
-                                <td class="text-center"><?= $no++ ?>.</td>
+                                <td><?= $no++ ?></td>
                                 <td><?= esc($supplier->kode) ?></td>
-                                <td>
-                                    <b><?= esc($supplier->nama) ?></b><br>
-                                    <small><?= esc($supplier->npwp) ?></small><?= br() ?>
-                                    <small><i><?= esc($supplier->alamat) ?></i></small>
-                                </td>
+                                <td><?= esc($supplier->nama) ?></td>
                                 <td class="text-center"><?= $getTipeLabel($supplier->tipe) ?></td>
                                 <td class="text-center"><?= $getStatusLabel($supplier->status) ?></td>
                                 <td class="text-center">
                                     <div class="btn-group">
-                                        <a href="<?= base_url("master/supplier/detail/{$supplier->id}") ?>"
-                                            class="btn btn-info btn-sm rounded-0">
-                                            <i class="fas fa-eye"></i>
+                                        <a href="<?= base_url("master/supplier/restore/{$supplier->id}") ?>"
+                                            class="btn btn-success btn-sm rounded-0" title="Pulihkan">
+                                            <i class="fas fa-trash-restore"></i>
                                         </a>
-                                        <a href="<?= base_url("master/supplier/edit/{$supplier->id}") ?>"
-                                            class="btn btn-warning btn-sm rounded-0">
-                                            <i class="fas fa-edit"></i>
-                                        </a>
-                                        <a href="<?= base_url("master/supplier/delete/{$supplier->id}") ?>"
-                                            class="btn btn-danger btn-sm rounded-0"
-                                            onclick="return confirm('Apakah anda yakin ingin menghapus data ini?')">
+                                        <a href="<?= base_url("master/supplier/delete-permanent/{$supplier->id}") ?>"
+                                            class="btn btn-danger btn-sm rounded-0" title="Hapus Permanen"
+                                            onclick="return confirm('Data akan dihapus secara permanen. Lanjutkan?')">
                                             <i class="fas fa-trash"></i>
                                         </a>
                                     </div>
                                 </td>
                             </tr>
-                        <?php endforeach; ?>
+                        <?php endforeach ?>
                     <?php else: ?>
                         <tr>
                             <td colspan="6" class="text-center">Tidak ada data</td>
                         </tr>
-                    <?php endif; ?>
+                    <?php endif ?>
                 </tbody>
             </table>
             <?= form_close() ?>
         </div>
     </div>
     <div class="card-footer">
-        <?= $pager->links('supplier', 'adminlte_pagination') ?>
+        <?= $pager->links('suppliers', 'adminlte_pagination') ?>
     </div>
 </div>
+
+<?= $this->section('js') ?>
+<script>
+function restoreAll() {
+    if (confirm('Pulihkan semua data?')) {
+        window.location.href = '<?= base_url("master/supplier/restore-all") ?>';
+    }
+}
+
+function deleteAllPermanent() {
+    if (confirm('Semua data akan dihapus secara permanen. Lanjutkan?')) {
+        window.location.href = '<?= base_url("master/supplier/delete-all-permanent") ?>';
+    }
+}
+</script>
+<?= $this->endSection() ?>
+
 <?= $this->endSection() ?> 

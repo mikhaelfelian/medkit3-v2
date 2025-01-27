@@ -125,4 +125,61 @@ if (!function_exists('usia_lkp')) {
             return $date; // Return original date if there's an error
         }
     }
+}
+
+if (!function_exists('format_tanggal_waktu')) {
+    /**
+     * Format date and time in Indonesian format
+     * Example: Selasa, 21 Jan 2025 | 23:49:26
+     * 
+     * @param string|null $date Date to format (null for current date/time)
+     * @return string
+     */
+    function format_tanggal_waktu($date = null) 
+    {
+        if ($date === null) {
+            $date = date('Y-m-d H:i:s');
+        }
+
+        $timestamp = strtotime($date);
+        
+        // Array of day names in Indonesian
+        $hari = [
+            'Sunday'    => 'Minggu',
+            'Monday'    => 'Senin',
+            'Tuesday'   => 'Selasa',
+            'Wednesday' => 'Rabu',
+            'Thursday'  => 'Kamis',
+            'Friday'    => 'Jumat',
+            'Saturday'  => 'Sabtu'
+        ];
+
+        // Array of month names in Indonesian
+        $bulan = [
+            'January'   => 'Jan',
+            'February'  => 'Feb',
+            'March'     => 'Mar',
+            'April'     => 'Apr',
+            'May'       => 'Mei',
+            'June'      => 'Jun',
+            'July'      => 'Jul',
+            'August'    => 'Agu',
+            'September' => 'Sep',
+            'October'   => 'Okt',
+            'November'  => 'Nov',
+            'December'  => 'Des'
+        ];
+
+        $nama_hari = $hari[date('l', $timestamp)];
+        $nama_bulan = $bulan[date('F', $timestamp)];
+
+        return sprintf(
+            "%s, %s %s %s | %s",
+            $nama_hari,
+            date('d', $timestamp),
+            $nama_bulan,
+            date('Y', $timestamp),
+            date('H:i:s', $timestamp)
+        );
+    }
 } 

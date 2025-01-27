@@ -30,6 +30,10 @@ class CreateTblMSupplier extends Migration
                 'type'    => 'DATETIME',
                 'null'    => true
             ],
+            'deleted_at' => [
+                'type'    => 'DATETIME',
+                'null'    => true
+            ],
             'kode' => [
                 'type'       => 'VARCHAR',
                 'constraint' => 50,

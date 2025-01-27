@@ -193,6 +193,8 @@ class CreateTblMItem extends Migration
         
         $this->forge->addKey('id', true);
         $this->forge->createTable('tbl_m_item', true);
+
+        $this->db->query("ALTER TABLE tbl_m_item COMMENT = 'Table untuk menyimpan semua item'");
     }
 
     public function down()

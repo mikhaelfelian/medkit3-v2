@@ -7,6 +7,11 @@
         <li class="nav-item">
             <a class="nav-link" data-widget="pushmenu" href="#" role="button"><i class="fas fa-bars"></i></a>
         </li>
+        <li class="nav-item">
+            <span class="nav-link" id="tanggalan">
+                <?= format_tanggal_waktu() ?>
+            </span>
+        </li>
     </ul>
 
     <!-- Right navbar links -->
@@ -33,4 +38,25 @@
             </ul>
         </li>
     </ul>
-</nav> 
+</nav>
+
+<script>
+function updateDateTime() {
+    const now = new Date();
+    const days = ['Minggu', 'Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat', 'Sabtu'];
+    const months = ['Jan', 'Feb', 'Mar', 'Apr', 'Mei', 'Jun', 'Jul', 'Agu', 'Sep', 'Okt', 'Nov', 'Des'];
+    
+    const day = days[now.getDay()];
+    const date = String(now.getDate()).padStart(2, '0');
+    const month = months[now.getMonth()];
+    const year = now.getFullYear();
+    const time = now.toTimeString().split(' ')[0];
+    
+    const formatted = `${day}, ${date} ${month} ${year} | ${time}`;
+    document.querySelector('#tanggalan').textContent = formatted;
+}
+
+// Update every second
+setInterval(updateDateTime, 1000);
+updateDateTime(); // Initial call
+</script> 

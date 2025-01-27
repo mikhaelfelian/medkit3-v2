@@ -1,4 +1,11 @@
 <?php
+/**
+ * Created by:
+ * Mikhael Felian Waskito - mikhaelfelian@gmail.com
+ * 2025-01-19
+ * 
+ * ItemModel
+ */
 
 namespace App\Models;
 
@@ -334,5 +341,90 @@ class ItemModel extends Model
             ->join('tbl_m_merk', 'tbl_m_merk.id = tbl_m_item.id_merk', 'left')
             ->where('tbl_m_item.status_item', 5)  // 5 for BHP
             ->where('tbl_m_item.status_hps', '0');
+    }
+
+    /**
+     * Get kategori list for dropdown
+     */
+    public function getKategoriList()
+    {
+        $builder = $this->db->table('tbl_m_kategori');
+        $result = $builder->select('id, kategori')
+                         ->where('status', '1')
+                         ->orderBy('kategori', 'ASC')
+                         ->get()
+                         ->getResult();
+
+        $list = [];
+        foreach ($result as $row) {
+            $list[$row->id] = $row->kategori;
+        }
+        return $list;
+    }
+
+    /**
+     * Get merk list for dropdown
+     */
+    public function getMerkList()
+    {
+        return $this->select('DISTINCT(merk) as merk')
+                   ->where('status', '1')
+                   ->orderBy('merk', 'ASC')
+                   ->get()
+                   ->getResult();
+    }
+
+    /**
+     * Get filtered items
+     */
+    public function getStockable($filters = [])
+    {
+        $builder = $this->select('
+                tbl_m_item.*, 
+                tbl_m_merk.merk,
+                tbl_m_kategori.kategori as nama_kategori,
+                tbl_m_satuan.satuanBesar as nama_satuan,
+                tbl_m_item_stok.jml as stok
+            ')
+            ->join('tbl_m_merk', 'tbl_m_merk.id = tbl_m_item.id_merk', 'left')
+            ->join('tbl_m_kategori', 'tbl_m_kategori.id = tbl_m_item.id_kategori', 'left')
+            ->join('tbl_m_satuan', 'tbl_m_satuan.id = tbl_m_item.id_satuan', 'left')
+            ->join('tbl_m_item_stok', 'tbl_m_item_stok.id_item = tbl_m_item.id', 'left')
+            ->where('tbl_m_item.status_stok', '1');
+
+        // Apply filters
+        if (!empty($filters['kategori'])) {
+            $builder->where('tbl_m_item.id_kategori', $filters['kategori']);
+        }
+
+        if (!empty($filters['merk'])) {
+            $builder->where('tbl_m_item.merk', $filters['merk']);
+        }
+
+        if (!empty($filters['item'])) {
+            $builder->like('tbl_m_item.item', $filters['item']);
+        }
+
+        if (!empty($filters['status'])) {
+            $builder->where('tbl_m_item.status', $filters['status']);
+        }
+
+        if (!empty($filters['q'])) {
+            $builder->groupStart()
+                   ->like('tbl_m_item.kode', $filters['q'])
+                   ->orLike('tbl_m_item.item', $filters['q'])
+                   ->orLike('tbl_m_item.merk', $filters['q'])
+                   ->groupEnd();
+        }
+
+        return $builder;
+    }
+
+    /**
+     * Get status label
+     */
+    public function getStatusLabel($status)
+    {
+        return $status === '1' ? 'Aktif' : 'Tidak Aktif';
     }
 }

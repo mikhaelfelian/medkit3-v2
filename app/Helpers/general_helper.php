@@ -81,3 +81,68 @@ if (!function_exists('jns_klm')) {
         return $genders[$code] ?? 'Unknown';
     }
 }
+
+if (!function_exists('get_status_badge')) {
+    /**
+     * Get bootstrap badge class based on PO status
+     * 
+     * @param int $status Status code
+     * @return string Bootstrap badge class
+     */
+    function get_status_badge($status)
+    {
+        $badges = [
+            0 => 'secondary', // Draft
+            1 => 'info',      // Menunggu Persetujuan
+            2 => 'primary',   // Disetujui
+            3 => 'danger',    // Ditolak
+            4 => 'warning',   // Diterima
+            5 => 'success'    // Selesai
+        ];
+
+        return $badges[$status] ?? 'secondary';
+    }
+}
+
+if (!function_exists('statusPO')) {
+    /**
+     * Get PO status label and badge
+     * 
+     * @param int $status Status code
+     * @return array Array containing status label and badge class
+     */
+    function statusPO($status)
+    {
+        $statuses = [
+            0 => [
+                'label' => 'Draft',
+                'badge' => 'secondary'
+            ],
+            1 => [
+                'label' => 'Menunggu Persetujuan',
+                'badge' => 'info'
+            ],
+            2 => [
+                'label' => 'Disetujui',
+                'badge' => 'primary'
+            ],
+            3 => [
+                'label' => 'Ditolak',
+                'badge' => 'danger'
+            ],
+            4 => [
+                'label' => 'Diterima',
+                'badge' => 'warning'
+            ],
+            5 => [
+                'label' => 'Selesai',
+                'badge' => 'success'
+            ]
+        ];
+
+        return $statuses[$status] ?? [
+            'label' => 'Unknown',
+            'badge' => 'secondary'
+        ];
+    }
+}

@@ -19,7 +19,7 @@ class SupplierModel extends Model
     protected $primaryKey       = 'id';
     protected $useAutoIncrement = true;
     protected $returnType       = 'object';
-    protected $useSoftDeletes   = false;
+    protected $useSoftDeletes   = true;
     protected $protectFields    = true;
     protected $allowedFields    = [
         'kode', 'nama', 'npwp', 'alamat', 'rt', 'rw', 
@@ -32,6 +32,7 @@ class SupplierModel extends Model
     protected $dateFormat    = 'datetime';
     protected $createdField  = 'created_at';
     protected $updatedField  = 'updated_at';
+    protected $deletedField   = 'deleted_at';
 
     /**
      * Generate unique supplier code

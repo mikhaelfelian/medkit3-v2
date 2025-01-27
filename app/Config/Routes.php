@@ -217,6 +217,7 @@ $routes->group('master', ['namespace' => 'App\Controllers', 'filter' => 'auth'],
     $routes->post('supplier/update/(:num)', 'Supplier::update/$1');
     $routes->get('supplier/delete/(:num)', 'Supplier::delete/$1');
     $routes->get('supplier/detail/(:num)', 'Supplier::detail/$1');
+    $routes->get('supplier/trash', 'Supplier::trash');
 });
 
 // ICD Routes
@@ -228,12 +229,6 @@ $routes->group('master', ['namespace' => 'App\Controllers', 'filter' => 'auth'],
     $routes->post('icd/update/(:num)', 'Icd::update/$1');
     $routes->get('icd/delete/(:num)', 'Icd::delete/$1');
     $routes->get('icd/detail/(:num)', 'Icd::detail/$1');
-});
-
-// Pengaturan routes
-$routes->group('pengaturan', ['filter' => 'auth'], function ($routes) {
-    $routes->get('app', 'Pengaturan::index');
-    $routes->post('app/update', 'Pengaturan::update');
 });
 
 // Public API routes
@@ -268,4 +263,17 @@ $routes->group('stock', ['namespace' => 'App\Controllers', 'filter' => 'auth'], 
     $routes->get('items', 'Stock::items');
     $routes->get('items/history/(:num)', 'Stock::history/$1');
     $routes->get('items/detail/(:num)', 'Stock::detail/$1');
+});
+
+// Purchase Order Routes
+$routes->group('transaksi', ['namespace' => 'App\Controllers', 'filter' => 'auth'], function($routes) {
+    $routes->get('po', 'TransBeliPO::index');
+    $routes->get('po/create', 'TransBeliPO::create');
+    $routes->get('po/detail/(:num)', 'TransBeliPO::detail/$1');
+});
+
+// Pengaturan routes
+$routes->group('pengaturan', ['filter' => 'auth'], function ($routes) {
+    $routes->get('app', 'Pengaturan::index');
+    $routes->post('app/update', 'Pengaturan::update');
 });

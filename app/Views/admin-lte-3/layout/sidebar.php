@@ -199,6 +199,35 @@
                         </li>
                     </ul>
                 </li>
+
+                <!-- Transaksi -->
+                <li class="nav-item has-treeview <?= isMenuActive('transaksi') ? 'menu-open' : '' ?>">
+                    <a href="#" class="nav-link <?= isMenuActive('transaksi') ? 'active' : '' ?>">
+                        <i class="nav-icon fas fa-exchange-alt"></i>
+                        <p>
+                            Transaksi
+                            <i class="right fas fa-angle-left"></i>
+                        </p>
+                    </a>
+                    <ul class="nav nav-treeview">
+                        <li class="nav-item">
+                            <a href="<?= base_url('transaksi/po/create') ?>"
+                                class="nav-link <?= isMenuActive('transaksi/purchase_order') ? 'active' : '' ?>">
+                                <?= nbs(3) ?>
+                                <i class="fas fa-shopping-cart nav-icon"></i>
+                                <p>Purchase Order</p>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="<?= base_url('transaksi/po') ?>"
+                                class="nav-link <?= isMenuActive('transaksi/po') ? 'active' : '' ?>">
+                                <?= nbs(3) ?>
+                                <i class="fas fa-file-alt nav-icon"></i>
+                                <p>Data Purchase Order</p>
+                            </a>
+                        </li>
+                    </ul>
+                </li>
                 
                 <!-- Gudang -->
                 <li class="nav-item <?php echo strpos($_SERVER['REQUEST_URI'], 'stock') !== false ? 'menu-open' : ''; ?>">
