@@ -4,14 +4,15 @@
  * Mikhael Felian Waskito - mikhaelfelian@gmail.com
  * 2025-01-12
  * 
- * BHP Controller
+ * Radiologi Controller
  * 
- * Controller for managing Bahan Habis Pakai (BHP)
+ * Controller for managing radiology procedures
  * Handles CRUD operations and other related functionalities
  */
 
-namespace App\Controllers;
+namespace App\Controllers\Master;
 
+use App\Controllers\BaseController;
 use App\Models\ItemModel;
 use App\Models\ItemStokModel;
 use App\Models\ItemRefModel;
@@ -23,7 +24,7 @@ use App\Models\PengaturanModel;
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
 use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
 
-class BHP extends BaseController
+class Radiologi extends BaseController
 {
     protected $itemModel;
     protected $kategoriModel;
@@ -47,9 +48,9 @@ class BHP extends BaseController
 
     public function index()
     {
-        $currentPage = $this->request->getVar('page_bhp') ?? 1;
+        $currentPage = $this->request->getVar('page_radiologi') ?? 1;
         $perPage = 10;
-        $query = $this->itemModel->getBHP();
+        $query = $this->itemModel->getRadiologi();
 
         // Get active kategori list for dropdown
         $kategoriList = [];
@@ -101,10 +102,10 @@ class BHP extends BaseController
         }
 
         $data = [
-            'title'            => 'Data BHP',
+            'title'            => 'Data Radiologi',
             'Pengaturan'       => $this->pengaturan,
             'user'             => $this->ionAuth->user()->row(),
-            'bhp'              => $query->paginate($perPage, 'bhp'),
+            'radiologi'        => $query->paginate($perPage, 'radiologi'),
             'pager'            => $this->itemModel->pager,
             'currentPage'      => $currentPage,
             'perPage'          => $perPage,
@@ -113,26 +114,26 @@ class BHP extends BaseController
             'selectedKategori' => $selectedKategori,
             'selectedMerk'     => $selectedMerk,
             'selectedStatus'   => $selectedStatus,
-            'trashCount'       => $this->itemModel->countDeleted(5),
+            'trashCount'       => $this->itemModel->countDeleted(4),
             'breadcrumbs'      => '
                 <li class="breadcrumb-item"><a href="' . base_url() . '">Beranda</a></li>
                 <li class="breadcrumb-item">Master</li>
-                <li class="breadcrumb-item active">BHP</li>
+                <li class="breadcrumb-item active">Radiologi</li>
             '
         ];
 
-        return view($this->theme->getThemePath() . '/master/bhp/index', $data);
+        return view($this->theme->getThemePath() . '/master/radiologi/index', $data);
     }
 
     public function create()
     {
-        // Get active data for dropdowns
+        // Get kategori data
         $kategoris  = $this->kategoriModel->where('status', '1')->findAll();
         $merks      = $this->merkModel->where('status', '1')->findAll();
         $satuans    = $this->satuanModel->where('status', '1')->findAll();
 
         $data = [
-            'title'         => 'Tambah BHP',
+            'title'         => 'Tambah Radiologi',
             'Pengaturan'    => $this->pengaturan, 
             'kategoris'     => $kategoris,
             'merks'         => $merks,
@@ -142,16 +143,15 @@ class BHP extends BaseController
             'breadcrumbs'   => '
                 <li class="breadcrumb-item"><a href="' . base_url() . '">Beranda</a></li>
                 <li class="breadcrumb-item">Master</li>
-                <li class="breadcrumb-item"><a href="' . base_url('master/bhp') . '">BHP</a></li>
+                <li class="breadcrumb-item"><a href="' . base_url('master/radiologi') . '">Radiologi</a></li>
                 <li class="breadcrumb-item active">Tambah</li>
             '
         ];
 
-        return view($this->theme->getThemePath() . '/master/bhp/create', $data);
+        return view($this->theme->getThemePath() . '/master/radiologi/create', $data);
     }
 
-    public function store()
-    {
+    public function store(){
         // Validation rules
         $rules = [
             env('security.tokenName') => [
@@ -169,8 +169,8 @@ class BHP extends BaseController
             'item' => [
                 'rules' => 'required|max_length[160]',
                 'errors' => [
-                    'required'      => 'Nama BHP harus diisi',
-                    'max_length'    => 'Nama BHP maksimal 160 karakter'
+                    'required'      => 'Nama radiologi harus diisi',
+                    'max_length'    => 'Nama radiologi maksimal 160 karakter'
                 ]
             ],
             'harga_jual' => [
@@ -210,14 +210,14 @@ class BHP extends BaseController
                 'id_kategori' => $this->request->getVar('kategori'),
                 'id_merk'     => $this->request->getVar('merk'),
                 'id_satuan'   => $this->request->getVar('satuan'),
-                'kode'        => $this->itemModel->generateKode(5), // 5 for BHP
+                'kode'        => $this->itemModel->generateKode(4), // 4 for Radiologi
                 'item'        => $this->request->getPost('item'),
                 'item_kand'   => $this->request->getPost('item_kand'),
                 'harga_beli'  => format_angka_db($this->request->getVar('harga_beli')),
                 'harga_jual'  => format_angka_db($this->request->getVar('harga_jual')),
                 'status'      => $this->request->getPost('status'),
                 'status_stok' => $this->request->getPost('status_stok'),
-                'status_item' => 5, // BHP
+                'status_item' => 4, // RADIOLOGI
                 'id_user'     => $this->ionAuth->user()->row()->id
             ];
 
@@ -252,21 +252,21 @@ class BHP extends BaseController
 
                 $this->db->transCommit();
                 
-                return redirect()->to(base_url('master/bhp'))
-                    ->with('success', 'Data BHP berhasil ditambahkan');
+                return redirect()->to(base_url('master/radiologi'))
+                    ->with('success', 'Data radiologi berhasil ditambahkan');
             }
-
+    
             return redirect()->back()
-                ->with('error', 'Gagal menambahkan data BHP')
+                ->with('error', 'Gagal menambahkan data radiologi')
                 ->withInput();
 
         } catch (\Exception $e) {
             $this->db->transRollback();
-            log_message('error', '[BHP::store] ' . $e->getMessage());
+            log_message('error', '[Radiologi::store] ' . $e->getMessage());
             
             return redirect()->back()
                 ->withInput()
-                ->with('error', ENVIRONMENT === 'development' ? $e->getMessage() : 'Gagal menyimpan data BHP');
+                ->with('error', ENVIRONMENT === 'development' ? $e->getMessage() : 'Gagal menyimpan data radiologi');
         }
     }
 
@@ -274,13 +274,13 @@ class BHP extends BaseController
     {
         if (!$id) {
             return redirect()->back()
-                ->with('error', 'ID BHP tidak ditemukan');
+                ->with('error', 'ID radiologi tidak ditemukan');
         }
 
-        $bhp = $this->itemModel->getItemWithRelations($id);
-        if (!$bhp) {
+        $radiologi = $this->itemModel->getItemWithRelations($id);
+        if (!$radiologi) {
             return redirect()->back()
-                ->with('error', 'Data BHP tidak ditemukan');
+                ->with('error', 'Data radiologi tidak ditemukan');
         }
 
         // Get active data for dropdowns
@@ -292,9 +292,9 @@ class BHP extends BaseController
         $item_refs = $this->itemRefModel->getRefsByItem($id);
 
         $data = [
-            'title'         => 'Edit BHP',
+            'title'         => 'Edit Radiologi',
             'Pengaturan'    => $this->pengaturan,
-            'bhp'           => $bhp,
+            'radiologi'     => $radiologi,
             'kategoris'     => $kategoris,
             'merks'         => $merks,
             'satuans'       => $satuans,
@@ -304,19 +304,19 @@ class BHP extends BaseController
             'breadcrumbs'   => '
                 <li class="breadcrumb-item"><a href="' . base_url() . '">Beranda</a></li>
                 <li class="breadcrumb-item">Master</li>
-                <li class="breadcrumb-item"><a href="' . base_url('master/bhp') . '">BHP</a></li>
+                <li class="breadcrumb-item"><a href="' . base_url('master/radiologi') . '">Radiologi</a></li>
                 <li class="breadcrumb-item active">Edit</li>
             '
         ];
 
-        return view($this->theme->getThemePath() . '/master/bhp/edit', $data);
+        return view($this->theme->getThemePath() . '/master/radiologi/edit', $data);
     }
 
     public function update($id = null)
     {
         if (!$id) {
             return redirect()->back()
-                ->with('error', 'ID BHP tidak ditemukan');
+                ->with('error', 'ID radiologi tidak ditemukan');
         }
 
         // Validation rules
@@ -336,15 +336,15 @@ class BHP extends BaseController
             'item' => [
                 'rules' => 'required|max_length[160]',
                 'errors' => [
-                    'required'      => 'Nama BHP harus diisi',
-                    'max_length'    => 'Nama BHP maksimal 160 karakter'
+                    'required' => 'Nama radiologi harus diisi',
+                    'max_length' => 'Nama radiologi maksimal 160 karakter'
                 ]
             ],
             'harga_jual' => [
                 'rules' => 'required|numeric|greater_than_equal_to[0]',
                 'errors' => [
-                    'required'              => 'Harga jual harus diisi',
-                    'numeric'               => 'Harga jual harus berupa angka',
+                    'required' => 'Harga jual harus diisi',
+                    'numeric' => 'Harga jual harus berupa angka',
                     'greater_than_equal_to' => 'Harga jual tidak boleh negatif'
                 ]
             ],
@@ -357,8 +357,8 @@ class BHP extends BaseController
             'status' => [
                 'rules' => 'required|in_list[0,1]',
                 'errors' => [
-                    'required'  => 'Status harus dipilih',
-                    'in_list'   => 'Status tidak valid'
+                    'required' => 'Status harus dipilih',
+                    'in_list' => 'Status tidak valid'
                 ]
             ]
         ];
@@ -387,45 +387,67 @@ class BHP extends BaseController
                 'id_user'     => $this->ionAuth->user()->row()->id
             ];
 
+            // Always save remun_tipe even if empty
+            $data['remun_tipe'] = (string)$this->request->getVar('remun_tipe');
+
+            // If remun_tipe is percentage (1), calculate nominal amount from percentage
+            if ($this->request->getPost('remun_tipe') == '1') {
+                $hargaJual = format_angka_db($this->request->getPost('harga_jual'));
+                $remunPerc = format_angka_db($this->request->getPost('remun_perc'));
+                
+                $data['remun_perc'] = $this->request->getPost('remun_perc') ? format_angka_db($this->request->getPost('remun_perc')) : 0;
+                $data['remun_nom'] = round(($hargaJual * $remunPerc) / 100);
+            } else if ($this->request->getPost('remun_tipe') == '2') {
+                $hargaJual = format_angka_db($this->request->getPost('harga_jual'));
+                $remunNom = format_angka_db($this->request->getPost('remun_nom'));
+                
+                $data['remun_nom'] = $this->request->getPost('remun_nom') ? format_angka_db($this->request->getPost('remun_nom')) : 0;
+                $data['remun_perc'] = $hargaJual > 0 ? min(round(($remunNom * 100) / $hargaJual), 100) : 0;
+            }
+
+            // Always save apres_tipe even if empty
+            $data['apres_tipe'] = (string)$this->request->getPost('apres_tipe');
+            
+            // If apres_tipe is percentage (1), calculate nominal amount from percentage
+            if ($this->request->getPost('apres_tipe') == '1') {
+                $hargaJual = format_angka_db($this->request->getPost('harga_jual'));
+                $apresPerc = format_angka_db($this->request->getPost('apres_perc'));
+                
+                $data['apres_perc'] = $this->request->getPost('apres_perc') ? format_angka_db($this->request->getPost('apres_perc')) : 0;
+                $data['apres_nom']  = round(($hargaJual * $apresPerc) / 100);
+            } else if ($this->request->getPost('apres_tipe') == '2') {
+                $hargaJual = format_angka_db($this->request->getPost('harga_jual')); 
+                $apresNom = format_angka_db($this->request->getPost('apres_nom'));
+                
+                $data['apres_nom'] = $this->request->getPost('apres_nom') ? format_angka_db($this->request->getPost('apres_nom')) : 0;
+                $data['apres_perc'] = $hargaJual > 0 ? min(round(($apresNom * 100) / $hargaJual), 100) : 0;
+            }
+
             if (!$this->itemModel->update($id, $data)) {
-                throw new \Exception('Gagal mengupdate data BHP');
+                throw new \Exception('Gagal mengupdate data tindakan');
             }
 
             $this->db->transCommit();
             
-            return redirect()->to(base_url('master/bhp'))
-                ->with('success', 'Data BHP berhasil diupdate');
-
+            return redirect()->to(base_url('master/radiologi'))
+                ->with('success', 'Data radiologi berhasil diupdate');
         } catch (\Exception $e) {
             $this->db->transRollback();
-            log_message('error', '[BHP::update] ' . $e->getMessage());
+            log_message('error', '[Radiologi::update] ' . $e->getMessage());
             
             return redirect()->back()
                 ->withInput()
-                ->with('error', ENVIRONMENT === 'development' ? $e->getMessage() : 'Gagal mengupdate data BHP');
+                ->with('error', ENVIRONMENT === 'development' ? $e->getMessage() : 'Gagal mengupdate data radiologi');
         }
     }
 
     public function trash()
     {
-        $currentPage = $this->request->getVar('page_bhp') ?? 1;
-        $perPage = 10;
+        $currentPage = $this->request->getVar('page_radiologi') ?? 1;
+        $perPage = $this->pengaturan->pagination_limit;
 
-        // Get builder instance
-        $builder = $this->db->table('tbl_m_item')
-            ->select('
-                tbl_m_item.id,
-                tbl_m_item.kode,
-                tbl_m_item.item,
-                tbl_m_item.item_alias,
-                tbl_m_item.item_kand,
-                tbl_m_item.harga_jual,
-                tbl_m_item.status,
-                tbl_m_item.status_item,
-                tbl_m_item.deleted_at
-            ')
-            ->where('tbl_m_item.status_item', 5)  // 5 for BHP
-            ->where('tbl_m_item.status_hps', '1');
+        // Get builder instance and convert to array for pagination
+        $builder = $this->itemModel->getLabTrash();
 
         // Filter by name/code/alias
         $item = $this->request->getVar('item');
@@ -437,137 +459,176 @@ class BHP extends BaseController
                 ->groupEnd();
         }
 
+        // Get total rows for pagination
+        $total = $builder->countAllResults(false); // false to keep the query builder instance
+
+        // Get the data with limit and offset
+        $radiologi = $builder->limit($perPage, ($currentPage - 1) * $perPage)->get()->getResult();
+
+        // Create manual pagination
+        $pager = service('pager');
+        $pager->setPath('master/lab/trash');
+        $pager->makeLinks($currentPage, $perPage, $total, 'adminlte_pagination');
+
         $data = [
-            'title'         => 'Sampah BHP',
+            'title'         => 'Sampah Radiologi',
             'Pengaturan'    => $this->pengaturan,
             'user'          => $this->ionAuth->user()->row(),
-            'bhp'           => $builder->get()->getResult(),
-            'pager'         => null,
+            'radiologi'     => $radiologi,
+            'pager'         => $pager,
             'currentPage'   => $currentPage,
             'perPage'       => $perPage,
             'breadcrumbs'   => '
                 <li class="breadcrumb-item"><a href="' . base_url() . '">Beranda</a></li>
                 <li class="breadcrumb-item">Master</li>
-                <li class="breadcrumb-item"><a href="' . base_url('master/bhp') . '">BHP</a></li>
+                <li class="breadcrumb-item"><a href="' . base_url('master/radiologi') . '">Radiologi</a></li>
                 <li class="breadcrumb-item active">Sampah</li>
             '
         ];
 
-        return view($this->theme->getThemePath() . '/master/bhp/trash', $data);
-    }
-
-    public function delete($id = null)
-    {
-        if (!$id) {
-            return redirect()->back()
-                ->with('error', 'ID BHP tidak ditemukan');
-        }
-
-        try {
-            $bhp = $this->itemModel->find($id);
-            if (!$bhp) {
-                throw new \Exception('Data BHP tidak ditemukan');
-            }
-
-            // Soft delete by updating status_hps
-            if (!$this->itemModel->update($id, ['status_hps' => '1'])) {
-                throw new \Exception('Gagal menghapus data BHP');
-            }
-
-            return redirect()->back()
-                ->with('success', 'Data BHP berhasil dihapus');
-
-        } catch (\Exception $e) {
-            log_message('error', '[BHP::delete] ' . $e->getMessage());
-            
-            return redirect()->back()
-                ->with('error', ENVIRONMENT === 'development' ? $e->getMessage() : 'Gagal menghapus data BHP');
-        }
+        return view($this->theme->getThemePath() . '/master/lab/trash', $data);
     }
 
     public function restore($id = null)
     {
         if (!$id) {
-            return redirect()->back()
-                ->with('error', 'ID BHP tidak ditemukan');
+            return redirect()->to(base_url('master/radiologi/trash'))
+                ->with('error', 'ID radiologi tidak ditemukan');
         }
 
         try {
-            // Find the BHP with status_hps = 1
-            $bhp = $this->itemModel->where([
-                'id' => $id,
-                'status_item' => 5,  // 5 for BHP
-                'status_hps' => '1'
-            ])->first();
+            $data = [
+                'status_hps' => '0',
+                'deleted_at' => null,
+                'updated_at' => date('Y-m-d H:i:s')
+            ];
 
-            if (!$bhp) {
-                throw new \Exception('Data BHP tidak ditemukan');
+            if (!$this->db->table('tbl_m_item')
+                ->where('id', $id)
+                ->update($data)) {
+                throw new \Exception('Gagal memulihkan data radiologi');
             }
 
-            // Restore by updating status_hps
-            if (!$this->itemModel->update($id, ['status_hps' => '0'])) {
-                throw new \Exception('Gagal memulihkan data BHP');
-            }
-
-            return redirect()->back()
-                ->with('success', 'Data BHP berhasil dipulihkan');
-
+            return redirect()->to(base_url('master/radiologi/trash'))
+                ->with('success', 'Data radiologi berhasil dipulihkan');
         } catch (\Exception $e) {
-            log_message('error', '[BHP::restore] ' . $e->getMessage());
+            log_message('error', '[Radiologi::restore] ' . $e->getMessage());
             
             return redirect()->back()
-                ->with('error', ENVIRONMENT === 'development' ? $e->getMessage() : 'Gagal memulihkan data BHP');
+                ->with('error', ENVIRONMENT === 'development' ? $e->getMessage() : 'Gagal memulihkan data radiologi');
         }
     }
 
-    public function delete_permanent($id = null)
+    public function delete_permanent($id = null) 
     {
         if (!$id) {
+            return redirect()->to(base_url('master/radiologi/trash'))
+                ->with('error', 'ID radiologi tidak ditemukan');
+        }
+
+        try {
+            if (!$this->itemModel->delete_permanent($id)) {
+                throw new \Exception('Gagal menghapus permanen data radiologi');
+            }
+
+            return redirect()->to(base_url('master/radiologi/trash'))
+                ->with('success', 'Data radiologi berhasil dihapus permanen');
+        } catch (\Exception $e) {
+            log_message('error', '[Radiologi::delete_permanent] ' . $e->getMessage());
+            
             return redirect()->back()
-                ->with('error', 'ID BHP tidak ditemukan');
+                ->with('error', ENVIRONMENT === 'development' ? $e->getMessage() : 'Gagal menghapus permanen data radiologi');
+        }
+    }
+
+    public function delete($id = null)
+    {
+        if (!$id) {
+            return redirect()->to(base_url('master/radiologi'))
+                ->with('error', 'ID radiologi tidak ditemukan');
+        }
+
+        try {
+            if (!$this->itemModel->delete($id)) {
+                throw new \Exception('Gagal menghapus data radiologi');
+            }
+
+            return redirect()->to(base_url('master/radiologi'))
+                ->with('success', 'Data radiologi berhasil dihapus');
+        } catch (\Exception $e) {
+            log_message('error', '[Radiologi::delete] ' . $e->getMessage());
+            
+            return redirect()->back()
+                ->with('error', ENVIRONMENT === 'development' ? $e->getMessage() : 'Gagal menghapus data radiologi');
+        }
+    }
+
+
+
+    public function item_ref_save($id_item = null){
+        if (!$id_item) {
+            return redirect()->back()
+                ->with('error', 'ID tindakan tidak ditemukan');
         }
 
         // Start transaction
         $this->db->transStart();
 
         try {
-            // Find the BHP with status_hps = 1
-            $bhp = $this->itemModel->where([
-                'id' => $id,
-                'status_item' => 5,  // 5 for BHP
-                'status_hps' => '1'
-            ])->first();
+            $data = [
+                'id_item'        => $id_item,
+                'id_item_ref'    => $this->request->getPost('id_item_ref'),
+                'item'           => $this->request->getPost('item_ref'),
+                'jml'            => format_angka_db($this->request->getPost('jml')),
+                'harga'          => format_angka_db($this->request->getPost('harga_item_ref')),
+                'subtotal'       => format_angka_db($this->request->getPost('jml')) * format_angka_db($this->request->getPost('harga_item_ref')),
+                'status'         => '1',
+                'id_user'        => $this->ionAuth->user()->row()->id
+            ];
 
-            if (!$bhp) {
-                throw new \Exception('Data BHP tidak ditemukan');
-            }
-
-            // Delete related records first
-            $this->itemStokModel->where('id_item', $id)->delete();
-            $this->itemRefModel->where('id_item', $id)->delete();
-
-            // Delete the BHP record permanently
-            if (!$this->itemModel->delete($id)) {
-                throw new \Exception('Gagal menghapus permanen data BHP');
+            if (!$this->itemRefModel->insert($data)) {
+                throw new \Exception('Gagal menyimpan data referensi tindakan');
             }
 
             $this->db->transCommit();
-            
-            return redirect()->back()
-                ->with('success', 'Data BHP berhasil dihapus permanen');
 
+            return redirect()->back()
+                ->with('success', 'Berhasil menyimpan data referensi tindakan');
         } catch (\Exception $e) {
             $this->db->transRollback();
-            log_message('error', '[BHP::delete_permanent] ' . $e->getMessage());
+            log_message('error', '[Tindakan::item_ref_save] ' . $e->getMessage());
             
             return redirect()->back()
-                ->with('error', ENVIRONMENT === 'development' ? $e->getMessage() : 'Gagal menghapus permanen data BHP');
+                ->withInput()
+                ->with('error', ENVIRONMENT === 'development' ? $e->getMessage() : 'Gagal menyimpan data referensi tindakan');
+        }
+    }
+
+    public function item_ref_delete($id = null){
+        if (!$id) {
+            return redirect()->back()
+                ->with('error', 'ID referensi tindakan tidak ditemukan');
+        }
+
+        try {
+            if (!$this->itemRefModel->delete($id)) {
+                throw new \Exception('Gagal menghapus data referensi tindakan');
+            }
+
+            return redirect()->back()
+                ->with('success', 'Berhasil menghapus data referensi tindakan');
+
+        } catch (\Exception $e) {
+            log_message('error', '[Tindakan::item_ref_delete] ' . $e->getMessage());
+            
+            return redirect()->back()
+                ->with('error', ENVIRONMENT === 'development' ? $e->getMessage() : 'Gagal menghapus data referensi tindakan');
         }
     }
 
     public function xls_items()
     {
-        $query = $this->itemModel->getBHP();
+        $query = $this->itemModel->getRadiologi();
 
         // Apply filters
         $item = $this->request->getVar('item');
@@ -614,7 +675,7 @@ class BHP extends BaseController
         $sheet->setCellValue('B1', 'Kode');
         $sheet->setCellValue('C1', 'Kategori');
         $sheet->setCellValue('D1', 'Merk');
-        $sheet->setCellValue('E1', 'Nama BHP');
+        $sheet->setCellValue('E1', 'Nama Radiologi');
         $sheet->setCellValue('F1', 'Alias');
         $sheet->setCellValue('G1', 'Keterangan');
         $sheet->setCellValue('H1', 'Harga Jual');
@@ -671,7 +732,7 @@ class BHP extends BaseController
 
         // Create Excel file
         $writer = new Xlsx($spreadsheet);
-        $filename = 'data_bhp_' . date('Y-m-d_His') . '.xlsx';
+        $filename = 'data_radiologi_' . date('Y-m-d_His') . '.xlsx';
 
         // Set headers for download
         header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
@@ -681,70 +742,5 @@ class BHP extends BaseController
         // Save file to PHP output
         $writer->save('php://output');
         exit();
-    }
-    
-
-    public function item_ref_save($id_item = null)
-    {
-        if (!$id_item) {
-            return redirect()->back()
-                ->with('error', 'ID tindakan tidak ditemukan');
-        }
-
-        // Start transaction
-        $this->db->transStart();
-
-        try {
-            $data = [
-                'id_item'        => $id_item,
-                'id_item_ref'    => $this->request->getPost('id_item_ref'),
-                'item'           => $this->request->getPost('item_ref'),
-                'jml'            => format_angka_db($this->request->getPost('jml')),
-                'harga'          => format_angka_db($this->request->getPost('harga_item_ref')),
-                'subtotal'       => format_angka_db($this->request->getPost('jml')) * format_angka_db($this->request->getPost('harga_item_ref')),
-                'status'         => '1',
-                'id_user'        => $this->ionAuth->user()->row()->id
-            ];
-
-            if (!$this->itemRefModel->insert($data)) {
-                throw new \Exception('Gagal menyimpan data referensi tindakan');
-            }
-
-            $this->db->transCommit();
-
-            return redirect()->back()
-                ->with('success', 'Berhasil menyimpan data referensi tindakan');
-
-        } catch (\Exception $e) {
-            $this->db->transRollback();
-            log_message('error', '[Tindakan::item_ref_save] ' . $e->getMessage());
-            
-            return redirect()->back()
-                ->withInput()
-                ->with('error', ENVIRONMENT === 'development' ? $e->getMessage() : 'Gagal menyimpan data referensi tindakan');
-        }
-    }
-
-    public function item_ref_delete($id = null)
-    {
-        if (!$id) {
-            return redirect()->back()
-                ->with('error', 'ID referensi tindakan tidak ditemukan');
-        }
-
-        try {
-            if (!$this->itemRefModel->delete($id)) {
-                throw new \Exception('Gagal menghapus data referensi tindakan');
-            }
-
-            return redirect()->back()
-                ->with('success', 'Berhasil menghapus data referensi tindakan');
-
-        } catch (\Exception $e) {
-            log_message('error', '[Tindakan::item_ref_delete] ' . $e->getMessage());
-            
-            return redirect()->back()
-                ->with('error', ENVIRONMENT === 'development' ? $e->getMessage() : 'Gagal menghapus data referensi tindakan');
-        }
     }
 } 

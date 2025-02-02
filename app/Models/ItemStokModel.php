@@ -18,17 +18,16 @@ class ItemStokModel extends Model
         'id_gudang',
         'id_user',
         'jml',
-        'status',
-        'status_hps'
+        'status'
     ];
 
-    // Dates
+    // Tanggal
     protected $useTimestamps = true;
     protected $dateFormat    = 'datetime';
     protected $createdField  = 'created_at';
     protected $updatedField  = 'updated_at';
 
-    // Validation
+    // Validasi
     protected $validationRules = [
         'id_item'    => 'required|integer',
         'id_gudang'  => 'permit_empty|integer',
@@ -38,42 +37,58 @@ class ItemStokModel extends Model
     ];
 
     /**
-     * Get stock with relations (item, gudang, satuan)
+     * Mendapatkan stok dengan relasi (item, gudang, satuan)
      */
     public function getStockWithRelations($id = null)
     {
         $builder = $this->db->table($this->table . ' s')
-            ->select('s.*, i.kode as item_kode, i.item, g.gudang, st.satuanBesar as satuan')
+            ->select('
+                s.*, 
+                i.kode as item_kode, 
+                i.item, 
+                g.gudang,
+                g.status_gd,
+                st.satuanBesar as satuan
+            ')
             ->join('tbl_m_item i', 'i.id = s.id_item', 'left')
             ->join('tbl_m_gudang g', 'g.id = s.id_gudang', 'left')
             ->join('tbl_m_satuan st', 'st.id = s.id_satuan', 'left')
-            ->where('s.status_hps', '0');
+            ->where('i.status_hps', '0')
+            ->where('s.status', '1');
 
         if ($id !== null) {
-            return $builder->where('s.id', $id)->get()->getRow();
+            $builder->where('s.id_item', $id);
         }
 
         return $builder->get()->getResult();
     }
 
     /**
-     * Get stock by item ID
+     * Mendapatkan stok berdasarkan ID item
      */
     public function getStockByItem($itemId)
     {
-        return $this->where('id_item', $itemId)->findAll();
+        return $this->db->table($this->table . ' s')
+            ->select('
+                s.*, 
+                i.kode as item_kode, 
+                i.item, 
+                g.gudang,
+                g.status_gd,
+                st.satuanBesar as satuan
+            ')
+            ->join('tbl_m_item i', 'i.id = s.id_item', 'left')
+            ->join('tbl_m_gudang g', 'g.id = s.id_gudang', 'left')
+            ->join('tbl_m_satuan st', 'st.id = s.id_satuan', 'left')
+            ->where('s.id_item', $itemId)
+            ->where('i.status_hps', '0')
+            ->where('s.status', '1')
+            ->get()
+            ->getResult();
     }
 
     /**
-     * Get stock by gudang ID
-     */
-    public function getStockByGudang($gudangId)
-    {
-        return $this->where('id_gudang', $gudangId)->findAll();
-    }
-
-    /**
-     * Get total stock by item ID
+     * Mendapatkan total stok berdasarkan ID item
      */
     public function getTotalStockByItem($itemId)
     {
@@ -85,45 +100,44 @@ class ItemStokModel extends Model
     }
 
     /**
-     * Get stock by item ID and gudang ID
+     * Mendapatkan stok berdasarkan ID item dan ID gudang
      */
     public function getStockByItemAndGudang($itemId, $gudangId)
     {
         return $this->where([
             'id_item'   => $itemId,
-            'id_gudang' => $gudangId
+            'id_gudang' => $gudangId,
+            'status'    => '1'
         ])->first();
     }
 
     /**
-     * Update or create stock
+     * Memperbarui atau membuat stok
      */
     public function updateStock($itemId, $gudangId, $qty, $status = '1')
     {
         $existingStock = $this->getStockByItemAndGudang($itemId, $gudangId);
 
         if ($existingStock) {
-            // Update existing stock
             $data = [
                 'jml'    => $existingStock->jml + $qty,
                 'status' => $status
             ];
             return $this->update($existingStock->id, $data);
         } else {
-            // Create new stock
             $data = [
                 'id_item'   => $itemId,
                 'id_gudang' => $gudangId,
                 'jml'       => $qty,
                 'status'    => $status,
-                'id_user'   => user_id() // Assuming you have a helper function to get current user ID
+                'id_user'   => user_id()
             ];
             return $this->insert($data);
         }
     }
 
     /**
-     * Get low stock items (where jml <= jml_limit)
+     * Mendapatkan item stok rendah
      */
     public function getLowStockItems()
     {
@@ -133,49 +147,8 @@ class ItemStokModel extends Model
             ->join('tbl_m_gudang g', 'g.id = s.id_gudang')
             ->where('s.jml <=', 'i.jml_limit', false)
             ->where('s.status', '1')
+            ->where('i.status_hps', '0')
             ->get()
             ->getResult();
-    }
-
-    /**
-     * Soft delete a stock record
-     */
-    public function delete($id = null, bool $purge = false)
-    {
-        if ($purge) {
-            return parent::delete($id, true);
-        }
-        
-        $data = [
-            'status_hps'  => '1',
-            'deleted_at'  => date('Y-m-d H:i:s'),
-            'updated_at'  => date('Y-m-d H:i:s')
-        ];
-
-        // Use the query builder to ensure timestamps are updated
-        return $this->db->table($this->table)
-                        ->where($this->primaryKey, $id)
-                        ->update($data);
-    }
-
-    /**
-     * Override find methods to exclude soft deleted records
-     */
-    public function find($id = null)
-    {
-        $this->where('status_hps', '0');
-        return parent::find($id);
-    }
-
-    /**
-     * Override findAll to exclude soft deleted records
-     * 
-     * @param int|null $limit  The limit of records to return
-     * @param int      $offset The record offset
-     */
-    public function findAll(?int $limit = null, int $offset = 0)
-    {
-        $this->where('status_hps', '0');
-        return parent::findAll($limit, $offset);
     }
 } 

@@ -50,6 +50,11 @@ class CreateTblTransBeliPo extends Migration
                 'type'    => 'DATETIME',
                 'null'    => true
             ],
+            'deleted_at' => [
+                'type'    => 'DATETIME',
+                'null'    => true,
+                'comment' => 'Kalau terisi sudah terhapus'                
+            ],
             'tgl_masuk' => [
                 'type'    => 'DATE',
                 'null'    => true
@@ -83,6 +88,13 @@ class CreateTblTransBeliPo extends Migration
                 'constraint' => 11,
                 'null'       => true,
                 'default'    => 0
+            ],
+            'status_hps' => [
+                'type'       => 'ENUM',
+                'constraint' => ['0','1'],
+                'null'       => true,
+                'default'    => '0',
+                'comment'    => '0 = Belum dihapus\r\n1 = Dihapus'
             ]
         ]);
 

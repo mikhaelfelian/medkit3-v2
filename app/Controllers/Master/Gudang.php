@@ -1,89 +1,92 @@
 <?php
 /**
- * Merk Controller
+ * Gudang Controller
  * 
- * Controller for managing brands (merk)
+ * Controller for managing warehouses (gudang)
  * Handles CRUD operations and other related functionalities
  * 
  * @author    Mikhael Felian Waskito <mikhaelfelian@gmail.com>
  * @date      2025-01-12
  */
 
-namespace App\Controllers;
+namespace App\Controllers\Master;
 
-use App\Models\MerkModel;
+use App\Controllers\BaseController;
+use App\Models\GudangModel;
 
-class Merk extends BaseController
+class Gudang extends BaseController
 {
-    protected $merkModel;
+    protected $gudangModel;
     protected $validation;
 
     public function __construct()
     {
-        $this->merkModel = new MerkModel();
+        $this->gudangModel = new GudangModel();
         $this->validation = \Config\Services::validation();
     }
 
     public function index()
     {
-        $currentPage = $this->request->getVar('page_merk') ?? 1;
+        $currentPage = $this->request->getVar('page_gudang') ?? 1;
         $perPage = 10;
         $keyword = $this->request->getVar('keyword');
 
+        $query = $this->gudangModel;
+
         if ($keyword) {
-            $this->merkModel->groupStart()
-                ->like('merk', $keyword)
+            $query->groupStart()
+                ->like('gudang', $keyword)
                 ->orLike('kode', $keyword)
                 ->orLike('keterangan', $keyword)
                 ->groupEnd();
         }
 
         $data = [
-            'title'         => 'Data Merk',
+            'title'         => 'Data Gudang',
             'Pengaturan'    => $this->pengaturan,
             'user'          => $this->ionAuth->user()->row(),
-            'merk'          => $this->merkModel->paginate($perPage, 'merk'),
-            'pager'         => $this->merkModel->pager,
+            'gudang'        => $query->paginate($perPage, 'gudang'),
+            'pager'         => $this->gudangModel->pager,
             'currentPage'   => $currentPage,
             'perPage'       => $perPage,
             'keyword'       => $keyword,
             'breadcrumbs'   => '
                 <li class="breadcrumb-item"><a href="' . base_url() . '">Beranda</a></li>
                 <li class="breadcrumb-item">Master</li>
-                <li class="breadcrumb-item active">Merk</li>
+                <li class="breadcrumb-item active">Gudang</li>
             '
         ];
 
-        return view($this->theme->getThemePath() . '/master/merk/index', $data);
+        return view($this->theme->getThemePath() . '/master/gudang/index', $data);
     }
 
     public function create()
     {
         $data = [
-            'title'         => 'Form Merk',
+            'title'         => 'Form Gudang',
             'Pengaturan'    => $this->pengaturan,
             'user'          => $this->ionAuth->user()->row(),
             'validation'    => $this->validation,
             'breadcrumbs'   => '
                 <li class="breadcrumb-item"><a href="' . base_url() . '">Beranda</a></li>
                 <li class="breadcrumb-item">Master</li>
-                <li class="breadcrumb-item"><a href="' . base_url('master/merk') . '">Merk</a></li>
+                <li class="breadcrumb-item"><a href="' . base_url('master/gudang') . '">Gudang</a></li>
                 <li class="breadcrumb-item active">Tambah</li>
             '
         ];
 
-        return view($this->theme->getThemePath() . '/master/merk/create', $data);
+        return view($this->theme->getThemePath() . '/master/gudang/create', $data);
     }
 
     public function store()
     {
         // Validation rules
         $rules = [
-            'merk' => [
+            'gudang' => [
                 'rules' => 'required|max_length[160]',
                 'errors' => [
-                    'required' => 'Merk harus diisi',
-                    'max_length' => 'Merk maksimal 160 karakter'
+                    'required' => 'Nama gudang harus diisi',
+                    'max_length' => 'Nama gudang maksimal 160 karakter'
                 ]
             ],
             env('security.tokenName', 'csrf_test_name') => [
@@ -101,56 +104,57 @@ class Merk extends BaseController
         }
 
         $data = [
-            'kode'       => $this->merkModel->generateKode(),
-            'merk'       => $this->request->getPost('merk'),
+            'kode'       => $this->gudangModel->generateKode(),
+            'gudang'     => $this->request->getPost('gudang'),
             'keterangan' => $this->request->getPost('keterangan'),
-            'status'     => $this->request->getPost('status')
+            'status'     => $this->request->getPost('status'),
+            'status_gd'  => $this->request->getPost('status_gd')
         ];
 
-        if ($this->merkModel->insert($data)) {
-            return redirect()->to(base_url('master/merk'))
-                ->with('success', 'Data merk berhasil ditambahkan');
+        if ($this->gudangModel->insert($data)) {
+            return redirect()->to(base_url('master/gudang'))
+                ->with('success', 'Data gudang berhasil ditambahkan');
         }
 
         return redirect()->back()
-            ->with('error', 'Gagal menambahkan data merk')
+            ->with('error', 'Gagal menambahkan data gudang')
             ->withInput();
     }
 
     public function edit($id)
     {
         $data = [
-            'title'         => 'Form Merk',
+            'title'         => 'Form Gudang',
             'Pengaturan'    => $this->pengaturan,
             'user'          => $this->ionAuth->user()->row(),
             'validation'    => $this->validation,
             'breadcrumbs'   => '
                 <li class="breadcrumb-item"><a href="' . base_url() . '">Beranda</a></li>
                 <li class="breadcrumb-item">Master</li>
-                <li class="breadcrumb-item"><a href="' . base_url('master/merk') . '">Merk</a></li>
+                <li class="breadcrumb-item"><a href="' . base_url('master/gudang') . '">Gudang</a></li>
                 <li class="breadcrumb-item active">Edit</li>
             '
         ];
 
-        $data['merk'] = $this->merkModel->find($id);
+        $data['gudang'] = $this->gudangModel->find($id);
 
-        if (empty($data['merk'])) {
-            return redirect()->to(base_url('master/merk'))
-                ->with('error', 'Data merk tidak ditemukan');
+        if (empty($data['gudang'])) {
+            return redirect()->to(base_url('master/gudang'))
+                ->with('error', 'Data gudang tidak ditemukan');
         }
 
-        return view($this->theme->getThemePath() . '/master/merk/edit', $data);
+        return view($this->theme->getThemePath() . '/master/gudang/edit', $data);
     }
 
     public function update($id)
     {
         // Validation rules
         $rules = [
-            'merk' => [
+            'gudang' => [
                 'rules' => 'required|max_length[160]',
                 'errors' => [
-                    'required' => 'Merk harus diisi',
-                    'max_length' => 'Merk maksimal 160 karakter'
+                    'required' => 'Nama gudang harus diisi',
+                    'max_length' => 'Nama gudang maksimal 160 karakter'
                 ]
             ],
             env('security.tokenName', 'csrf_test_name') => [
@@ -168,29 +172,30 @@ class Merk extends BaseController
         }
 
         $data = [
-            'merk'       => $this->request->getPost('merk'),
+            'gudang'     => $this->request->getPost('gudang'),
             'keterangan' => $this->request->getPost('keterangan'),
-            'status'     => $this->request->getPost('status')
+            'status'     => $this->request->getPost('status'),
+            'status_gd'  => $this->request->getPost('status_gd')
         ];
 
-        if ($this->merkModel->update($id, $data)) {
-            return redirect()->to(base_url('master/merk'))
-                ->with('success', 'Data merk berhasil diubah!');
+        if ($this->gudangModel->update($id, $data)) {
+            return redirect()->to(base_url('master/gudang'))
+                ->with('success', 'Data gudang berhasil diubah');
         }
 
         return redirect()->back()
-            ->with('error', 'Gagal mengupdate data merk')
+            ->with('error', 'Gagal mengupdate data gudang')
             ->withInput();
     }
 
     public function delete($id)
     {
-        if ($this->merkModel->delete($id)) {
-            return redirect()->to(base_url('master/merk'))
-                ->with('success', 'Data merk berhasil dihapus');
+        if ($this->gudangModel->delete($id)) {
+            return redirect()->to(base_url('master/gudang'))
+                ->with('success', 'Data gudang berhasil dihapus');
         }
 
         return redirect()->back()
-            ->with('error', 'Gagal menghapus data merk');
+            ->with('error', 'Gagal menghapus data gudang');
     }
 } 

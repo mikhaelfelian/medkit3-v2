@@ -9,8 +9,9 @@
  * Controller for managing Kamar (Room) data
  */
 
-namespace App\Controllers;
+namespace App\Controllers\Master;
 
+use App\Controllers\BaseController;
 use App\Models\KamarModel;
 use App\Models\PengaturanModel;
 

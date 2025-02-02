@@ -9,8 +9,9 @@
  * Controller for managing supplier data
  */
 
-namespace App\Controllers;
+namespace App\Controllers\Master;
 
+use App\Controllers\BaseController;
 use App\Models\SupplierModel;
 use App\Models\PengaturanModel;
 
@@ -83,7 +84,7 @@ class Supplier extends BaseController
             'trashCount'     => $this->supplierModel->onlyDeleted()->countAllResults()
         ];
 
-        return view('admin-lte-3/master/supplier/index', $data);
+        return $this->view($this->theme->getThemePath() . '/master/supplier/index', $data);
     }
 
     /**
@@ -333,6 +334,6 @@ class Supplier extends BaseController
             }
         ];
 
-        return view('admin-lte-3/master/supplier/trash', $data);
+        return $this->view($this->theme->getThemePath() . '/master/supplier/trash', $data);
     }
 } 

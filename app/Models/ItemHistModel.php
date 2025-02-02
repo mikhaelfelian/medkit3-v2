@@ -2,11 +2,9 @@
 /**
  * Created by:
  * Mikhael Felian Waskito - mikhaelfelian@gmail.com
- * 2025-01-19
+ * 2025-01-30
  * 
- * ItemHistModel
- * 
- * This model handles database operations for item history data
+ * Item History Model
  */
 
 namespace App\Models;
@@ -22,11 +20,29 @@ class ItemHistModel extends Model
     protected $useSoftDeletes   = false;
     protected $protectFields    = true;
     protected $allowedFields    = [
-        'id_item', 'id_satuan', 'id_gudang', 'id_user', 'id_pelanggan',
-        'id_supplier', 'id_penjualan', 'id_pembelian', 'id_pembelian_det',
-        'id_so', 'tgl_masuk', 'tgl_ed', 'no_nota', 'kode', 'kode_batch',
-        'item', 'keterangan', 'nominal', 'jml', 'jml_satuan', 'satuan',
-        'status', 'sp'
+        'id_item',
+        'id_satuan',
+        'id_gudang',
+        'id_user',
+        'id_pelanggan',
+        'id_supplier',
+        'id_penjualan',
+        'id_pembelian',
+        'id_pembelian_det',
+        'id_so',
+        'tgl_masuk',
+        'tgl_ed',
+        'no_nota',
+        'kode',
+        'kode_batch',
+        'item',
+        'keterangan',
+        'nominal',
+        'jml',
+        'jml_satuan',
+        'satuan',
+        'status',
+        'sp'
     ];
 
     // Dates
@@ -62,12 +78,11 @@ class ItemHistModel extends Model
         $builder = $this->db->table($this->table)
             ->select('tbl_m_item_hist.*, tbl_m_item.item as item_name, tbl_m_gudang.gudang')
             ->join('tbl_m_item', 'tbl_m_item.id = tbl_m_item_hist.id_item')
-            ->join('tbl_m_gudang', 'tbl_m_gudang.id = tbl_m_item_hist.id_gudang');
+            ->join('tbl_m_gudang', 'tbl_m_gudang.id = tbl_m_item_hist.id_gudang')
+            ->orderBy('tbl_m_item_hist.id', 'DESC');
 
         if ($id !== null) {
-            return $builder->where('tbl_m_item_hist.id', $id)
-                         ->get()
-                         ->getRow();
+            $builder->where('tbl_m_item_hist.id_item', $id);
         }
 
         return $builder->get()->getResult();

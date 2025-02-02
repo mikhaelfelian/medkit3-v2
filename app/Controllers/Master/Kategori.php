@@ -9,8 +9,9 @@
  * @date      2025-01-12
  */
 
-namespace App\Controllers;
+namespace App\Controllers\Master;
 
+use App\Controllers\BaseController;
 use App\Models\KategoriModel;
 
 class Kategori extends BaseController

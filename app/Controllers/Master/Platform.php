@@ -9,8 +9,9 @@
  * Controller for managing Platform (Payment Platform) data
  */
 
-namespace App\Controllers;
+namespace App\Controllers\Master;
 
+use App\Controllers\BaseController;
 use App\Models\PlatformModel;
 use App\Models\PengaturanModel;
 

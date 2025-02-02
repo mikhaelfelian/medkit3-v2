@@ -42,11 +42,11 @@ class TransBeliPODetModel extends Model
                 tbl_trans_beli_po_det.*,
                 tbl_m_item.item as item_name,
                 tbl_m_satuan.satuanBesar as satuan_name,
-                users.username as username
+                tbl_ion_users.username as username
             ')
             ->join('tbl_m_item', 'tbl_m_item.id = tbl_trans_beli_po_det.id_item', 'left')
             ->join('tbl_m_satuan', 'tbl_m_satuan.id = tbl_trans_beli_po_det.id_satuan', 'left')
-            ->join('users', 'users.id = tbl_trans_beli_po_det.id_user', 'left');
+            ->join('tbl_ion_users', 'tbl_ion_users.id = tbl_trans_beli_po_det.id_user', 'left');
 
         if ($id_pembelian !== null) {
             return $builder->where('tbl_trans_beli_po_det.id_pembelian', $id_pembelian)

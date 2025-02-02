@@ -9,8 +9,9 @@
  * Controller for managing employee (karyawan) data
  */
 
-namespace App\Controllers;
+namespace App\Controllers\Master;
 
+use App\Controllers\BaseController;
 use App\Models\KaryawanModel;
 use App\Models\PoliModel;
 use App\Models\PengaturanModel;

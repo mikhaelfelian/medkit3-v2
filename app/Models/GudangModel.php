@@ -14,13 +14,13 @@ class GudangModel extends Model
     protected $protectFields    = true;
     protected $allowedFields    = ['kode', 'gudang', 'keterangan', 'status', 'status_gd', 'updated_at'];
 
-    // Dates
+    // Pengaturan tanggal
     protected $useTimestamps = true;
     protected $dateFormat    = 'datetime';
     protected $createdField  = 'created_at';
     protected $updatedField  = 'updated_at';
 
-    // Validation
+    // Validasi
     protected $validationRules = [
         'gudang'     => 'required|max_length[160]',
         'kode'       => 'permit_empty|max_length[160]',
@@ -29,8 +29,8 @@ class GudangModel extends Model
     ];
 
     /**
-     * Generate unique kode for gudang
-     * Format: GDG-001, GDG-002, etc
+     * Menghasilkan kode unik untuk gudang
+     * Format: GDG-001, GDG-002, dll
      */
     public function generateKode()
     {
@@ -48,5 +48,20 @@ class GudangModel extends Model
         $newNumber = $lastNumber + 1;
         
         return $prefix . str_pad($newNumber, 3, '0', STR_PAD_LEFT);
+    }
+
+    /**
+     * Mendapatkan level stok untuk suatu item di semua gudang
+     */
+    public function getItemStocks($item_id)
+    {
+        return $this->db->table('tbl_m_gudang')
+            ->select('
+                tbl_m_gudang.gudang,
+                COALESCE(tbl_m_item_stok.jml, 0) as stok
+            ')
+            ->join('tbl_m_item_stok', 'tbl_m_item_stok.id_gudang = tbl_m_gudang.id AND tbl_m_item_stok.id_item = ' . $item_id, 'left')
+            ->get()
+            ->getResult();
     }
 } 

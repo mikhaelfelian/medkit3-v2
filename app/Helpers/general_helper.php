@@ -146,3 +146,60 @@ if (!function_exists('statusPO')) {
         ];
     }
 }
+
+/**
+ * Get status history label with badge
+ * 
+ * @param string $status Status code
+ * @return array Label and badge class
+ */
+function statusHist($status)
+{
+    switch ($status) {
+        case '1':
+            return [
+                'label' => 'Stok Masuk Pembelian',
+                'badge' => 'success'
+            ];
+        case '2':
+            return [
+                'label' => 'Stok Masuk',
+                'badge' => 'info'
+            ];
+        case '3':
+            return [
+                'label' => 'Stok Masuk Retur Jual',
+                'badge' => 'primary'
+            ];
+        case '4':
+            return [
+                'label' => 'Stok Keluar Penjualan',
+                'badge' => 'danger'
+            ];
+        case '5':
+            return [
+                'label' => 'Stok Keluar Retur Beli',
+                'badge' => 'warning'
+            ];
+        case '6':
+            return [
+                'label' => 'SO',
+                'badge' => 'dark'
+            ];
+        case '7':
+            return [
+                'label' => 'Stok Keluar',
+                'badge' => 'danger'
+            ];
+        case '8':
+            return [
+                'label' => 'Mutasi Antar Gudang',
+                'badge' => 'secondary'
+            ];
+        default:
+            return [
+                'label' => '-',
+                'badge' => 'secondary'
+            ];
+    }
+}

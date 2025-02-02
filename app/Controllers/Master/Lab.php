@@ -10,8 +10,9 @@
  * Handles CRUD operations and other related functionalities
  */
 
-namespace App\Controllers;
+namespace App\Controllers\Master;
 
+use App\Controllers\BaseController;
 use App\Models\ItemModel;
 use App\Models\ItemStokModel;
 use App\Models\ItemRefModel;

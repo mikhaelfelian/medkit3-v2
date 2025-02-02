@@ -375,22 +375,29 @@ class ItemModel extends Model
     }
 
     /**
-     * Get filtered items
+     * Get stockable items with filters and pagination
+     * 
+     * @param array $filters Filter parameters
+     * @param bool $countOnly Return count only
+     * @param int|null $limit Limit per page
+     * @param int|null $offset Offset for pagination
+     * @return mixed Count or results depending on $countOnly
      */
-    public function getStockable($filters = [])
+    public function getStockable($filters = [], $countOnly = false, $limit = null, $offset = null)
     {
         $builder = $this->select('
                 tbl_m_item.*, 
                 tbl_m_merk.merk,
-                tbl_m_kategori.kategori as nama_kategori,
-                tbl_m_satuan.satuanBesar as nama_satuan,
-                tbl_m_item_stok.jml as stok
+                tbl_m_kategori.kategori,
+                tbl_m_satuan.satuanBesar as satuan,
+                SUM(tbl_m_item_stok.jml) as stok
             ')
             ->join('tbl_m_merk', 'tbl_m_merk.id = tbl_m_item.id_merk', 'left')
             ->join('tbl_m_kategori', 'tbl_m_kategori.id = tbl_m_item.id_kategori', 'left')
             ->join('tbl_m_satuan', 'tbl_m_satuan.id = tbl_m_item.id_satuan', 'left')
             ->join('tbl_m_item_stok', 'tbl_m_item_stok.id_item = tbl_m_item.id', 'left')
-            ->where('tbl_m_item.status_stok', '1');
+            ->where('tbl_m_item.status_stok', '1')
+            ->groupBy('tbl_m_item_stok.id_item');
 
         // Apply filters
         if (!empty($filters['kategori'])) {
@@ -398,26 +405,29 @@ class ItemModel extends Model
         }
 
         if (!empty($filters['merk'])) {
-            $builder->where('tbl_m_item.merk', $filters['merk']);
+            $builder->where('tbl_m_item.id_merk', $filters['merk']);
         }
 
         if (!empty($filters['item'])) {
-            $builder->like('tbl_m_item.item', $filters['item']);
-        }
-
-        if (!empty($filters['status'])) {
-            $builder->where('tbl_m_item.status', $filters['status']);
-        }
-
-        if (!empty($filters['q'])) {
             $builder->groupStart()
-                   ->like('tbl_m_item.kode', $filters['q'])
-                   ->orLike('tbl_m_item.item', $filters['q'])
-                   ->orLike('tbl_m_item.merk', $filters['q'])
-                   ->groupEnd();
+                    ->like('tbl_m_item.kode', $filters['item'])
+                    ->orLike('tbl_m_item.item', $filters['item'])
+                    ->groupEnd();
         }
 
-        return $builder;
+        if (!empty($filters['harga'])) {
+            $builder->where('tbl_m_item.harga_beli', str_replace(['Rp', '.', ','], '', $filters['harga']));
+        }
+
+        if ($countOnly) {
+            return $builder->countAllResults();
+        }
+
+        if ($limit !== null) {
+            $builder->limit($limit, $offset);
+        }
+
+        return $builder->get()->getResult();
     }
 
     /**
@@ -426,5 +436,23 @@ class ItemModel extends Model
     public function getStatusLabel($status)
     {
         return $status === '1' ? 'Aktif' : 'Tidak Aktif';
+    }
+
+    /**
+     * Get item with all its details
+     */
+    public function getItemDetail($id)
+    {
+        return $this->select('
+                tbl_m_item.*,
+                tbl_m_kategori.kategori as nama_kategori,
+                tbl_m_merk.merk as nama_merk,
+                tbl_m_satuan.satuanBesar as satuan
+            ')
+            ->join('tbl_m_kategori', 'tbl_m_kategori.id = tbl_m_item.id_kategori', 'left')
+            ->join('tbl_m_merk', 'tbl_m_merk.id = tbl_m_item.id_merk', 'left')
+            ->join('tbl_m_satuan', 'tbl_m_satuan.id = tbl_m_item.id_satuan', 'left')
+            ->where('tbl_m_item.id', $id)
+            ->first();
     }
 }

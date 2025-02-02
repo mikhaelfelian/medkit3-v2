@@ -4,43 +4,44 @@
  * Mikhael Felian Waskito - mikhaelfelian@gmail.com
  * 2025-01-13
  * 
- * Poli Controller
+ * Penjamin Controller
  * 
- * Controller for managing clinic/department (poli) data
+ * Controller for managing insurance/guarantor (penjamin) data
  * Handles CRUD operations and other related functionalities
  */
 
-namespace App\Controllers;
+namespace App\Controllers\Master;
 
-use App\Models\PoliModel;
+use App\Controllers\BaseController;
+use App\Models\PenjaminModel;
 use App\Models\PengaturanModel;
 
-class Poli extends BaseController
+class Penjamin extends BaseController
 {
-    protected $poliModel;
+    protected $penjaminModel;
     protected $validation;
     protected $pengaturan;
 
     public function __construct()
     {
-        $this->poliModel = new PoliModel();
+        $this->penjaminModel = new PenjaminModel();
         $this->pengaturan = new PengaturanModel();
         $this->validation = \Config\Services::validation();
     }
 
     public function index()
     {
-        $currentPage = $this->request->getVar('page_poli') ?? 1;
+        $currentPage = $this->request->getVar('page_penjamin') ?? 1;
         $perPage = 10;
 
         // Start with the model query
-        $query = $this->poliModel;
+        $query = $this->penjaminModel;
 
         // Filter by name/code
         $search = $this->request->getVar('search');
         if ($search) {
             $query->groupStart()
-                ->like('poli', $search)
+                ->like('penjamin', $search)
                 ->orLike('kode', $search)
                 ->groupEnd();
         }
@@ -52,11 +53,11 @@ class Poli extends BaseController
         }
 
         $data = [
-            'title'          => 'Data Poli',
+            'title'          => 'Data Penjamin',
             'Pengaturan'     => $this->pengaturan,
             'user'           => $this->ionAuth->user()->row(),
-            'poli'           => $query->paginate($perPage, 'poli'),
-            'pager'          => $this->poliModel->pager,
+            'penjamin'       => $query->paginate($perPage, 'penjamin'),
+            'pager'          => $this->penjaminModel->pager,
             'currentPage'    => $currentPage,
             'perPage'        => $perPage,
             'search'         => $search,
@@ -64,29 +65,29 @@ class Poli extends BaseController
             'breadcrumbs'    => '
                 <li class="breadcrumb-item"><a href="' . base_url() . '">Beranda</a></li>
                 <li class="breadcrumb-item">Master</li>
-                <li class="breadcrumb-item active">Poli</li>
+                <li class="breadcrumb-item active">Penjamin</li>
             '
         ];
 
-        return view($this->theme->getThemePath() . '/master/poli/index', $data);
+        return view($this->theme->getThemePath() . '/master/penjamin/index', $data);
     }
 
     public function create()
     {
         $data = [
-            'title'         => 'Tambah Poli',
+            'title'         => 'Tambah Penjamin',
             'Pengaturan'    => $this->pengaturan,
             'user'          => $this->ionAuth->user()->row(),
             'validation'    => $this->validation,
             'breadcrumbs'   => '
                 <li class="breadcrumb-item"><a href="' . base_url() . '">Beranda</a></li>
                 <li class="breadcrumb-item">Master</li>
-                <li class="breadcrumb-item"><a href="' . base_url('master/poli') . '">Poli</a></li>
+                <li class="breadcrumb-item"><a href="' . base_url('master/penjamin') . '">Penjamin</a></li>
                 <li class="breadcrumb-item active">Tambah</li>
             '
         ];
 
-        return view($this->theme->getThemePath() . '/master/poli/create', $data);
+        return view($this->theme->getThemePath() . '/master/penjamin/create', $data);
     }
 
     public function store()
@@ -99,20 +100,19 @@ class Poli extends BaseController
                     'required' => env('csrf.name') . ' harus diisi'
                 ]
             ],
-            'poli' => [
-                'rules' => 'required|max_length[64]',
+            'penjamin' => [
+                'rules' => 'required|max_length[160]',
                 'errors' => [
-                    'required' => 'Nama poli harus diisi',
-                    'max_length' => 'Nama poli maksimal 64 karakter'
+                    'required' => 'Nama penjamin harus diisi',
+                    'max_length' => 'Nama penjamin maksimal 160 karakter'
                 ]
             ],
-            'keterangan' => [
-                'rules' => 'permit_empty',
-            ],
-            'post_location' => [
-                'rules' => 'permit_empty|max_length[100]',
+            'persen' => [
+                'rules' => 'permit_empty|numeric|greater_than_equal_to[0]|less_than_equal_to[100]',
                 'errors' => [
-                    'max_length' => 'Post location maksimal 100 karakter'
+                    'numeric' => 'Persentase harus berupa angka',
+                    'greater_than_equal_to' => 'Persentase tidak boleh kurang dari 0',
+                    'less_than_equal_to' => 'Persentase tidak boleh lebih dari 100'
                 ]
             ],
             'status' => [
@@ -133,26 +133,25 @@ class Poli extends BaseController
 
         try {
             $data = [
-                'kode'          => $this->poliModel->generateKode(),
-                'poli'          => $this->request->getPost('poli'),
-                'keterangan'    => $this->request->getPost('keterangan'),
-                'post_location' => $this->request->getPost('post_location'),
-                'status'        => $this->request->getPost('status')
+                'kode'      => $this->penjaminModel->generateKode(),
+                'penjamin'  => $this->request->getPost('penjamin'),
+                'persen'    => floatval($this->request->getPost('persen')) ?? 0,
+                'status'    => $this->request->getPost('status')
             ];
 
-            if (!$this->poliModel->insert($data)) {
-                throw new \Exception('Gagal menyimpan data poli');
+            if (!$this->penjaminModel->insert($data)) {
+                throw new \Exception('Gagal menyimpan data penjamin');
             }
 
-            return redirect()->to(base_url('master/poli'))
-                ->with('success', 'Data poli berhasil ditambahkan');
+            return redirect()->to(base_url('master/penjamin'))
+                ->with('success', 'Data penjamin berhasil ditambahkan');
 
         } catch (\Exception $e) {
-            log_message('error', '[Poli::store] ' . $e->getMessage());
+            log_message('error', '[Penjamin::store] ' . $e->getMessage());
             
             return redirect()->back()
                 ->withInput()
-                ->with('error', ENVIRONMENT === 'development' ? $e->getMessage() : 'Gagal menyimpan data poli');
+                ->with('error', ENVIRONMENT === 'development' ? $e->getMessage() : 'Gagal menyimpan data penjamin');
         }
     }
 
@@ -160,37 +159,37 @@ class Poli extends BaseController
     {
         if (!$id) {
             return redirect()->back()
-                ->with('error', 'ID Poli tidak ditemukan');
+                ->with('error', 'ID Penjamin tidak ditemukan');
         }
 
-        $poli = $this->poliModel->find($id);
-        if (!$poli) {
+        $penjamin = $this->penjaminModel->find($id);
+        if (!$penjamin) {
             return redirect()->back()
-                ->with('error', 'Data Poli tidak ditemukan');
+                ->with('error', 'Data Penjamin tidak ditemukan');
         }
 
         $data = [
-            'title'         => 'Edit Poli',
+            'title'         => 'Edit Penjamin',
             'Pengaturan'    => $this->pengaturan,
             'user'          => $this->ionAuth->user()->row(),
             'validation'    => $this->validation,
-            'poli'          => $poli,
+            'penjamin'      => $penjamin,
             'breadcrumbs'   => '
                 <li class="breadcrumb-item"><a href="' . base_url() . '">Beranda</a></li>
                 <li class="breadcrumb-item">Master</li>
-                <li class="breadcrumb-item"><a href="' . base_url('master/poli') . '">Poli</a></li>
+                <li class="breadcrumb-item"><a href="' . base_url('master/penjamin') . '">Penjamin</a></li>
                 <li class="breadcrumb-item active">Edit</li>
             '
         ];
 
-        return view($this->theme->getThemePath() . '/master/poli/edit', $data);
+        return view($this->theme->getThemePath() . '/master/penjamin/edit', $data);
     }
 
     public function update($id = null)
     {
         if (!$id) {
             return redirect()->back()
-                ->with('error', 'ID Poli tidak ditemukan');
+                ->with('error', 'ID Penjamin tidak ditemukan');
         }
 
         // Validation rules
@@ -201,20 +200,19 @@ class Poli extends BaseController
                     'required' => env('csrf.name') . ' harus diisi'
                 ]
             ],
-            'poli' => [
-                'rules' => 'required|max_length[64]',
+            'penjamin' => [
+                'rules' => 'required|max_length[160]',
                 'errors' => [
-                    'required' => 'Nama poli harus diisi',
-                    'max_length' => 'Nama poli maksimal 64 karakter'
+                    'required' => 'Nama penjamin harus diisi',
+                    'max_length' => 'Nama penjamin maksimal 160 karakter'
                 ]
             ],
-            'keterangan' => [
-                'rules' => 'permit_empty',
-            ],
-            'post_location' => [
-                'rules' => 'permit_empty|max_length[100]',
+            'persen' => [
+                'rules' => 'permit_empty|numeric|greater_than_equal_to[0]|less_than_equal_to[100]',
                 'errors' => [
-                    'max_length' => 'Post location maksimal 100 karakter'
+                    'numeric' => 'Persentase harus berupa angka',
+                    'greater_than_equal_to' => 'Persentase tidak boleh kurang dari 0',
+                    'less_than_equal_to' => 'Persentase tidak boleh lebih dari 100'
                 ]
             ],
             'status' => [
@@ -235,25 +233,24 @@ class Poli extends BaseController
 
         try {
             $data = [
-                'poli'          => $this->request->getPost('poli'),
-                'keterangan'    => $this->request->getPost('keterangan'),
-                'post_location' => $this->request->getPost('post_location'),
-                'status'        => $this->request->getPost('status')
+                'penjamin'  => $this->request->getPost('penjamin'),
+                'persen'    => floatval($this->request->getPost('persen')) ?? 0,
+                'status'    => $this->request->getPost('status')
             ];
 
-            if (!$this->poliModel->update($id, $data)) {
-                throw new \Exception('Gagal mengupdate data poli');
+            if (!$this->penjaminModel->update($id, $data)) {
+                throw new \Exception('Gagal mengupdate data penjamin');
             }
 
-            return redirect()->to(base_url('master/poli'))
-                ->with('success', 'Data poli berhasil diupdate');
+            return redirect()->to(base_url('master/penjamin'))
+                ->with('success', 'Data penjamin berhasil diupdate');
 
         } catch (\Exception $e) {
-            log_message('error', '[Poli::update] ' . $e->getMessage());
+            log_message('error', '[Penjamin::update] ' . $e->getMessage());
             
             return redirect()->back()
                 ->withInput()
-                ->with('error', ENVIRONMENT === 'development' ? $e->getMessage() : 'Gagal mengupdate data poli');
+                ->with('error', ENVIRONMENT === 'development' ? $e->getMessage() : 'Gagal mengupdate data penjamin');
         }
     }
 
@@ -261,27 +258,27 @@ class Poli extends BaseController
     {
         if (!$id) {
             return redirect()->back()
-                ->with('error', 'ID Poli tidak ditemukan');
+                ->with('error', 'ID Penjamin tidak ditemukan');
         }
 
         try {
-            $poli = $this->poliModel->find($id);
-            if (!$poli) {
-                throw new \Exception('Data Poli tidak ditemukan');
+            $penjamin = $this->penjaminModel->find($id);
+            if (!$penjamin) {
+                throw new \Exception('Data Penjamin tidak ditemukan');
             }
 
-            if (!$this->poliModel->delete($id)) {
-                throw new \Exception('Gagal menghapus data poli');
+            if (!$this->penjaminModel->delete($id)) {
+                throw new \Exception('Gagal menghapus data penjamin');
             }
 
             return redirect()->back()
-                ->with('success', 'Data poli berhasil dihapus');
+                ->with('success', 'Data penjamin berhasil dihapus');
 
         } catch (\Exception $e) {
-            log_message('error', '[Poli::delete] ' . $e->getMessage());
+            log_message('error', '[Penjamin::delete] ' . $e->getMessage());
             
             return redirect()->back()
-                ->with('error', ENVIRONMENT === 'development' ? $e->getMessage() : 'Gagal menghapus data poli');
+                ->with('error', ENVIRONMENT === 'development' ? $e->getMessage() : 'Gagal menghapus data penjamin');
         }
     }
 } 

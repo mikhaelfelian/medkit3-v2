@@ -33,19 +33,19 @@ class TransBeliPOModel extends Model
     protected $updatedField  = 'updated_at';
 
     /**
-     * Generate unique PO number
-     * Format: PO/YYYYMMDD/XXXX
+     * Generate unique PO number with format PO25010001
+     * PO + YY + MM + 4-digit sequence
      * 
      * @return string
      */
     public function generateNoNota()
     {
-        $prefix = 'PO/' . date('Ymd') . '/';
+        $prefix = 'PO' . date('ym');
         
         $lastPO = $this->select('no_nota')
-                      ->like('no_nota', $prefix, 'after')
-                      ->orderBy('no_nota', 'DESC')
-                      ->first();
+                       ->like('no_nota', $prefix, 'after')
+                       ->orderBy('no_nota', 'DESC')
+                       ->first();
 
         if (!$lastPO) {
             return $prefix . '0001';
@@ -62,38 +62,37 @@ class TransBeliPOModel extends Model
     /**
      * Get PO with relations
      */
-    public function getWithRelations($filters = [])
+    public function getWithRelations($conditions = [])
     {
         $builder = $this->select('
                 tbl_trans_beli_po.*, 
                 tbl_m_supplier.nama as supplier_name,
-                tbl_ion_users.username as username,
+                tbl_m_supplier.alamat as supplier_address,
+                tbl_m_supplier.no_tlp as supplier_phone,
+                tbl_ion_users.username as created_by,
                 (SELECT COUNT(*) FROM tbl_trans_beli_po_det WHERE id_pembelian = tbl_trans_beli_po.id) as total_items
             ')
             ->join('tbl_m_supplier', 'tbl_m_supplier.id = tbl_trans_beli_po.id_supplier', 'left')
             ->join('tbl_ion_users', 'tbl_ion_users.id = tbl_trans_beli_po.id_user', 'left');
 
-        // Apply filters
-        if (!empty($filters['supplier'])) {
-            $builder->where('tbl_trans_beli_po.id_supplier', $filters['supplier']);
+        // If single record is requested
+        if (isset($conditions['tbl_trans_beli_po.id'])) {
+            return $builder->where($conditions)->get()->getRow();
         }
 
-        if (isset($filters['status']) && $filters['status'] !== '') {
-            $builder->where('tbl_trans_beli_po.status', $filters['status']);
+        // Apply filters for list view
+        if (!empty($conditions['supplier'])) {
+            $builder->where('tbl_trans_beli_po.id_supplier', $conditions['supplier']);
         }
 
-        if (!empty($filters['date_start'])) {
-            $builder->where('tbl_trans_beli_po.tgl_masuk >=', $filters['date_start']);
+        if (isset($conditions['status']) && $conditions['status'] !== '') {
+            $builder->where('tbl_trans_beli_po.status', $conditions['status']);
         }
 
-        if (!empty($filters['date_end'])) {
-            $builder->where('tbl_trans_beli_po.tgl_masuk <=', $filters['date_end']);
-        }
-
-        if (!empty($filters['q'])) {
+        if (!empty($conditions['q'])) {
             $builder->groupStart()
-                   ->like('tbl_trans_beli_po.no_nota', $filters['q'])
-                   ->orLike('tbl_m_supplier.nama', $filters['q'])
+                   ->like('tbl_trans_beli_po.no_nota', $conditions['q'])
+                   ->orLike('tbl_m_supplier.nama', $conditions['q'])
                    ->groupEnd();
         }
 
@@ -115,5 +114,35 @@ class TransBeliPOModel extends Model
         ];
 
         return $labels[$status] ?? 'Unknown';
+    }
+
+    /**
+     * Get count of trashed POs
+     * 
+     * @return int
+     */
+    public function getTrashCount()
+    {
+        return $this->where('status_hps', '1')
+                    ->countAllResults();
+    }
+
+    /**
+     * Get PO with supplier details
+     * 
+     * @param int $id PO ID
+     * @return object|null
+     */
+    public function getPOWithDetails($id)
+    {
+        return $this->select('
+                tbl_trans_beli_po.*,
+                tbl_m_supplier.nama as supplier_name,
+                tbl_m_supplier.alamat as supplier_address,
+                tbl_m_supplier.no_tlp as supplier_phone
+            ')
+            ->join('tbl_m_supplier', 'tbl_m_supplier.id = tbl_trans_beli_po.id_supplier', 'left')
+            ->where('tbl_trans_beli_po.id', $id)
+            ->first();
     }
 } 

@@ -9,8 +9,9 @@
  * Controller for managing ICD (International Classification of Diseases) data
  */
 
-namespace App\Controllers;
+namespace App\Controllers\Master;
 
+use App\Controllers\BaseController;
 use App\Models\IcdModel;
 use App\Models\PengaturanModel;
 

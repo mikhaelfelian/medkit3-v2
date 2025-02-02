@@ -14,15 +14,12 @@
     <div class="card-header">
         <div class="row">
             <div class="col-md-6">
-                <a href="<?= base_url('transaksi/po/create') ?>" class="btn btn-sm btn-primary rounded-0">
-                    <i class="fas fa-plus"></i> Buat PO
-                </a>
                 <a href="<?= base_url('transaksi/po/export') ?>?<?= $_SERVER['QUERY_STRING'] ?>"
                     class="btn btn-sm btn-success rounded-0">
                     <i class="fas fa-file-excel"></i> Export Excel
                 </a>
                 <a href="<?= base_url('transaksi/po/trash') ?>" class="btn btn-sm btn-danger rounded-0">
-                    <i class="fas fa-trash"></i> Sampah (<?php // $trashCount ?>)
+                    <i class="fas fa-trash"></i> Sampah (<?= $transBeliPOModel->getTrashCount() ?>)
                 </a>
             </div>
         </div>
