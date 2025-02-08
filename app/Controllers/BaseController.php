@@ -65,7 +65,7 @@ abstract class BaseController extends Controller
     public function __construct()
     {
         $this->theDate = new Time();
-        $this->theTime = now('Asia/Jakarta');
+        $this->theTime = Time::now('Asia/Jakarta');
     }
 
     /**

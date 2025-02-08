@@ -85,4 +85,15 @@ class TransBeliPODetModel extends Model
                    ->getRow()
                    ->jml ?? 0;
     }
+
+    /**
+     * Get items by PO ID
+     * 
+     * @param int $id PO ID
+     * @return array
+     */
+    public function getItemByPO($id)
+    {
+        return $this->where('id_pembelian', $id)->findAll();
+    }
 } 

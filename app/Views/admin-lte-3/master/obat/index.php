@@ -92,6 +92,9 @@
                                 <td><?= $row->merk ?></td>
                                 <td>
                                     <?= $row->item.br(); ?>
+                                    <?php if (!empty($row->jenis)): ?>
+                                        <small><i><?= $row->jenis ?></i></small><?=br(); ?>
+                                    <?php endif; ?>
                                     <small><i><?= $row->kode ?></i></small><?=br(); ?>
                                     <small><b><?= format_angka_rp($row->harga_jual) ?></b></small>
                                     <?php if (!empty($row->item_alias)): ?>

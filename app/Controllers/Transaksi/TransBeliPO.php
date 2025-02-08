@@ -188,7 +188,7 @@ class TransBeliPO extends BaseController
                 'validation' => $this->validation
             ];
 
-            return $this->view($this->theme->getThemePath() . '/transaksi/po/edit', $data);
+            return $this->view($this->theme->getThemePath() . '/transaksi/po/trans_po_edit', $data);
 
         // } catch (\Exception $e) {
         //     log_message('error', '[TransBeliPO::edit] ' . $e->getMessage());
@@ -301,7 +301,7 @@ class TransBeliPO extends BaseController
                 'items'         => $items
             ];
 
-            return $this->view($this->theme->getThemePath() . '/transaksi/po/detail', $data);
+            return $this->view($this->theme->getThemePath() . '/transaksi/po/trans_po_detail', $data);
 
         } catch (\Exception $e) {
             log_message('error', '[TransBeliPO::detail] ' . $e->getMessage());
@@ -430,110 +430,6 @@ class TransBeliPO extends BaseController
     }
 
     /**
-     * Generate PDF for purchase order
-     * 
-     * @param int $id PO ID
-     */
-    public function pdf_po($id = null)
-    {
-        try {
-            // Get PO data
-            $po = $this->transBeliPOModel->getWithRelations(['tbl_trans_beli_po.id' => $id]);
-            if (!$po) {
-                throw new \RuntimeException('Data PO tidak ditemukan');
-            }
-
-            // Get PO items
-            $items = $this->transBeliPODetModel->getWithRelations($id);
-
-            // Create PDF instance
-            $pdf = new \FPDF('P', 'mm', 'A4');
-            $pdf->AddPage();
-            
-            // Set font
-            $pdf->SetFont('Arial', 'B', 16);
-            
-            // Header
-            $pdf->Cell(0, 10, 'PURCHASE ORDER', 0, 1, 'C');
-            $pdf->SetFont('Arial', '', 12);
-            $pdf->Cell(0, 10, 'No: ' . $po->no_nota, 0, 1, 'C');
-            $pdf->Ln(10);
-            
-            // PO Information
-            $pdf->SetFont('Arial', 'B', 10);
-            $pdf->Cell(40, 7, 'Tanggal PO', 0);
-            $pdf->Cell(5, 7, ':', 0);
-            $pdf->SetFont('Arial', '', 10);
-            $pdf->Cell(0, 7, date('d/m/Y', strtotime($po->tgl_masuk)), 0);
-            $pdf->Ln();
-            
-            $pdf->SetFont('Arial', 'B', 10);
-            $pdf->Cell(40, 7, 'Supplier', 0);
-            $pdf->Cell(5, 7, ':', 0);
-            $pdf->SetFont('Arial', '', 10);
-            $pdf->Cell(0, 7, $po->supplier_name, 0);
-            $pdf->Ln();
-            
-            $pdf->SetFont('Arial', 'B', 10);
-            $pdf->Cell(40, 7, 'Pengiriman', 0);
-            $pdf->Cell(5, 7, ':', 0);
-            $pdf->SetFont('Arial', '', 10);
-            $pdf->MultiCell(0, 7, $po->pengiriman);
-            $pdf->Ln(5);
-            
-            // Items Table Header
-            $pdf->SetFont('Arial', 'B', 10);
-            $pdf->Cell(10, 7, 'No', 1, 0, 'C');
-            $pdf->Cell(80, 7, 'Item', 1, 0, 'C');
-            $pdf->Cell(30, 7, 'Jumlah', 1, 0, 'C');
-            $pdf->Cell(30, 7, 'Satuan', 1, 0, 'C');
-            $pdf->Cell(40, 7, 'Keterangan', 1, 1, 'C');
-            
-            // Items Table Content
-            $pdf->SetFont('Arial', '', 10);
-            $no = 1;
-            foreach ($items as $item) {
-                $pdf->Cell(10, 7, $no++, 1, 0, 'C');
-                $pdf->Cell(80, 7, $item->item_name, 1, 0, 'L');
-                $pdf->Cell(30, 7, $item->jml, 1, 0, 'C');
-                $pdf->Cell(30, 7, $item->satuan_name, 1, 0, 'C');
-                $pdf->Cell(40, 7, $item->keterangan, 1, 1, 'L');
-            }
-            
-            // Footer
-            $pdf->Ln(10);
-            $pdf->SetFont('Arial', '', 10);
-            $pdf->Cell(0, 7, 'Keterangan: ' . $po->keterangan, 0, 1);
-            $pdf->Ln(10);
-            
-            // Signatures
-            $pdf->Cell(63, 7, 'Dibuat Oleh,', 0, 0, 'C');
-            $pdf->Cell(63, 7, 'Diperiksa Oleh,', 0, 0, 'C');
-            $pdf->Cell(63, 7, 'Disetujui Oleh,', 0, 1, 'C');
-            
-            $pdf->Ln(20);
-            
-            $pdf->Cell(63, 7, '(________________)', 0, 0, 'C');
-            $pdf->Cell(63, 7, '(________________)', 0, 0, 'C');
-            $pdf->Cell(63, 7, '(________________)', 0, 1, 'C');
-            
-            // Set headers for PDF download
-            $response = service('response');
-            $response->setHeader('Content-Type', 'application/pdf');
-            $response->setHeader('Content-Disposition', 'inline; filename="PO_' . $po->no_nota . '.pdf"');
-            
-            // Output PDF
-            $pdf->Output('PO_' . $po->no_nota . '.pdf', 'I');
-            exit();
-
-        } catch (\Exception $e) {
-            log_message('error', '[TransBeliPO::pdf_po] ' . $e->getMessage());
-            return redirect()->back()
-                           ->with('error', 'Gagal membuat PDF Purchase Order');
-        }
-    }
-
-    /**
      * Delete PO
      */
     public function delete($id = null)
@@ -580,53 +476,183 @@ class TransBeliPO extends BaseController
     }
 
     /**
-     * Update PO status
+     * Process/approve purchase order
+     * 
+     * @param int $id PO ID
+     * @return \CodeIgniter\HTTP\RedirectResponse
      */
-    public function updateStatus($id = null)
+    public function proses($id)
     {
-        if (!$this->request->isAJAX()) {
-            return $this->response->setJSON([
-                'success' => false,
-                'message' => 'Invalid request'
-            ]);
-        }
-
-        if (!$id) {
-            return $this->response->setJSON([
-                'success' => false,
-                'message' => 'ID PO tidak ditemukan'
-            ]);
-        }
-
         try {
+            // Start transaction
+            $this->db->transStart();
+
+            // Get PO data
             $po = $this->transBeliPOModel->find($id);
             if (!$po) {
                 throw new \RuntimeException('Data PO tidak ditemukan');
             }
 
-            // Check if PO has items
-            $itemCount = $this->transBeliPODetModel->where('id_pembelian', $id)->countAllResults();
-            if ($itemCount === 0) {
+            // Verify PO is in draft status
+            if ($po->status != '0') {
+                throw new \RuntimeException('Hanya PO dengan status draft yang dapat diproses');
+            }
+
+            // Get PO details to verify there are items
+            $poDetails = $this->transBeliPODetModel->where('id_pembelian', $id)->findAll();
+            if (empty($poDetails)) {
                 throw new \RuntimeException('PO tidak memiliki item');
             }
 
-            // Update status
-            $status = $this->request->getPost('status');
-            if (!$this->transBeliPOModel->update($id, ['status' => $status])) {
-                throw new \RuntimeException('Gagal mengupdate status PO');
+            // Update PO status to approved (1)
+            if (!$this->transBeliPOModel->update($id, [
+                'status' => '1',
+                'updated_at' => date('Y-m-d H:i:s')
+            ])) {
+                throw new \RuntimeException('Gagal memperbarui status PO');
             }
 
-            return $this->response->setJSON([
-                'success' => true,
-                'message' => 'Status PO berhasil diupdate'
-            ]);
+            // Commit transaction
+            $this->db->transComplete();
+
+            if ($this->db->transStatus() === false) {
+                throw new \RuntimeException('Gagal memproses PO');
+            }
+
+            return redirect()->to('transaksi/po')
+                            ->with('success', 'PO berhasil diproses');
 
         } catch (\Exception $e) {
-            log_message('error', '[TransBeliPO::updateStatus] ' . $e->getMessage());
-            return $this->response->setJSON([
-                'success' => false,
-                'message' => $e->getMessage()
-            ]);
+            // Rollback transaction on error
+            $this->db->transRollback();
+            
+            log_message('error', '[TransBeliPO::proses] ' . $e->getMessage());
+            
+            return redirect()->back()
+                            ->with('error', $e->getMessage());
         }
+    }
+
+    /**
+     * Create invoice from PO
+     * 
+     * @param int $id PO ID
+     * @return \CodeIgniter\HTTP\RedirectResponse
+     */
+    public function buatFaktur($id)
+    {
+        try {
+            // Start transaction
+            $this->db->transStart();
+
+            // Get PO data
+            $po = $this->transBeliPOModel->find($id);
+            if (!$po) {
+                throw new \RuntimeException('Data PO tidak ditemukan');
+            }
+
+            // Verify PO is in processed status
+            if ($po->status != '1') {
+                throw new \RuntimeException('Hanya PO yang sudah diproses yang dapat dibuatkan faktur');
+            }
+
+            // Get PO details
+            $poDetails = $this->transBeliPODetModel->where('id_pembelian', $id)->findAll();
+            if (empty($poDetails)) {
+                throw new \RuntimeException('PO tidak memiliki item');
+            }
+
+            // Generate invoice number
+            $invoiceNumber = $this->generateInvoiceNumber();
+
+            // Create invoice header
+            $invoiceData = [
+                'no_faktur' => $invoiceNumber,
+                'id_po' => $po->id,
+                'id_supplier' => $po->id_supplier,
+                'tgl_faktur' => date('Y-m-d'),
+                'total' => 0, // Will be calculated from details
+                'status' => '0', // Draft status
+                'created_at' => date('Y-m-d H:i:s')
+            ];
+
+            // Insert invoice header
+            $this->db->table('tbl_trans_beli_faktur')->insert($invoiceData);
+            $invoiceId = $this->db->insertID();
+
+            // Calculate total and create invoice details
+            $total = 0;
+            foreach ($poDetails as $detail) {
+                $detailData = [
+                    'id_faktur' => $invoiceId,
+                    'id_item' => $detail->id_item,
+                    'jml' => $detail->jml,
+                    'harga' => $detail->harga ?? 0,
+                    'subtotal' => ($detail->jml * ($detail->harga ?? 0)),
+                    'created_at' => date('Y-m-d H:i:s')
+                ];
+                
+                $this->db->table('tbl_trans_beli_faktur_det')->insert($detailData);
+                $total += $detailData['subtotal'];
+            }
+
+            // Update invoice total
+            $this->db->table('tbl_trans_beli_faktur')
+                     ->where('id', $invoiceId)
+                     ->update(['total' => $total]);
+
+            // Update PO status to invoice created (2)
+            $this->transBeliPOModel->update($id, [
+                'status' => '2',
+                'updated_at' => date('Y-m-d H:i:s')
+            ]);
+
+            // Commit transaction
+            $this->db->transComplete();
+
+            if ($this->db->transStatus() === false) {
+                throw new \RuntimeException('Gagal membuat faktur');
+            }
+
+            return redirect()->to("transaksi/pembelian/faktur/edit/{$invoiceId}")
+                            ->with('success', 'Faktur berhasil dibuat');
+
+        } catch (\Exception $e) {
+            // Rollback transaction on error
+            $this->db->transRollback();
+            
+            log_message('error', '[TransBeliPO::buatFaktur] ' . $e->getMessage());
+            
+            return redirect()->back()
+                            ->with('error', $e->getMessage());
+        }
+    }
+
+    /**
+     * Generate invoice number
+     * 
+     * @return string
+     */
+    private function generateInvoiceNumber()
+    {
+        $prefix = 'FKT' . date('Ym');
+        
+        // Get last invoice number
+        $lastInvoice = $this->db->table('tbl_trans_beli_faktur')
+                               ->select('no_faktur')
+                               ->like('no_faktur', $prefix, 'after')
+                               ->orderBy('id', 'DESC')
+                               ->get()
+                               ->getRow();
+
+        if (!$lastInvoice) {
+            return $prefix . '0001';
+        }
+
+        // Extract number and increment
+        $lastNumber = (int)substr($lastInvoice->no_faktur, -4);
+        $newNumber = $lastNumber + 1;
+        
+        return $prefix . str_pad($newNumber, 4, '0', STR_PAD_LEFT);
     }
 } 

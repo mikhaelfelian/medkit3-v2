@@ -88,3 +88,17 @@ if (!function_exists('terbilang')) {
         return $terbilang;
     }
 } 
+
+if (!function_exists('format_nomor')) {
+    /**
+     * Format number with leading zeros
+     * 
+     * @param int $number_length Desired length of the formatted number
+     * @param int $number Number to format
+     * @return string Formatted number with leading zeros
+     */
+    function format_nomor($number_length, $number)
+    {
+        return str_pad($number, $number_length, '0', STR_PAD_LEFT);
+    }
+}

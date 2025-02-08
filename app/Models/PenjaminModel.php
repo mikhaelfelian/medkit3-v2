@@ -14,6 +14,14 @@ namespace App\Models;
 
 use CodeIgniter\Model;
 
+/**
+ * PenjaminModel
+ * 
+ * Handles database operations for penjamin (insurance/guarantor) data
+ * 
+ * @author    Mikhael Felian Waskito <mikhaelfelian@gmail.com>
+ * @date      2025-02-06
+ */
 class PenjaminModel extends Model
 {
     protected $table            = 'tbl_m_penjamin';
@@ -26,7 +34,11 @@ class PenjaminModel extends Model
         'kode',
         'penjamin',
         'persen',
-        'status'
+        'status',
+        'nama',
+        'keterangan',
+        'created_at',
+        'updated_at'
     ];
 
     // Dates

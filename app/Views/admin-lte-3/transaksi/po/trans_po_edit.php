@@ -91,10 +91,12 @@
                 <a href="<?= base_url('transaksi/po') ?>" class="btn btn-default rounded-0">
                     <i class="fas fa-arrow-left"></i> Kembali
                 </a>
-                <button type="button" class="btn btn-success float-right rounded-0" id="btn-proses" 
-                        onclick="updateStatus(<?= $po->id ?>)">
-                    <i class="fas fa-check"></i> Proses »
+                <?= form_open('transaksi/po/proses/' . $po->id, ['id' => 'form-proses']) ?>
+                <button type="submit" class="btn btn-success float-right rounded-0" id="btn-proses" 
+                        onclick="return confirm('Apakah anda yakin ingin memproses PO ini?')">
+                    <i class="fas fa-check"></i> Proses &raquo;
                 </button>
+                <?= form_close() ?>
             </div>
             <?= form_close() ?>
         </div>
@@ -242,10 +244,14 @@
                 </div>
             </div>
             <div class="card-footer">
-                <button type="button" class="btn btn-success float-right rounded-0" id="btn-proses">
-                    Proses »
+                <?= form_open('transaksi/po/proses/' . $po->id, ['id' => 'form-proses']) ?>
+                <button type="submit" class="btn btn-success float-right rounded-0" id="btn-proses" 
+                        onclick="return confirm('Apakah anda yakin ingin memproses PO ini?')">
+                    <i class="fas fa-check"></i> Proses &raquo;
                 </button>
+                <?= form_close() ?>
             </div>
+
         </div>
     </div>
 </div>

@@ -88,15 +88,18 @@ class ItemStokModel extends Model
     }
 
     /**
-     * Mendapatkan total stok berdasarkan ID item
+     * Get total stock for an item across all warehouses
+     * 
+     * @param int $itemId The ID of the item
+     * @return int Total stock quantity
      */
     public function getTotalStockByItem($itemId)
     {
-        return $this->selectSum('jml')
-                    ->where('id_item', $itemId)
-                    ->where('status', '1')
-                    ->first()
-                    ->jml ?? 0;
+        return $this->where('id_item', $itemId)
+                   ->selectSum('jml')
+                   ->get()
+                   ->getRow()
+                   ->jml ?? 0;
     }
 
     /**

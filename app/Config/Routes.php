@@ -255,6 +255,16 @@ $routes->group('master', ['namespace' => 'App\Controllers\Master', 'filter' => '
     $routes->get('platform/detail/(:num)', 'Platform::detail/$1');
 });
 
+// Kategori Obat routes
+$routes->group('master', ['namespace' => 'App\Controllers\Master', 'filter' => 'auth'], function($routes) {
+    $routes->get('jenis', 'KategoriObat::index');
+    $routes->get('jenis/create', 'KategoriObat::create');
+    $routes->post('jenis/store', 'KategoriObat::store');
+    $routes->get('jenis/edit/(:num)', 'KategoriObat::edit/$1');
+    $routes->post('jenis/update/(:num)', 'KategoriObat::update/$1');
+    $routes->get('jenis/delete/(:num)', 'KategoriObat::delete/$1');
+});
+
 /** END MASTER **/
 
 /*
@@ -271,8 +281,19 @@ $routes->group('transaksi', ['namespace' => 'App\Controllers\Transaksi', 'filter
     $routes->get('po/print/(:num)', 'TransBeliPO::pdf_po/$1');
     $routes->post('po/cart_add/(:num)', 'TransBeliPO::cart_add/$1');
     $routes->post('po/update-status/(:num)', 'TransBeliPO::updateStatus/$1');
+    $routes->post('po/proses/(:num)', 'TransBeliPO::proses/$1');
 });
-/** END MASTER **/
+
+// Purchase Transaction Routes
+$routes->group('transaksi', ['namespace' => 'App\Controllers\Transaksi', 'filter' => 'auth'], function($routes) {
+    $routes->get('beli', 'TransBeli::index');
+    $routes->get('beli/create', 'TransBeli::create');
+    $routes->post('beli/store', 'TransBeli::store');
+    $routes->get('beli/edit/(:num)', 'TransBeli::edit/$1');
+    $routes->post('beli/update/(:num)', 'TransBeli::update/$1');
+});
+
+/** END TRANSAKSI **/
 
 /*
  * GUDANG ROUTES
@@ -283,9 +304,26 @@ $routes->group('stock', ['namespace' => 'App\Controllers\Gudang', 'filter' => 'a
     $routes->get('items/history/(:num)', 'Stock::history/$1');
     $routes->get('items/detail/(:num)', 'Stock::detail/$1');
     $routes->post('items/update/(:num)', 'Stock::update/$1');
+    $routes->get('items/delete_hist/(:num)', 'Stock::delete_hist/$1');
 });
 
 /** END GUDANG **/
+
+/*
+* MEDICAL RECORDS ROUTES
+*/
+// Medical Records Routes
+$routes->group('medrecords', ['namespace' => 'App\Controllers\Medrecords'], function ($routes) {
+    $routes->get('daftar', 'MedDaftar::create');
+    $routes->post('daftar/store', 'MedDaftar::store');
+    $routes->get('antrian', 'Antrian::index');
+    $routes->get('antrian/detail/(:num)', 'Antrian::detail/$1');
+    $routes->get('daftar/konfirm/(:num)', 'MedDaftar::konfirm/$1');
+    $routes->get('trans/create/(:num)', 'MedTrans::create/$1');
+    $routes->post('trans/store', 'MedTrans::store');
+    $routes->get('trans', 'MedTrans::index');
+});
+/* -- END -- */
 
 // Pengaturan routes
 $routes->group('pengaturan', ['filter' => 'auth'], function ($routes) {
@@ -298,5 +336,9 @@ $routes->group('pengaturan', ['filter' => 'auth'], function ($routes) {
 $routes->group('publik', function ($routes) {
     $routes->get('items', 'Publik::getItems');
     $routes->get('items_stock', 'Publik::getItemsStock');
+});
+
+$routes->group('', ['filter' => 'auth'], function($routes) {
+    $routes->post('chatgpt/send', 'ChatGPT::send', ['filter' => 'cors']);
 });
 ?>

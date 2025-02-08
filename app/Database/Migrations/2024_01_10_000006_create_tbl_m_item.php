@@ -39,6 +39,12 @@ class CreateTblMItem extends Migration
                 'null'       => true,
                 'default'    => 0,
             ],
+            'id_kategori_obat' => [
+                'type'       => 'INT',
+                'constraint' => 11,
+                'null'       => true,
+                'default'    => 0,
+            ],
             'id_lokasi' => [
                 'type'       => 'INT',
                 'constraint' => 11,

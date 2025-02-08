@@ -79,4 +79,23 @@ class ItemBatchModel extends Model
 
         return $builder->get()->getResult();
     }
+
+    /**
+     * Get batches by item ID
+     * 
+     * @param int $itemId Item ID
+     * @return array Batch data
+     */
+    public function getBatchesByItem($itemId)
+    {
+        return $this->select('
+                tbl_m_item_batch.*,
+                tbl_m_gudang.gudang
+            ')
+            ->join('tbl_m_gudang', 'tbl_m_gudang.id = tbl_m_item_batch.id_gudang', 'left')
+            ->where('tbl_m_item_batch.id_item', $itemId)
+            ->where('tbl_m_item_batch.status', '1')
+            ->orderBy('tbl_m_item_batch.tgl_ed', 'ASC')
+            ->findAll();
+    }
 } 

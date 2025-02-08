@@ -18,6 +18,7 @@ use App\Models\ItemRefModel;
 use App\Models\ItemStokModel;
 use App\Models\SatuanModel;
 use App\Models\KategoriModel;
+use App\Models\KategoriObatModel;
 use App\Models\MerkModel;
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
 use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
@@ -32,14 +33,15 @@ class Obat extends BaseController
 
     public function __construct()
     {
-        $this->gudangModel   = new GudangModel();
-        $this->itemModel     = new ItemModel();
-        $this->itemRefModel  = new ItemRefModel();
-        $this->itemStokModel = new ItemStokModel();
-        $this->satuanModel   = new SatuanModel(); 
-        $this->kategoriModel = new KategoriModel();
-        $this->merkModel     = new MerkModel();
-        $this->validation    = \Config\Services::validation();
+        $this->gudangModel       = new GudangModel();
+        $this->itemModel         = new ItemModel();
+        $this->itemRefModel      = new ItemRefModel();
+        $this->itemStokModel     = new ItemStokModel();
+        $this->satuanModel       = new SatuanModel(); 
+        $this->kategoriModel     = new KategoriModel();
+        $this->kategoriObatModel = new KategoriObatModel();
+        $this->merkModel         = new MerkModel();
+        $this->validation        = \Config\Services::validation();
     }
 
     public function index()
@@ -61,6 +63,7 @@ class Obat extends BaseController
         foreach ($activeMerks as $merk) {
             $merkList[$merk->id] = $merk->merk;
         }
+        
 
         // Filter by kategori
         $selectedKategori = $this->request->getVar('kategori');
@@ -123,18 +126,19 @@ class Obat extends BaseController
 
     public function create()
     {
-        $satuan = $this->satuanModel->where('status', '1')->findAll();
-
         $data = [
             'title'         => 'Form Obat',
             'Pengaturan'    => $this->pengaturan,
             'user'          => $this->ionAuth->user()->row(),
             'validation'    => $this->validation,
-            'satuan'        => $satuan,
+            'satuan'        => $this->satuanModel->where('status', '1')->findAll(),
             'kategori'      => $this->kategoriModel->where('status', '1')->findAll(),
             'merk'          => $this->merkModel->where('status', '1')->findAll(),
+            'jenis'         => $this->kategoriObatModel->where('status', '1')->findAll(),
             'breadcrumbs'   => '
                 <li class="breadcrumb-item"><a href="' . base_url() . '">Beranda</a></li>
+
+
                 <li class="breadcrumb-item">Master</li>
                 <li class="breadcrumb-item"><a href="' . base_url('master/obat') . '">Obat</a></li>
                 <li class="breadcrumb-item active">Tambah</li>
@@ -175,6 +179,12 @@ class Obat extends BaseController
                     'integer' => 'Kategori tidak valid'
                 ]
             ],
+            'jenis' => [
+                'rules' => 'required',
+                'errors' => [
+                    'required' => 'Jenis Obat harus dipilih'
+                ]
+            ],            
             'id_merk' => [
                 'rules' => 'required|integer',
                 'errors' => [
@@ -200,29 +210,30 @@ class Obat extends BaseController
             ]
         ];
 
-        // if (!$this->validate($rules)) {
-        //     return redirect()->back()
-        //         ->withInput()
-        //         ->with('error', 'Validasi gagal');
-        // }
+        if (!$this->validate($rules)) {
+            return redirect()->back()
+                ->withInput()
+                ->with('error', 'Validasi gagal');
+        }
 
         $data = [
-            'id_user'       => $this->ionAuth->user()->row()->id,
-            'kode'          => $this->itemModel->generateKode(1),
-            'item'          => $this->request->getPost('item'),
-            'item_alias'    => $this->request->getPost('item_alias'),
-            'item_kand'     => $this->request->getPost('item_kand'),
-            'barcode'       => $this->request->getPost('barcode'),
-            'id_satuan'     => $this->request->getPost('id_satuan'),
-            'id_kategori'   => $this->request->getPost('id_kategori'),
-            'id_merk'       => $this->request->getPost('id_merk'),
-            'jml'           => $this->request->getPost('jml') ?? 0,
-            'harga_beli'    => format_angka_db($this->request->getPost('harga_beli')) ?? 0,
-            'harga_jual'    => format_angka_db($this->request->getPost('harga_jual')) ?? 0,
-            'status'        => $this->request->getPost('status'),
-            'status_stok'   => $this->request->getPost('status_stok') ?? '0',
-            'status_racikan'=> $this->request->getPost('status_racikan') ?? '0',
-            'status_item'   => 1, // 1 = Obat
+            'id_user'            => $this->ionAuth->user()->row()->id,
+            'kode'               => $this->itemModel->generateKode(1),
+            'item'               => $this->request->getPost('item'),
+            'item_alias'         => $this->request->getPost('item_alias'),
+            'item_kand'          => $this->request->getPost('item_kand'),
+            'barcode'            => $this->request->getPost('barcode'),
+            'id_satuan'          => $this->request->getPost('id_satuan'),
+            'id_kategori'        => $this->request->getPost('id_kategori'),
+            'id_kategori_obat'   => $this->request->getPost('jenis'),   
+            'id_merk'            => $this->request->getPost('id_merk'),
+            'jml'                => $this->request->getPost('jml') ?? 0,
+            'harga_beli'         => format_angka_db($this->request->getPost('harga_beli')) ?? 0,
+            'harga_jual'         => format_angka_db($this->request->getPost('harga_jual')) ?? 0,
+            'status'             => $this->request->getPost('status'),
+            'status_stok'        => $this->request->getPost('status_stok') ?? '0',
+            'status_racikan'     => $this->request->getPost('status_racikan') ?? '0',
+            'status_item'        => 1, // 1 = Obat
         ];
 
         if ($this->itemModel->insert($data)) {
@@ -273,6 +284,7 @@ class Obat extends BaseController
             'satuan'        => $this->satuanModel->findAll(),
             'kategori'      => $this->kategoriModel->findAll(),
             'merk'          => $this->merkModel->findAll(),
+            'jenis'         => $this->kategoriObatModel->where('status', '1')->findAll(),
             'breadcrumbs'   => '
                 <li class="breadcrumb-item"><a href="' . base_url() . '">Beranda</a></li>
                 <li class="breadcrumb-item">Master</li>
@@ -310,6 +322,12 @@ class Obat extends BaseController
                     'integer' => 'Satuan tidak valid'
                 ]
             ],
+            'jenis' => [
+                'rules' => 'required',
+                'errors' => [
+                    'required' => 'Jenis Obat harus dipilih'
+                ]
+            ],
             env('security.tokenName', 'csrf_test_name') => [
                 'rules' => 'required',
                 'errors' => [
@@ -325,20 +343,21 @@ class Obat extends BaseController
         }
 
         $data = [
-            'item'          => $this->request->getPost('item'),
-            'item_alias'    => $this->request->getPost('item_alias'),
-            'item_kand'     => $this->request->getPost('item_kand'),
-            'barcode'       => $this->request->getPost('barcode'),
-            'id_satuan'     => $this->request->getPost('id_satuan'),
-            'id_kategori'   => $this->request->getPost('id_kategori'),
-            'id_merk'       => $this->request->getPost('id_merk'),
-            'jml_min'       => $this->request->getPost('jml_min') ?? 0,
-            'jml_limit'     => $this->request->getPost('jml_limit') ?? 0,
-            'harga_beli'    => format_angka_db($this->request->getPost('harga_beli')) ?? 0,
-            'harga_jual'    => format_angka_db($this->request->getPost('harga_jual')) ?? 0,
-            'status'        => $this->request->getPost('status'),
-            'status_stok'   => $this->request->getPost('status_stok') ?? '0',
-            'status_racikan'=> $this->request->getPost('status_racikan') ?? '0'
+            'item'              => $this->request->getPost('item'),
+            'item_alias'        => $this->request->getPost('item_alias'),
+            'item_kand'         => $this->request->getPost('item_kand'),
+            'barcode'           => $this->request->getPost('barcode'),
+            'id_satuan'         => $this->request->getPost('id_satuan'),
+            'id_kategori'       => $this->request->getPost('id_kategori'),
+            'id_kategori_obat'  => $this->request->getPost('jenis'),
+            'id_merk'           => $this->request->getPost('id_merk'),
+            'jml_min'           => $this->request->getPost('jml_min') ?? 0,
+            'jml_limit'         => $this->request->getPost('jml_limit') ?? 0,
+            'harga_beli'        => format_angka_db($this->request->getPost('harga_beli')) ?? 0,
+            'harga_jual'        => format_angka_db($this->request->getPost('harga_jual')) ?? 0,
+            'status'            => $this->request->getPost('status'),
+            'status_stok'       => $this->request->getPost('status_stok') ?? '0',
+            'status_racikan'    => $this->request->getPost('status_racikan') ?? '0'
         ];
 
         $lastInsertId = $id;

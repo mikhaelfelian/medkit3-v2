@@ -42,6 +42,19 @@
                 </div>
 
                 <div class="form-group">
+                    <label for="jenis_obat">Jenis Obat</label>
+                    <select name="jenis" id="jenis" class="form-control select2 rounded-0 <?= validation_show_error('id_kategori_obat') ? 'is-invalid' : '' ?>">
+                        <option value="">Pilih Jenis Obat</option>
+                        <?php foreach ($jenis as $jenis): ?>
+                            <option value="<?= $jenis->id ?>"><?= $jenis->jenis ?></option>
+                        <?php endforeach; ?>
+                    </select>
+                    <div class="invalid-feedback">
+                        <?= validation_show_error('id_kategori_obat') ?>
+                    </div>
+                </div>
+
+                <div class="form-group">
                     <label>Nama Obat <span class="text-danger">*</span></label>
                     <?= form_input([
                         'type' => 'text',
@@ -286,9 +299,8 @@
                                         <td class="text-right"><?= format_angka_rp($ref->harga) ?></td>
                                         <td class="text-right"><?= format_angka_rp($ref->subtotal) ?></td>
                                         <td class="text-center">
-                                            <a href="<?= base_url('master/obat/item_ref_delete/' . $ref->id) ?>" 
-                                               class="btn btn-danger btn-sm rounded-0"
-                                               onclick="return confirm('Hapus?')">
+                                            <a href="<?= base_url('master/obat/item_ref_delete/' . $ref->id) ?>"
+                                                class="btn btn-danger btn-sm rounded-0" onclick="return confirm('Hapus?')">
                                                 <i class="fas fa-trash"></i>
                                             </a>
                                         </td>

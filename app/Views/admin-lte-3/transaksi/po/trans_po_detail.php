@@ -112,7 +112,18 @@
                onclick="return confirm('Apakah anda yakin ingin menghapus PO ini?')">
                 <i class="fas fa-trash"></i> Hapus
             </a>
-        <?php endif ?>
+            <?php else: ?>
+                <a href="<?= base_url("transaksi/po/proses/{$po->id}") ?>" class="btn btn-success rounded-0">
+                    <i class="fas fa-check"></i> Proses
+                </a>
+                <?php if ($po->status == '1'): ?>
+                    <a href="<?= base_url("transaksi/beli/create?id_po=$po->id") ?>" class="btn btn-primary rounded-0">
+                        <i class="fas fa-file-invoice"></i> Buat Faktur
+                    </a>
+                <?php endif; ?>
+
+            <?php endif ?>
     </div>
 </div>
+
 <?= $this->endSection() ?> 

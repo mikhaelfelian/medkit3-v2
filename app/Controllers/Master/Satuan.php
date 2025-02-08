@@ -175,4 +175,99 @@ class Satuan extends BaseController
                 ->with('error', ENVIRONMENT === 'development' ? $e->getMessage() : 'Gagal menghapus data satuan');
         }
     }
+
+    /**
+     * Display edit form for satuan
+     */
+    public function edit($id)
+    {
+        $satuan = $this->satuanModel->find($id);
+        if (!$satuan) {
+            return redirect()->to('master/satuan')
+                           ->with('error', 'Data satuan tidak ditemukan');
+        }
+
+        $data = [
+            'title'       => 'Edit Satuan',
+            'Pengaturan'  => $this->pengaturan,
+            'user'        => $this->ionAuth->user()->row(),
+            'validation'  => $this->validation,
+            'satuan'      => $satuan,
+            'breadcrumbs' => '
+                <li class="breadcrumb-item"><a href="' . base_url() . '">Beranda</a></li>
+                <li class="breadcrumb-item">Master</li>
+                <li class="breadcrumb-item"><a href="' . base_url('master/satuan') . '">Satuan</a></li>
+                <li class="breadcrumb-item active">Edit</li>
+            '
+        ];
+
+        return view($this->theme->getThemePath() . '/master/satuan/edit', $data);
+    }
+
+    /**
+     * Update satuan data
+     */
+    public function update($id)
+    {
+        // Validation rules
+        $rules = [
+            env('security.tokenName') => [
+                'rules' => 'required',
+                'errors' => [
+                    'required' => env('csrf.name') . ' harus diisi'
+                ]
+            ],
+            'satuanKecil' => [
+                'rules' => 'required|max_length[50]',
+                'errors' => [
+                    'required' => 'Satuan kecil harus diisi',
+                    'max_length' => 'Satuan kecil maksimal 50 karakter'
+                ]
+            ],
+            'satuanBesar' => [
+                'rules' => 'required|max_length[50]',
+                'errors' => [
+                    'required' => 'Satuan besar harus diisi',
+                    'max_length' => 'Satuan besar maksimal 50 karakter'
+                ]
+            ],
+            'status' => [
+                'rules' => 'required|in_list[0,1]',
+                'errors' => [
+                    'required' => 'Status harus dipilih',
+                    'in_list' => 'Status tidak valid'
+                ]
+            ]
+        ];
+
+        if (!$this->validate($rules)) {
+            return redirect()->back()
+                           ->withInput()
+                           ->with('validation_errors', $this->validator->getErrors())
+                           ->with('error', 'Validasi gagal. Silakan periksa kembali input Anda.');
+        }
+
+        try {
+            $data = [
+                'satuanKecil' => $this->request->getPost('satuanKecil'),
+                'satuanBesar' => $this->request->getPost('satuanBesar'),
+                'jml'         => $this->request->getPost('jml'),
+                'status'      => $this->request->getPost('status')
+            ];
+
+            if (!$this->satuanModel->update($id, $data)) {
+                throw new \Exception('Gagal mengupdate data satuan');
+            }
+
+            return redirect()->to(base_url('master/satuan'))
+                           ->with('success', 'Data satuan berhasil diupdate');
+
+        } catch (\Exception $e) {
+            log_message('error', '[Satuan::update] ' . $e->getMessage());
+            
+            return redirect()->back()
+                           ->withInput()
+                           ->with('error', ENVIRONMENT === 'development' ? $e->getMessage() : 'Gagal mengupdate data satuan');
+        }
+    }
 } 

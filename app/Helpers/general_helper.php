@@ -119,10 +119,6 @@ if (!function_exists('statusPO')) {
                 'badge' => 'secondary'
             ],
             1 => [
-                'label' => 'Menunggu Persetujuan',
-                'badge' => 'info'
-            ],
-            2 => [
                 'label' => 'Disetujui',
                 'badge' => 'primary'
             ],

@@ -27,6 +27,7 @@ class ItemModel extends Model
         'barcode',
         'id_satuan',
         'id_kategori',
+        'id_kategori_obat',
         'id_merk',
         'jml',
         'jml_min',
@@ -107,10 +108,11 @@ class ItemModel extends Model
     public function getItemWithRelations($id = null)
     {
         $builder = $this->db->table($this->table . ' i')
-            ->select('i.*, s.satuanBesar as satuan, k.kategori, m.merk')
+            ->select('i.*, s.satuanBesar as satuan, k.kategori, m.merk, ko.jenis')
             ->join('tbl_m_satuan s', 's.id = i.id_satuan', 'left')
             ->join('tbl_m_kategori k', 'k.id = i.id_kategori', 'left')
-            ->join('tbl_m_merk m', 'm.id = i.id_merk', 'left');
+            ->join('tbl_m_merk m', 'm.id = i.id_merk', 'left')
+            ->join('tbl_m_kategori_obat ko', 'ko.id = i.id_kategori_obat', 'left');
 
         if ($id !== null) {
             return $builder->where('i.id', $id)->get()->getRow();
@@ -173,10 +175,11 @@ class ItemModel extends Model
      */
     public function getObat()
     {
-        return $this->select('tbl_m_item.*, tbl_m_merk.merk, tbl_m_satuan.satuanBesar, tbl_m_satuan.satuanKecil, tbl_m_satuan.jml, tbl_m_kategori.kategori')
+        return $this->select('tbl_m_item.*, tbl_m_merk.merk, tbl_m_satuan.satuanBesar, tbl_m_satuan.satuanKecil, tbl_m_satuan.jml, tbl_m_kategori.kategori, tbl_m_kategori_obat.jenis')
             ->join('tbl_m_merk', 'tbl_m_merk.id = tbl_m_item.id_merk', 'left')
             ->join('tbl_m_satuan', 'tbl_m_satuan.id = tbl_m_item.id_satuan', 'left')
             ->join('tbl_m_kategori', 'tbl_m_kategori.id = tbl_m_item.id_kategori', 'left')
+            ->join('tbl_m_kategori_obat', 'tbl_m_kategori_obat.id = tbl_m_item.id_kategori_obat', 'left')
             ->where('tbl_m_item.status_item', 1)
             ->where('tbl_m_item.status_hps', '0');
     }

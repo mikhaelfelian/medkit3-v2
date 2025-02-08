@@ -104,12 +104,12 @@
                                     </td>
                                     <td class="text-right"><?= format_angka_rp($item->harga_beli) ?></td>
                                     <td class="text-center">
-                                        <?= $stockCounts[$item->id] ?? 0 ?>
+                                        <?= $itemStockModel->getTotalStockByItem($item->id) ?? 0 ?>
                                         <?= $item->nama_satuan ?? '' ?>
                                     </td>
                                     <td class="text-center">
                                         <div class="btn-group">
-                                            <a href="<?= base_url('stock/detail/' . $item->id) ?>"
+                                            <a href="<?= base_url('stock/items/detail/' . $item->id) ?>"
                                                class="btn btn-info btn-sm rounded-0" title="Detail">
                                                 <i class="fas fa-eye"></i>
                                             </a>

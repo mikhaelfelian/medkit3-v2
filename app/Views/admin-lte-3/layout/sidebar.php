@@ -66,6 +66,14 @@
                             </a>
                         </li>
                         <li class="nav-item">
+                            <a href="<?= base_url('master/jenis') ?>"
+                                class="nav-link <?= isMenuActive('master/jenis') ? 'active' : '' ?>">
+                                <?= nbs(3) ?>
+                                <i class="fas fa-capsules nav-icon"></i>
+                                <p>Jenis Obat</p>
+                            </a>
+                        </li>
+                        <li class="nav-item">
                             <a href="<?= base_url('master/merk') ?>"
                                 class="nav-link <?= isMenuActive('master/merk') ? 'active' : '' ?>">
                                 <?= nbs(3) ?>
@@ -219,11 +227,27 @@
                             </a>
                         </li>
                         <li class="nav-item">
+                            <a href="<?= base_url('transaksi/beli/create') ?>"
+                                class="nav-link <?= isMenuActive('transaksi/beli/create') ? 'active' : '' ?>">
+                                <?= nbs(3) ?>
+                                <i class="fas fa-cart-plus nav-icon"></i>
+                                <p>Faktur</p>
+                            </a>
+                        </li>
+                        <li class="nav-item">
                             <a href="<?= base_url('transaksi/po') ?>"
                                 class="nav-link <?= isMenuActive('transaksi/po') ? 'active' : '' ?>">
                                 <?= nbs(3) ?>
                                 <i class="fas fa-list nav-icon"></i>
                                 <p>Data Purchase Order</p>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="<?= base_url('transaksi/beli') ?>"
+                                class="nav-link <?= isMenuActive('transaksi/beli') ? 'active' : '' ?>">
+                                <?= nbs(3) ?>
+                                <i class="fas fa-list nav-icon"></i>
+                                <p>Data Pembelian</p>
                             </a>
                         </li>
                     </ul>
@@ -271,6 +295,68 @@
                                 <?= nbs(2) ?>
                                 <i class="fas fa-history nav-icon"></i>
                                 <p>Riwayat Mutasi</p>
+                            </a>
+                        </li>
+                    </ul>
+                </li>
+                <li class="nav-item has-treeview <?php echo strpos($_SERVER['REQUEST_URI'], 'medrecords') !== false ? 'menu-open' : ''; ?>">
+                    <a href="#" class="nav-link <?php echo strpos($_SERVER['REQUEST_URI'], 'medrecords') !== false ? 'active' : ''; ?>">
+                        <i class="nav-icon fas fa-hospital"></i>
+                        <p>
+                            Medical Records
+                            <i class="right fas fa-angle-left"></i>
+                        </p>
+                    </a>
+                    <ul class="nav nav-treeview">
+                        <li class="nav-header"><?= nbs() ?>PELAYANAN</li>
+                        <li class="nav-item">
+                            <a href="<?php echo base_url('medrecords/daftar'); ?>" 
+                                class="nav-link <?= isMenuActive('medrecords/daftar') ? 'active' : '' ?>">
+                                <?= nbs(2) ?>
+                                <i class="fas fa-user-plus nav-icon"></i>
+                                <p>Pendaftaran</p>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="<?php echo base_url('medrecords/antrian'); ?>" 
+                                class="nav-link <?= isMenuActive('medrecords/antrian') ? 'active' : '' ?>">
+                                <?= nbs(2) ?>
+                                <i class="fas fa-users nav-icon"></i>
+                                <p>Antrian</p>
+
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="<?php echo base_url('medical/rawat_jalan'); ?>" 
+                                class="nav-link <?php echo strpos($_SERVER['REQUEST_URI'], 'medical/rawat_jalan') !== false ? 'active' : ''; ?>">
+                                <?= nbs(2) ?>
+                                <i class="fas fa-procedures nav-icon"></i>
+                                <p>Rawat Jalan</p>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="<?php echo base_url('medical/rawat_inap'); ?>" 
+                                class="nav-link <?php echo strpos($_SERVER['REQUEST_URI'], 'medical/rawat_inap') !== false ? 'active' : ''; ?>">
+                                <?= nbs(2) ?>
+                                <i class="fas fa-bed nav-icon"></i>
+                                <p>Rawat Inap</p>
+                            </a>
+                        </li>
+                        <li class="nav-header"><?= nbs() ?>PENUNJANG</li>
+                        <li class="nav-item">
+                            <a href="<?php echo base_url('medical/radiologi'); ?>" 
+                                class="nav-link <?php echo strpos($_SERVER['REQUEST_URI'], 'medical/radiologi') !== false ? 'active' : ''; ?>">
+                                <?= nbs(2) ?>
+                                <i class="fas fa-x-ray nav-icon"></i>
+                                <p>Radiologi</p>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="<?php echo base_url('medical/laboratorium'); ?>" 
+                                class="nav-link <?php echo strpos($_SERVER['REQUEST_URI'], 'medical/laboratorium') !== false ? 'active' : ''; ?>">
+                                <?= nbs(2) ?>
+                                <i class="fas fa-vial nav-icon"></i>
+                                <p>Laboratorium</p>
                             </a>
                         </li>
                     </ul>

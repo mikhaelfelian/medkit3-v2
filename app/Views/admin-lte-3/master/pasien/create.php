@@ -63,17 +63,15 @@
                     <?= anchor('pasien', '<i class="fas fa-times"></i>', ['class' => 'btn btn-tool rounded-0']) ?>
                 </div>
             </div>
-            <?= csrf_field() ?>
-
             <div class="card-body">
                 <div class="form-group">
                     <?= form_label('Nomor RM <span class="text-danger">*</span>', 'no_rm') ?>
                     <?= form_input([
-                        'type' => 'text',
-                        'class' => 'form-control rounded-0',
-                        'id' => 'no_rm',
-                        'name' => 'no_rm',
-                        'value' => $pasien,
+                        'type'     => 'text',
+                        'class'    => 'form-control rounded-0',
+                        'id'       => 'no_rm',
+                        'name'     => 'no_rm',
+                        'value'    => $pasien,
                         'readonly' => true,
                         'required' => true
                     ]) ?>
@@ -82,13 +80,13 @@
                 <div class="form-group">
                     <?= form_label('NIK', 'nik') ?>
                     <?= form_input([
-                        'type' => 'text',
-                        'class' => 'form-control rounded-0 ' . (session('validation_errors.nik') ? 'is-invalid' : ''),
-                        'id' => 'nik',
-                        'name' => 'nik',
-                        'maxlength' => 16,
+                        'type'        => 'text',
+                        'class'       => 'form-control rounded-0 ' . (session('validation_errors.nik') ? 'is-invalid' : ''),
+                        'id'          => 'nik',
+                        'name'        => 'nik',
+                        'maxlength'   => 16,
                         'placeholder' => 'Masukkan NIK',
-                        'value' => old('nik')
+                        'value'       => old('nik')
                     ]) ?>
                     <?php if (session('validation_errors.nik')): ?>
                         <div class="invalid-feedback">
@@ -118,11 +116,11 @@
                         <div class="form-group">
                             <?= form_label('Nama Lengkap <span class="text-danger">*</span>', 'nama') ?>
                             <?= form_input([
-                                'type' => 'text',
-                                'class' => 'form-control rounded-0 ' . (session('validation_errors.nama') ? 'is-invalid' : ''),
-                                'id' => 'nama',
-                                'name' => 'nama',
-                                'value' => old('nama'),
+                                'type'        => 'text',
+                                'class'       => 'form-control rounded-0 ' . (session('validation_errors.nama') ? 'is-invalid' : ''),
+                                'id'          => 'nama',
+                                'name'        => 'nama',
+                                'value'       => old('nama'),
                                 'placeholder' => 'Masukkan nama lengkap'
                             ]) ?>
                             <?php if (session('validation_errors.nama')): ?>
@@ -154,11 +152,11 @@
                         <div class="form-group">
                             <?= form_label('Tempat Lahir <span class="text-danger">*</span>', 'tmp_lahir') ?>
                             <?= form_input([
-                                'type' => 'text',
-                                'class' => 'form-control rounded-0 ' . (session('validation_errors.tmp_lahir') ? 'is-invalid' : ''),
-                                'id' => 'tmp_lahir',
-                                'name' => 'tmp_lahir',
-                                'value' => old('tmp_lahir'),
+                                'type'        => 'text',
+                                'class'       => 'form-control rounded-0 ' . (session('validation_errors.tmp_lahir') ? 'is-invalid' : ''),
+                                'id'          => 'tmp_lahir',
+                                'name'        => 'tmp_lahir',
+                                'value'       => old('tmp_lahir'),
                                 'placeholder' => 'Masukkan tempat lahir'
                             ]) ?>
                             <?php if (session('validation_errors.tmp_lahir')): ?>
@@ -172,12 +170,12 @@
                         <div class="form-group">
                             <?= form_label('Tanggal Lahir <span class="text-danger">*</span>', 'tgl_lahir') ?>
                             <?= form_input([
-                                'type' => 'date',
-                                'class' => 'form-control rounded-0 ' . (session('validation_errors.tgl_lahir') ? 'is-invalid' : ''),
-                                'id' => 'tgl_lahir',
-                                'name' => 'tgl_lahir',
-                                'value' => old('tgl_lahir'),
-                                'placeholder' => 'yyyy-mm-dd'
+                                'type'        => 'date',
+                                'class'       => 'form-control rounded-0 ' . (session('validation_errors.tgl_lahir') ? 'is-invalid' : ''),
+                                'id'          => 'tgl_lahir',
+                                'name'        => 'tgl_lahir',
+                                'value'       => '08/17/1945',
+                                // 'placeholder' => 'yyyy-mm-dd'
                             ]) ?>
                             <?php if (session('validation_errors.tgl_lahir')): ?>
                                 <div class="invalid-feedback">
@@ -192,11 +190,10 @@
                         <div class="form-group">
                             <?= form_label('Alamat <span class="text-danger">*</span>', 'alamat') ?>
                             <?= form_textarea([
-                                'class' => 'form-control rounded-0 ' . (session('validation_errors.alamat') ? 'is-invalid' : ''),
-                                'id' => 'alamat',
-                                'name' => 'alamat',
-                                'rows' => 3,
-                                'value' => old('alamat'),
+                                'name'        => 'alamat',
+                                'class'       => 'form-control rounded-0 ' . (session('validation_errors.alamat') ? 'is-invalid' : ''),
+                                'rows'        => 3,
+                                'value'       => old('alamat'),
                                 'placeholder' => 'Masukkan alamat lengkap'
                             ]) ?>
                             <?php if (session('validation_errors.alamat')): ?>
@@ -290,10 +287,10 @@
                         <div class="form-group">
                             <?= form_label('No HP', 'no_hp') ?>
                             <?= form_input([
-                                'type' => 'text',
-                                'class' => 'form-control rounded-0',
-                                'id' => 'no_hp',
-                                'name' => 'no_hp',
+                                'type'        => 'text',
+                                'class'       => 'form-control rounded-0',
+                                'id'          => 'no_hp',
+                                'name'        => 'no_hp',
                                 'placeholder' => 'Masukkan nomor HP'
                             ]) ?>
                         </div>
@@ -302,10 +299,10 @@
                         <div class="form-group">
                             <?= form_label('Pekerjaan', 'pekerjaan') ?>
                             <?= form_input([
-                                'type' => 'text',
-                                'class' => 'form-control rounded-0',
-                                'id' => 'pekerjaan',
-                                'name' => 'pekerjaan',
+                                'type'        => 'text',
+                                'class'       => 'form-control rounded-0',
+                                'id'          => 'pekerjaan',
+                                'name'        => 'pekerjaan',
                                 'placeholder' => 'Masukkan pekerjaan'
                             ]) ?>
                         </div>

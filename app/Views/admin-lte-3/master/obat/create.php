@@ -35,6 +35,19 @@
                 </div>
 
                 <div class="form-group">
+                    <label for="jenis_obat">Jenis Obat <span class="text-danger">*</span></label>
+                    <select name="jenis" id="jenis" class="form-control select2 rounded-0 <?= validation_show_error('id_kategori_obat') ? 'is-invalid' : '' ?>">
+                        <option value="">Pilih Jenis Obat</option>
+                        <?php foreach ($jenis as $jenis): ?>
+                            <option value="<?= $jenis->id ?>" <?= old('jenis') == $jenis->id ? 'selected' : '' ?>><?= $jenis->jenis ?></option>
+                        <?php endforeach; ?>
+                    </select>
+                    <div class="invalid-feedback">
+                        <?= validation_show_error('jenis') ?>
+                    </div>
+                </div>
+
+                <div class="form-group">
                     <label>Nama Obat <span class="text-danger">*</span></label>
                     <?= form_input([
                         'type' => 'text',

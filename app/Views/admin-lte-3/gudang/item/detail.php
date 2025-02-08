@@ -61,7 +61,7 @@
                                     <label>Jumlah</label>
                                     <?= form_input([
                                         'class' => 'form-control rounded-0',
-                                        'value' => ($totalStock ?? 0),
+                                        'value' => ($itemStockModel->getTotalStockByItem($item->id) ?? 0),
                                         'readonly' => true
                                     ]) ?>
                                 </div>

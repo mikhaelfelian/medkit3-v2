@@ -69,6 +69,15 @@ if (!function_exists('tgl_indo8')) {
     }
 }
 
+if (!function_exists('tgl_indo9')) {
+    function tgl_indo9($date)
+    {
+        if (empty($date) || $date == '0000-00-00 00:00:00') return '';
+        return date('m/d/Y', strtotime($date));
+    }
+}
+
+
 if (!function_exists('tgl_indo_sys')) {
     function tgl_indo_sys($date)
     {
