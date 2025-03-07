@@ -113,7 +113,7 @@ class MedDaftar extends BaseController
         // Validation rules
         $rules = [
             'nik' => [
-                'rules' => 'required|min_length[16]|max_length[16]|numeric',
+                'rules' => 'required',
                 'errors' => [
                     'required' => 'NIK harus diisi',
                     'min_length' => 'NIK harus 16 digit',
@@ -164,16 +164,16 @@ class MedDaftar extends BaseController
                     'is_not_unique' => 'Poli tidak ditemukan'
                 ]
             ],
-            'id_penjamin' => [
-                'rules' => 'required|numeric|is_not_unique[tbl_m_penjamin.id]',
+            'tipe_bayar' => [
+                'rules' => 'required',
                 'errors' => [
                     'required' => 'Penjamin harus dipilih',
                     'numeric' => 'Penjamin tidak valid',
                     'is_not_unique' => 'Penjamin tidak ditemukan'
                 ]
             ],
-            'tipe' => [
-                'rules' => 'required|in_list[1,2]',
+            'tipe_rawat' => [
+                'rules' => 'required',
                 'errors' => [
                     'required' => 'Tipe harus dipilih',
                     'in_list' => 'Tipe tidak valid'
@@ -208,8 +208,8 @@ class MedDaftar extends BaseController
         }
 
         try {
-            // Start transaction
-            $this->medDaftarModel->db->transStart();
+            // // Start transaction
+            // $this->medDaftarModel->db->transStart();
             
             // Get current date in Y-m-d format
             $today = date('Y-m-d');
@@ -281,7 +281,6 @@ class MedDaftar extends BaseController
                 $filePath = 'uploads/pendaftaran/' . $prefix_foto . $kode . '.png';
                 $data['file_base64'] = $filePath;
             }
-
 
             // Process KTP photo
             if ($foto_ktp = $this->request->getPost('foto_ktp')) {

@@ -21,12 +21,10 @@
                     <tr>
                         <th></th>
                         <th>No.</th>
-                        <th>Tgl</th>
-                        <th>Antrian</th>
+                        <th>ID</th>
                         <th>Pasien</th>
-                        <th>Dokter</th>
-                        <th>Poli</th>
-                        <th>Status</th>
+                        <th>L / P</th>
+                        <th>Tgl Lahir</th>
                         <th>#</th>
                     </tr>
                 </thead>
@@ -38,57 +36,32 @@
                             ?>
                             <tr>
                                 <td></td>
-                                <td class="text-center"><?php echo $no++ ?>.</td>
+                                <td class="text-center"><?php echo $no ?>.</td>
                                 <td>
-                                    <span class="mailbox-read-time float-left"><?php echo tgl_indo8($med->tgl_masuk) ?></span>
+                                    <?php echo anchor('medrecords/trans/detail/' . $med->id, '#' . $med->no_rm) ?><br />
+                                    <span class="mailbox-read-time float-left"><?php echo tgl_indo8($med->tgl_masuk) ?></span><br />
+                                    <small><b><?= tipeRawat($med->tipe) ?></b></small>
                                 </td>
-                                <td><?php echo format_nomor(3, $med->no_urut) ?></td>
                                 <td>
                                     <b><?php echo $med->pasien ?></b><br />
-                                    <small><?php echo strtoupper($med->pasien_alamat) ?></small>
+                                    <small><?php echo strtoupper($med->pasien_alamat) ?></small><br/>                                    
+                                    <small><b><?php echo $med->poli ?></b></small><br/>
+                                    <small><i><?php echo $med->dokter ?></i></small>
                                 </td>
-                                <td><?php echo $med->dokter ?></td>
-                                <td><?php echo $med->poli ?></td>
-                                <td>
-                                    <?php
-                                    switch ($med->status) {
-                                        case '1':
-                                            echo '<span class="badge badge-info">Anamnesa</span>';
-                                            break;
-                                        case '2':
-                                            echo '<span class="badge badge-primary">Tindakan</span>';
-                                            break;
-                                        case '3':
-                                            echo '<span class="badge badge-warning">Obat</span>';
-                                            break;
-                                        case '4':
-                                            echo '<span class="badge badge-success">Laborat</span>';
-                                            break;
-                                        case '5':
-                                            echo '<span class="badge badge-danger">Dokter</span>';
-                                            break;
-                                        case '6':
-                                            echo '<span class="badge badge-secondary">Pembayaran</span>';
-                                            break;
-                                        case '7':
-                                            echo '<span class="badge badge-dark">Finish</span>';
-                                            break;
-                                        default:
-                                            echo '<span class="badge badge-light">Pending</span>';
-                                    }
-                                    ?>
-                                </td>
+                                <td><?php echo jns_klm($med->jns_klm) ?></td>
+                                <td><?php echo tgl_indo3($med->tgl_lahir) ?></td>
                                 <td style="width: 150px;">
                                     <?= anchor(
-                                        base_url('medrecords/trans/detail/' . $med->id),
-                                        '<i class="fa fa-eye"></i> Detail »',
+                                        base_url('medrecords/aksi/' . $med->id),
+                                        '<i class="fas fa-folder"></i> Aksi &raquo;',
                                         [
-                                            'class' => 'btn btn-info btn-flat btn-xs',
+                                            'class' => 'btn btn-primary btn-sm btn-flat',
                                             'style' => 'width: 80px;'
                                         ]
                                     ) ?>
                                 </td>
                             </tr>
+                            <?php $no++ ?>
                         <?php endforeach; ?>
                     <?php else: ?>
                         <tr>
@@ -103,4 +76,4 @@
         <?= $pager->links('default', 'adminlte_pagination') ?>
     </div>
 </div>
-<?= $this->endSection() ?> 
+<?= $this->endSection() ?>

@@ -136,6 +136,39 @@ if (!function_exists('usia_lkp')) {
     }
 }
 
+if (!function_exists('usia')) {
+    /**
+     * Calculate age in years from date of birth
+     * Format output: xx Tahun
+     * 
+     * @param string $tgl_lahir Date of birth in any format that strtotime understands
+     * @return string Formatted age in years
+     */
+    function usia($tgl_lahir)
+    {
+        if (empty($tgl_lahir) || $tgl_lahir == '0000-00-00') {
+            return '';
+        }
+
+        try {
+            // Convert input date to DateTime
+            $birthDate = new DateTime($tgl_lahir);
+            $today = new DateTime('today');
+
+            // Get the difference in years
+            $age = $today->diff($birthDate)->y;
+
+            // Return formatted age
+            return $age . ' Tahun';
+
+        } catch (Exception $e) {
+            log_message('error', '[usia] ' . $e->getMessage());
+            return ''; // Return empty string if there's an error
+        }
+    }
+}
+
+
 if (!function_exists('format_tanggal_waktu')) {
     /**
      * Format date and time in Indonesian format

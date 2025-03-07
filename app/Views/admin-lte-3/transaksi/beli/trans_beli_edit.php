@@ -254,8 +254,9 @@
                 <h3 class="card-title">Edit Transaksi Pembelian</h3>
                 <span class="badge badge-warning float-right">Draft</span>
             </div>
-            <div class="card-body table-responsive p-0">
-                <table class="table table-hover text-nowrap">
+            <div class="card-body">
+                <div class="table-responsive">
+                <table class="table table-striped">
                     <thead>
                         <tr>
                             <th width="5%">No</th>
@@ -322,6 +323,7 @@
                         </tr>
                     </tfoot>
                 </table>
+                </div>
             </div>
             <div class="card-footer">
                 <a href="<?= base_url('transaksi/beli/proses/' . $transaksi->id) ?>" 

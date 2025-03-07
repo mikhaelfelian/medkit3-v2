@@ -50,4 +50,11 @@ class IcdModel extends Model
         $newNumber = $lastNumber + 1;
         return $prefix . str_pad($newNumber, 4, '0', STR_PAD_LEFT);
     }
+
+    public function getIcdList()
+    {
+        return $this->select('id, kode, icd')
+                    ->orderBy('kode', 'ASC')
+                    ->findAll();
+    }
 } 

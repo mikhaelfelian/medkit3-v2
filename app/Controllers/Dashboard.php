@@ -7,9 +7,16 @@
  */
 
 namespace App\Controllers;
+use App\Models\MedTransModel;
 
 class Dashboard extends BaseController
 {
+    protected $medTransModel;
+
+    public function __construct()
+    {
+        $this->medTransModel = new MedTransModel();
+    }
     public function index()
     {
         // Check if user is logged in
@@ -26,5 +33,11 @@ class Dashboard extends BaseController
         ];
 
         return view($this->theme->getThemePath() . '/dashboard', $data);
+    }
+
+    public function test($id)
+    {
+        $medrec = $this->medTransModel->getTransById($id);
+        pre($medrec);
     }
 } 

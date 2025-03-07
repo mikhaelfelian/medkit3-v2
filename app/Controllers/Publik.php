@@ -12,14 +12,20 @@
 namespace App\Controllers;
 
 use App\Models\ItemModel;
+use App\Models\MedTransDetModel;
+use App\Models\MedTransIcdModel;
 
 class Publik extends BaseController
 {
     protected $itemModel;
+    protected $medTransDetModel;
 
     public function __construct()
     {
+        parent::__construct();
         $this->itemModel = new ItemModel();
+        $this->medTransDetModel = new \App\Models\MedTransDetModel();
+        $this->medTransIcdModel = new \App\Models\MedTransIcdModel();
     }
 
     /**
@@ -173,4 +179,130 @@ class Publik extends BaseController
             exit();
         }
     }
+
+    public function getTindakan($id_medrecs)
+    {
+        // Disable output buffering
+        while (ob_get_level() > 0) {
+            ob_end_clean();
+        }
+
+        // Set proper headers
+        header('Content-Type: application/json');
+        header('Cache-Control: no-store, no-cache, must-revalidate');
+
+        try {
+            // Get data without session interference
+            $items = $this->db->table('tbl_trans_medrecs_det')
+                ->select('
+                    tbl_trans_medrecs_det.*,
+                    tbl_m_item.kode,
+                    tbl_m_item.item,
+                    COALESCE(tbl_m_satuan.satuanBesar, "1") as satuan
+                ')
+                ->join('tbl_m_item', 'tbl_m_item.id = tbl_trans_medrecs_det.id_item')
+                ->join('tbl_m_satuan', 'tbl_m_satuan.id = tbl_m_item.id_satuan', 'left')
+                ->where('tbl_trans_medrecs_det.id_medrecs', $id_medrecs)
+                ->where('tbl_trans_medrecs_det.status', 3)
+                ->orderBy('tbl_trans_medrecs_det.tgl_simpan', 'DESC')
+                ->get()
+                ->getResult();
+
+            // Send response and exit immediately
+            echo json_encode([
+                'success' => true,
+                'data' => $items
+            ]);
+            exit();
+
+        } catch (\Exception $e) {
+            log_message('error', '[Get Tindakan] Error: ' . $e->getMessage());
+            
+            echo json_encode([
+                'success' => false,
+                'message' => 'Gagal memuat data: ' . $e->getMessage()
+            ]);
+            exit();
+        }
+    }
+
+    public function deleteTindakan($id = null)
+    {
+        // Disable output buffering
+        while (ob_get_level() > 0) {
+            ob_end_clean();
+        }
+
+        try {
+            if (!$id) {
+                throw new \Exception('ID tidak valid');
+            }
+
+            $deleted = $this->medTransDetModel->delete($id);
+            
+            if (!$deleted) {
+                throw new \Exception('Gagal menghapus data');
+            }
+
+            // Send response
+            header('Content-Type: application/json');
+            echo json_encode([
+                'success' => true,
+                'message' => 'Data berhasil dihapus'
+            ]);
+            exit();
+
+        } catch (\Exception $e) {
+            log_message('error', '[deleteTindakan] Error: ' . $e->getMessage());
+            
+            header('HTTP/1.1 500 Internal Server Error');
+            header('Content-Type: application/json');
+            echo json_encode([
+                'success' => false,
+                'message' => 'Gagal menghapus data: ' . $e->getMessage()
+            ]);
+            exit();
+        }
+    }
+
+public function getIcd($id = null)
+{
+    try {
+        if (!$id) {
+            header('HTTP/1.1 500 Internal Server Error');
+            header('Content-Type: application/json');
+            echo json_encode([
+                'success' => false,
+                'message' => 'Gagal memuat data'
+            ]);
+        }
+
+        // Fetch data from MedTransIcdModel
+        $icdData = $this->medTransIcdModel->asObject()->where('id_medrecs', $id)->findAll();
+
+        if (!$icdData) {
+            throw new \Exception('Data tidak ditemukan');
+        }
+
+        // Send response
+        header('Content-Type: application/json');
+        echo json_encode([
+            'success' => true,
+            'data' => $icdData
+        ]);
+        exit();
+
+    } catch (\Exception $e) {
+        log_message('error', '[getIcd] Error: ' . $e->getMessage());
+
+        header('HTTP/1.1 500 Internal Server Error');
+        header('Content-Type: application/json');
+        echo json_encode([
+            'success' => false,
+            'message' => 'Gagal memuat data: ' . $e->getMessage()
+        ]);
+        exit();
+    }
+}
+
 } 

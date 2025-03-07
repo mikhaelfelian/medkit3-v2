@@ -430,6 +430,34 @@ class TransBeliPO extends BaseController
     }
 
     /**
+     * Delete item from PO cart permanently
+     * 
+     * @param int $id ID of PO detail item to delete
+     * @return \CodeIgniter\HTTP\RedirectResponse
+     */
+    public function cart_delete($id)
+    {
+        try {
+            // Get the PO ID from query string
+            $po_id = $this->request->getGet('id');
+            
+            if (!$po_id) {
+                throw new \Exception('ID PO tidak ditemukan');
+            }
+
+            // Delete the item permanently
+            $this->transBeliPODetModel->delete($id);
+
+            return redirect()->to("transaksi/po/edit/$po_id")
+                           ->with('success', 'Item berhasil dihapus !!');
+                           
+        } catch (\Exception $e) {
+            return redirect()->back()
+                           ->with('error', 'Gagal menghapus item: ' . $e->getMessage());
+        }
+    }
+
+    /**
      * Delete PO
      */
     public function delete($id = null)
@@ -476,60 +504,32 @@ class TransBeliPO extends BaseController
     }
 
     /**
-     * Process/approve purchase order
+     * Process PO and update its status
      * 
-     * @param int $id PO ID
+     * @param int $id PO ID to process
      * @return \CodeIgniter\HTTP\RedirectResponse
      */
     public function proses($id)
     {
         try {
-            // Start transaction
-            $this->db->transStart();
-
             // Get PO data
             $po = $this->transBeliPOModel->find($id);
+            
             if (!$po) {
-                throw new \RuntimeException('Data PO tidak ditemukan');
+                throw new \Exception('PO tidak ditemukan');
             }
 
-            // Verify PO is in draft status
-            if ($po->status != '0') {
-                throw new \RuntimeException('Hanya PO dengan status draft yang dapat diproses');
-            }
-
-            // Get PO details to verify there are items
-            $poDetails = $this->transBeliPODetModel->where('id_pembelian', $id)->findAll();
-            if (empty($poDetails)) {
-                throw new \RuntimeException('PO tidak memiliki item');
-            }
-
-            // Update PO status to approved (1)
-            if (!$this->transBeliPOModel->update($id, [
-                'status' => '1',
-                'updated_at' => date('Y-m-d H:i:s')
-            ])) {
-                throw new \RuntimeException('Gagal memperbarui status PO');
-            }
-
-            // Commit transaction
-            $this->db->transComplete();
-
-            if ($this->db->transStatus() === false) {
-                throw new \RuntimeException('Gagal memproses PO');
-            }
+            // Update PO status to processed (2)
+            $this->transBeliPOModel->update($id, [
+                'status' => '4'  // 2 = Processed
+            ]);
 
             return redirect()->to('transaksi/po')
-                            ->with('success', 'PO berhasil diproses');
-
+                           ->with('success', 'PO berhasil diproses');
+                           
         } catch (\Exception $e) {
-            // Rollback transaction on error
-            $this->db->transRollback();
-            
-            log_message('error', '[TransBeliPO::proses] ' . $e->getMessage());
-            
             return redirect()->back()
-                            ->with('error', $e->getMessage());
+                           ->with('error', 'Gagal memproses PO: ' . $e->getMessage());
         }
     }
 
@@ -584,12 +584,12 @@ class TransBeliPO extends BaseController
             $total = 0;
             foreach ($poDetails as $detail) {
                 $detailData = [
-                    'id_faktur' => $invoiceId,
-                    'id_item' => $detail->id_item,
-                    'jml' => $detail->jml,
-                    'harga' => $detail->harga ?? 0,
-                    'subtotal' => ($detail->jml * ($detail->harga ?? 0)),
-                    'created_at' => date('Y-m-d H:i:s')
+                    'id_faktur'     => $invoiceId,
+                    'id_item'       => $detail->id_item,
+                    'jml'           => $detail->jml,
+                    'harga'         => $detail->harga ?? 0,
+                    'subtotal'      => ($detail->jml * ($detail->harga ?? 0)),
+                    'created_at'    => date('Y-m-d H:i:s')
                 ];
                 
                 $this->db->table('tbl_trans_beli_faktur_det')->insert($detailData);
@@ -654,5 +654,108 @@ class TransBeliPO extends BaseController
         $newNumber = $lastNumber + 1;
         
         return $prefix . str_pad($newNumber, 4, '0', STR_PAD_LEFT);
+    }
+
+    /**
+     * Generate PDF for Purchase Order
+     * 
+     * @param int $id PO ID to print
+     * @return mixed
+     */
+    public function print($id)
+    {
+        try {
+            // Get PO data with relations
+            $po = $this->transBeliPOModel->getWithRelations(['id' => $id])->first();
+            if (!$po) {
+                throw new \Exception('PO tidak ditemukan');
+            }
+
+            // Get PO details
+            $po_details = $this->transBeliPODetModel->select('
+                    tbl_trans_beli_po_det.*,
+                    tbl_m_item.kode as kode,
+                    tbl_m_item.item as deskripsi
+                ')
+                ->join('tbl_m_item', 'tbl_m_item.id = tbl_trans_beli_po_det.id_item')
+                ->where('id_pembelian', $id)
+                ->findAll();
+
+            // Initialize PDF
+            $pdf = new FPDF('P', 'mm', 'A4');
+            $pdf->AddPage();
+            
+            // Set margins
+            $pdf->SetMargins(20, 20, 20);
+            
+            // Header
+            $pdf->SetFont('Arial', 'B', 12);
+            $pdf->Cell(120, 6, 'KLINIK UTAMA dan LABORATORIUM "ESENSIA"', 0, 0, 'L');
+            $pdf->Cell(50, 6, 'PURCHASE ORDER', 0, 1, 'R');
+            
+            $pdf->SetFont('Arial', '', 10);
+            $pdf->Cell(170, 5, 'Perum Mutiara Pandanaran Blok D11', 0, 1, 'L');
+            $pdf->Line(20, 33, 190, 33);
+            $pdf->Ln(5);
+
+            // APA & SIPA
+            $pdf->Cell(15, 5, 'APA', 0, 0);
+            $pdf->Cell(5, 5, ':', 0, 0);
+            $pdf->Cell(170, 5, 'APT. UNGSARI RIZKI EKA PURWANTO, M.SC', 0, 1);
+            
+            $pdf->Cell(15, 5, 'SIPA', 0, 0);
+            $pdf->Cell(5, 5, ':', 0, 0);
+            $pdf->Cell(170, 5, '449.1/61/DPM-PTSP/SIPA/II/2022', 0, 1);
+            $pdf->Ln(5);
+
+            // Supplier Info & PO Details
+            $pdf->Cell(20, 5, 'Kepada Yth.', 0, 1);
+            $pdf->Cell(100, 5, $po->supplier_name, 0, 0);
+            $pdf->Cell(25, 5, 'No. PO', 0, 0);
+            $pdf->Cell(5, 5, ':', 0, 0);
+            $pdf->Cell(40, 5, $po->no_nota, 0, 1);
+            
+            $pdf->Cell(100, 5, $po->supplier_address, 0, 0);
+            $pdf->Cell(25, 5, 'Tanggal', 0, 0);
+            $pdf->Cell(5, 5, ':', 0, 0);
+            $pdf->Cell(40, 5, '2025-02-19', 0, 1);
+            
+            $pdf->Cell(100, 5, '', 0, 0);
+            $pdf->Cell(25, 5, 'Oleh', 0, 0);
+            $pdf->Cell(5, 5, ':', 0, 0);
+            $pdf->Cell(40, 5, '', 0, 1);
+            $pdf->Ln(5);
+
+            // Table Header
+            $pdf->SetFont('Arial', 'B', 10);
+            $pdf->Cell(35, 7, 'KODE', 1, 0, 'C');
+            $pdf->Cell(85, 7, 'DESKRIPSI', 1, 0, 'C');
+            $pdf->Cell(20, 7, 'JML', 1, 0, 'C');
+            $pdf->Cell(30, 7, 'KETERANGAN', 1, 1, 'C');
+
+            // Table Content
+            $pdf->SetFont('Arial', '', 10);
+            foreach ($po_details as $item) {
+                $pdf->Cell(35, 7, $item->kode, 1, 0, 'L');
+                $pdf->Cell(85, 7, $item->deskripsi, 1, 0, 'L');
+                $pdf->Cell(20, 7, $item->jml, 1, 0, 'C');
+                $pdf->Cell(30, 7, $item->keterangan, 1, 1, 'L');
+            }
+
+            // Footer
+            $pdf->Ln(20);
+            $pdf->Cell(85, 5, 'Pemesan', 0, 0, 'C');
+            $pdf->Cell(85, 5, 'Semarang, ' . date('d F Y', strtotime($po->tgl_masuk)), 0, 1, 'C');
+            
+            $pdf->Ln(20);
+            $pdf->Cell(85, 5, 'APT. UNGSARI RIZKI EKA PURWANTO, M.SC', 0, 1, 'C');
+
+            // Output PDF
+            $pdf->Output('PO_' . $po->no_nota . '.pdf', 'I');
+            exit;
+        } catch (\Exception $e) {
+            return redirect()->back()
+                           ->with('error', 'Gagal mencetak PO: ' . $e->getMessage());
+        }
     }
 } 

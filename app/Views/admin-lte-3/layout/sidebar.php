@@ -94,7 +94,7 @@
                                 class="nav-link <?= isMenuActive('master/tindakan') ? 'active' : '' ?>">
                                 <?= nbs(3) ?>
                                 <i class="fas fa-procedures nav-icon"></i>
-                                <p>Data Tindakan</p>
+                                <p>Data Jasa & Tindakan</p>
                             </a>
                         </li>
                         <li class="nav-item">
@@ -327,16 +327,16 @@
                             </a>
                         </li>
                         <li class="nav-item">
-                            <a href="<?php echo base_url('medical/rawat_jalan'); ?>" 
-                                class="nav-link <?php echo strpos($_SERVER['REQUEST_URI'], 'medical/rawat_jalan') !== false ? 'active' : ''; ?>">
+                            <a href="<?php echo base_url('medrecords/rawat_jalan'); ?>" 
+                                class="nav-link <?php echo strpos($_SERVER['REQUEST_URI'], 'medrecords/rawat_jalan') !== false ? 'active' : ''; ?>">
                                 <?= nbs(2) ?>
                                 <i class="fas fa-procedures nav-icon"></i>
                                 <p>Rawat Jalan</p>
                             </a>
                         </li>
                         <li class="nav-item">
-                            <a href="<?php echo base_url('medical/rawat_inap'); ?>" 
-                                class="nav-link <?php echo strpos($_SERVER['REQUEST_URI'], 'medical/rawat_inap') !== false ? 'active' : ''; ?>">
+                            <a href="<?php echo base_url('medrecords/rawat_inap'); ?>" 
+                                class="nav-link <?php echo strpos($_SERVER['REQUEST_URI'], 'medrecords/rawat_inap') !== false ? 'active' : ''; ?>">
                                 <?= nbs(2) ?>
                                 <i class="fas fa-bed nav-icon"></i>
                                 <p>Rawat Inap</p>
@@ -344,7 +344,7 @@
                         </li>
                         <li class="nav-header"><?= nbs() ?>PENUNJANG</li>
                         <li class="nav-item">
-                            <a href="<?php echo base_url('medical/radiologi'); ?>" 
+                            <a href="<?php echo base_url('medrecords/radiologi'); ?>" 
                                 class="nav-link <?php echo strpos($_SERVER['REQUEST_URI'], 'medical/radiologi') !== false ? 'active' : ''; ?>">
                                 <?= nbs(2) ?>
                                 <i class="fas fa-x-ray nav-icon"></i>
@@ -352,11 +352,40 @@
                             </a>
                         </li>
                         <li class="nav-item">
-                            <a href="<?php echo base_url('medical/laboratorium'); ?>" 
+                            <a href="<?php echo base_url('medrecords/laboratorium'); ?>" 
                                 class="nav-link <?php echo strpos($_SERVER['REQUEST_URI'], 'medical/laboratorium') !== false ? 'active' : ''; ?>">
                                 <?= nbs(2) ?>
                                 <i class="fas fa-vial nav-icon"></i>
                                 <p>Laboratorium</p>
+                            </a>
+                        </li>
+                    </ul>
+                </li>
+
+                <!-- SDM -->
+                <li class="nav-item has-treeview <?= isMenuActive('sdm') ? 'menu-open' : '' ?>">
+                    <a href="#" class="nav-link <?= isMenuActive('sdm') ? 'active' : '' ?>">
+                        <i class="nav-icon fas fa-users"></i>
+                        <p>
+                            SDM
+                            <i class="right fas fa-angle-left"></i>
+                        </p>
+                    </a>
+                    <ul class="nav nav-treeview">
+                        <li class="nav-item">
+                            <a href="<?= base_url('sdm/kepegawaian') ?>" 
+                                class="nav-link <?= isMenuActive('sdm/kepegawaian') ? 'active' : '' ?>">
+                                <?= nbs(2) ?>
+                                <i class="fas fa-user-tie nav-icon"></i>
+                                <p>Kepegawaian</p>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="<?= base_url('sdm/absensi') ?>" 
+                                class="nav-link <?= isMenuActive('sdm/absensi') ? 'active' : '' ?>">
+                                <?= nbs(2) ?>
+                                <i class="fas fa-clipboard-list nav-icon"></i>
+                                <p>Absensi</p>
                             </a>
                         </li>
                     </ul>

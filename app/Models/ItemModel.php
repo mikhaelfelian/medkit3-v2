@@ -229,7 +229,7 @@ class ItemModel extends Model
                 tbl_m_item.status_item
             ')
             ->where('tbl_m_item.status_item', 2)
-            ->where('tbl_m_item.status_hps', '0');
+            ->where('tbl_m_item.status_hps', '0')->get()->getResult();
     }
 
     public function getTindakanTrash()

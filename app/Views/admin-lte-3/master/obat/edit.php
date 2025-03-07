@@ -43,7 +43,8 @@
 
                 <div class="form-group">
                     <label for="jenis_obat">Jenis Obat</label>
-                    <select name="jenis" id="jenis" class="form-control select2 rounded-0 <?= validation_show_error('id_kategori_obat') ? 'is-invalid' : '' ?>">
+                    <select name="jenis" id="jenis"
+                        class="form-control select2 rounded-0 <?= validation_show_error('id_kategori_obat') ? 'is-invalid' : '' ?>">
                         <option value="">Pilih Jenis Obat</option>
                         <?php foreach ($jenis as $jenis): ?>
                             <option value="<?= $jenis->id ?>"><?= $jenis->jenis ?></option>
@@ -148,6 +149,26 @@
                         ]) ?>
                         <div class="invalid-feedback">
                             <?= validation_show_error('harga_jual') ?>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label>Harga Eceran Tertinggi <span class="text-danger">*</span></label>
+                    <div class="input-group">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text rounded-0">Rp</span>
+                        </div>
+                        <?= form_input([
+                            'type' => 'text',
+                            'name' => 'harga_het',
+                            'id' => 'harga',
+                            'class' => 'form-control rounded-0 autonumeric ' . (validation_show_error('harga_jual') ? 'is-invalid' : ''),
+                            'placeholder' => 'Masukkan harga het',
+                            'value' => old('harga_het', $obat->harga_het)
+                        ]) ?>
+                        <div class="invalid-feedback">
+                            <?= validation_show_error('harga_het') ?>
                         </div>
                     </div>
                 </div>

@@ -228,11 +228,11 @@ class TransBeli extends BaseController
         // Get transaction items
         $transaksi->items = $this->transBeliDetModel->select('
                 tbl_trans_beli_det.*,
-                m_item.kode as item_kode,
-                m_satuan.nama as satuan_name
+                tbl_m_item.kode as item_kode,
+                tbl_m_satuan.satuanBesar as satuan_name
             ')
-            ->join('tbl_m_item m_item', 'm_item.id = tbl_trans_beli_det.id_item', 'left')
-            ->join('tbl_m_satuan m_satuan', 'm_satuan.id = tbl_trans_beli_det.id_satuan', 'left')
+            ->join('tbl_m_item', 'tbl_m_item.id = tbl_trans_beli_det.id_item', 'left')
+            ->join('tbl_m_satuan', 'tbl_m_satuan.id = tbl_trans_beli_det.id_satuan', 'left')
             ->where('id_pembelian', $id)
             ->findAll();
 

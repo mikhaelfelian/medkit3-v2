@@ -39,7 +39,6 @@
                     <?= form_dropdown('tipe', [
                         '' => '- Tipe -',
                         '1' => 'Rawat Jalan',
-                        '2' => 'Rawat Inap',
                         '3' => 'Laboratorium',
                         '4' => 'Radiologi'
                     ], $daftar->tipe ?? '', ['class' => 'form-control rounded-0', 'required' => true]) ?>
@@ -60,7 +59,9 @@
                     <?= form_label('Dokter<span class="text-danger">*</span>', 'id_dokter') ?>
                     <select name="id_dokter" class="form-control rounded-0" required>
                         <option value="">- Pilih Dokter -</option>
-                        <option value="1">dr. YANUAR ARDANI, M. Kes, Sp.PD, K-Psi, FINASIM</option>
+                        <?php foreach ($dokters as $dokter): ?>
+                            <option value="<?= $dokter->id ?>"><?= esc($dokter->nama_pgl) ?></option>
+                        <?php endforeach; ?>
                     </select>
                 </div>
 
@@ -203,12 +204,6 @@
                         '5' => 'Skala 5'
                     ], '', ['class' => 'form-control rounded-0']) ?>
                 </div>
-
-                <!-- Upload Foto -->
-                <div class="form-group">
-                    <?= form_label('Upload Foto', 'upload_foto') ?>
-                    <?= form_upload(['name' => 'upload_foto', 'class' => 'form-control rounded-0']) ?>
-                </div>
             </div>
         </div>
     </div>
@@ -222,4 +217,35 @@
     </div>
     <?= form_close() ?>
 </div>
+
+<script>
+function deleteTindakan(id) {
+    if (confirm('Apakah anda yakin ingin menghapus tindakan ini?')) {
+        $.ajax({
+            url: '<?= base_url('publik/deleteTindakan') ?>/' + id,
+            type: 'POST',
+            dataType: 'json',
+            success: function(response) {
+                if (response.success) {
+                    // Remove the row
+                    $('#row-tindakan-' + id).fadeOut(function() {
+                        $(this).remove();
+                    });
+                    
+                    // Show success message
+                    toastr.success(response.message);
+                } else {
+                    toastr.error(response.message || 'Gagal menghapus data');
+                }
+            },
+            error: function(xhr, status, error) {
+                console.error('Error:', error);
+                toastr.error('Error: ' + error);
+            }
+        });
+    }
+    return false;
+}
+</script>
+
 <?= $this->endSection() ?> 

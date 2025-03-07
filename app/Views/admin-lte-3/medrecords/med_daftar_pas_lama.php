@@ -101,7 +101,7 @@
                                 <div class="form-group">
                                     <label for="id_gelar">Gelar <span class="text-danger">*</span></label>
                                     <select name="id_gelar" id="id_gelar"
-                                        class="form-control select2 rounded-0 <?= session('validation_errors.id_gelar') ? 'is-invalid' : '' ?>">
+                                        class="form-control rounded-0 <?= session('validation_errors.id_gelar') ? 'is-invalid' : '' ?>">
                                         <option value="">Pilih Gelar</option>
                                         <?php foreach ($gelars as $gelar): ?>
                                             <option value="<?= $gelar->id ?>" <?= old('id_gelar', $pasien->id_gelar ?? '') == $gelar->id ? 'selected' : '' ?>>
@@ -360,7 +360,6 @@
                             <select name="tipe_rawat" class="form-control rounded-0" required>
                                 <option value="">Pilih Tipe</option>
                                 <option value="1">Rawat Jalan</option>
-                                <option value="2">Rawat Inap</option>
                                 <option value="3">Laboratorium</option>
                                 <option value="4">Radiologi</option>
                             </select>
@@ -385,3 +384,32 @@
         </div>
     </div>
 </div>
+
+<?= $this->section('js') ?>
+<script>
+$(document).ready(function() {
+    // Handle Toastr notifications from flash data
+    <?php if (session()->getFlashdata('toastr')): ?>
+        <?php $toastr = session()->getFlashdata('toastr'); ?>
+        <?php if (!empty($toastr['message']['foto_pasien'])): ?>
+            toastr.error('<?= $toastr['message']['foto_pasien'] ?>', 'Validasi Error');
+        <?php endif; ?>
+        <?php if (!empty($toastr['message']['foto_ktp'])): ?>
+            toastr.error('<?= $toastr['message']['foto_ktp'] ?>', 'Validasi Error');
+        <?php endif; ?>
+    <?php endif; ?>
+
+    // Form submission handling
+    $('form').on('submit', function(e) {
+        if (!$('#foto_pasien').val()) {
+            e.preventDefault();
+            toastr.error('Foto pasien harus diunggah', 'Validasi Error');
+        }
+        if (!$('#foto_ktp').val()) {
+            e.preventDefault();
+            toastr.error('Foto KTP harus diunggah', 'Validasi Error');
+        }
+    });
+});
+</script>
+<?= $this->endSection() ?>

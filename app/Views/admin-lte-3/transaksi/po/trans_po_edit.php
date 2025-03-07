@@ -92,8 +92,8 @@
                     <i class="fas fa-arrow-left"></i> Kembali
                 </a>
                 <?= form_open('transaksi/po/proses/' . $po->id, ['id' => 'form-proses']) ?>
-                <button type="submit" class="btn btn-success float-right rounded-0" id="btn-proses" 
-                        onclick="return confirm('Apakah anda yakin ingin memproses PO ini?')">
+                <button type="submit" class="btn btn-success float-right rounded-0" id="btn-proses"
+                    onclick="return confirm('Apakah anda yakin ingin memproses PO ini?')">
                     <i class="fas fa-check"></i> Proses &raquo;
                 </button>
                 <?= form_close() ?>
@@ -220,7 +220,7 @@
                                     <tr>
                                         <td width="4%" class="text-center"><?= $no++ ?></td>
                                         <td width="50%" class="text-left">
-                                            <small><i><?= $detail->kode ?></i></small><?=br()?>
+                                            <small><i><?= $detail->kode ?></i></small><?= br() ?>
                                             <?= $detail->item ?>
                                         </td>
                                         <td width="10%" class="text-left">
@@ -228,9 +228,11 @@
                                         </td>
                                         <td width="20%" class="text-left"><?= $detail->keterangan_itm ?></td>
                                         <td width="5%" class="text-center">
-                                            <button type="button" class="btn btn-danger btn-sm rounded-0">
+                                            <a href="<?= base_url("transaksi/po/cart_delete/{$detail->id}?id={$po->id}") ?>"
+                                                class="btn btn-danger btn-sm rounded-0"
+                                                onclick="return confirm('Apakah anda yakin ingin menghapus item ini?')">
                                                 <i class="fas fa-trash"></i>
-                                            </button>
+                                            </a>
                                         </td>
                                     </tr>
                                 <?php endforeach; ?>
@@ -244,12 +246,14 @@
                 </div>
             </div>
             <div class="card-footer">
-                <?= form_open('transaksi/po/proses/' . $po->id, ['id' => 'form-proses']) ?>
-                <button type="submit" class="btn btn-success float-right rounded-0" id="btn-proses" 
+                <?php if (!empty($po_details)): ?>
+                    <?= form_open('transaksi/po/proses/' . $po->id, ['id' => 'form-proses']) ?>
+                    <button type="submit" class="btn btn-success float-right rounded-0" id="btn-proses"
                         onclick="return confirm('Apakah anda yakin ingin memproses PO ini?')">
-                    <i class="fas fa-check"></i> Proses &raquo;
-                </button>
-                <?= form_close() ?>
+                        <i class="fas fa-check"></i> Proses &raquo;
+                    </button>
+                    <?= form_close() ?>
+                <?php endif; ?>
             </div>
 
         </div>
@@ -301,7 +305,7 @@
                     status: 1, // Status 1 = Diproses
                     <?= csrf_token() ?>: '<?= csrf_hash() ?>'
                 },
-                success: function(response) {
+                success: function (response) {
                     if (response.success) {
                         toastr.success('PO berhasil diproses');
                         window.location.href = '<?= base_url('transaksi/po') ?>';
@@ -309,7 +313,7 @@
                         toastr.error(response.message || 'Gagal memproses PO');
                     }
                 },
-                error: function() {
+                error: function () {
                     toastr.error('Terjadi kesalahan sistem');
                 }
             });

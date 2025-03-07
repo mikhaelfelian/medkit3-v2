@@ -119,7 +119,7 @@ if (!function_exists('statusPO')) {
                 'badge' => 'secondary'
             ],
             1 => [
-                'label' => 'Disetujui',
+                'label' => 'Proses',
                 'badge' => 'primary'
             ],
             3 => [
@@ -127,7 +127,7 @@ if (!function_exists('statusPO')) {
                 'badge' => 'danger'
             ],
             4 => [
-                'label' => 'Diterima',
+                'label' => 'Disetujui',
                 'badge' => 'warning'
             ],
             5 => [
@@ -199,3 +199,20 @@ function statusHist($status)
             ];
     }
 }
+
+function tipeRawat($tipe)
+{
+    switch ($tipe) {
+        case '1':
+            return 'Rawat Jalan';
+        case '2':
+            return 'Rawat Inap';
+        case '3':
+            return 'Laboratorium';
+        case '4':
+            return 'Radiologi';
+        default:
+            return '-';
+    }
+}
+

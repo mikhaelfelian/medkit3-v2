@@ -9,7 +9,7 @@
             </div>
             
             <div class="card-body">
-            <iframe src="http://localhost/jajal/" width="100%" height="600px" frameborder="0"></iframe>
+            <iframe src="<?php echo base_url('jajal')?>" width="100%" height="600px" frameborder="0"></iframe>
             </div>
 
             <div class="card-footer">

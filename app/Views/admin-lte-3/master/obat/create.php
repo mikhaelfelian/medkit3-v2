@@ -143,6 +143,25 @@
                         </div>
                     </div>
                 </div>
+                <div class="form-group">
+                    <label>Harga Eceran Tertinggi <span class="text-danger">*</span></label>
+                    <div class="input-group">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text rounded-0">Rp</span>
+                        </div>
+                        <?= form_input([
+                            'type' => 'text',
+                            'name' => 'harga_het',
+                            'id' => 'harga',
+                            'class' => 'form-control rounded-0 autonumeric ' . (validation_show_error('harga_het') ? 'is-invalid' : ''),
+                            'placeholder' => 'Masukkan harga het',
+                            'value' => old('harga_het', 0)
+                        ]) ?>
+                        <div class="invalid-feedback">
+                            <?= validation_show_error('harga_het') ?>
+                        </div>
+                    </div>
+                </div>
 
                 <div class="form-group">
                     <label>Status Stok</label>

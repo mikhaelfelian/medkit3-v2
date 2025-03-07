@@ -38,51 +38,38 @@ class Tindakan extends BaseController
 
     public function index()
     {
-        $currentPage    = $this->request->getVar('page_tindakan') ?? 1;
-        $perPage        = 10;
-        $query          = $this->itemModel->getTindakan();
+        try {
+            $currentPage = $this->request->getVar('page') ?? 1;
+            $perPage = $this->pengaturan->pagination_limit ?? 10;
 
-        // Filter by name/code/alias
-        $item = $this->request->getVar('item');
-        if ($item) {
-            $query->groupStart()
-                ->like('tbl_m_item.item', $item)
-                ->orLike('tbl_m_item.kode', $item)
-                ->orLike('tbl_m_item.item_alias', $item)
-                ->groupEnd();
+            // Get items with pagination
+            $query = $this->itemModel
+                ->select('tbl_m_item.*, tbl_m_satuan.satuanBesar as satuan')
+                ->join('tbl_m_satuan', 'tbl_m_satuan.id = tbl_m_item.id_satuan', 'left')
+                ->where('tbl_m_item.status_hps', '0')
+                ->where('tbl_m_item.status_item', '2') // For tindakan only
+                ->orderBy('tbl_m_item.kode', 'ASC');
+
+            $data = [
+                'title'       => 'Data Tindakan',
+                'Pengaturan'  => $this->pengaturan,
+                'user'        => $this->ionAuth->user()->row(),
+                'tindakans'   => $query->paginate($perPage),
+                'pager'       => $this->itemModel->pager,
+                'currentPage' => $currentPage,
+                'perPage'     => $perPage,
+                'breadcrumbs' => '
+                    <li class="breadcrumb-item"><a href="' . base_url() . '">Beranda</a></li>
+                    <li class="breadcrumb-item">Master</li>
+                    <li class="breadcrumb-item active">Data Tindakan</li>
+                '
+            ];
+
+            return view($this->theme->getThemePath() . '/master/tindakan/index', $data);
+
+        } catch (\Exception $e) {
+            return redirect()->back()->with('error', $e->getMessage());
         }
-
-        // Filter by harga_jual
-        $hargaJual = $this->request->getVar('harga_jual');
-        if ($hargaJual) {
-            $hargaJual = format_angka_db($hargaJual);
-            $query->where('tbl_m_item.harga_jual', $hargaJual);
-        }
-
-        // Filter by status
-        $selectedStatus = $this->request->getVar('status');
-        if ($selectedStatus !== null && $selectedStatus !== '') {
-            $query->where('tbl_m_item.status', $selectedStatus);
-        }
-
-        $data = [
-            'title'         => 'Data Tindakan',
-            'Pengaturan'    => $this->pengaturan,
-            'user'          => $this->ionAuth->user()->row(),
-            'tindakan'      => $query->paginate($perPage, 'tindakan'),
-            'pager'         => $this->itemModel->pager,
-            'currentPage'   => $currentPage,
-            'perPage'       => $perPage,
-            'selectedStatus'=> $selectedStatus,
-            'trashCount'    => $this->itemModel->countDeleted(2),
-            'breadcrumbs'   => '
-                <li class="breadcrumb-item"><a href="' . base_url() . '">Beranda</a></li>
-                <li class="breadcrumb-item">Master</li>
-                <li class="breadcrumb-item active">Tindakan</li>
-            '
-        ];
-
-        return view($this->theme->getThemePath() . '/master/tindakan/index', $data);
     }
 
     public function create()

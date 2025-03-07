@@ -55,7 +55,7 @@ writable/logs/*
 !writable/logs/index.html
 
 writable/session/*
-!writable/session/index.html
+!writable/session/.gitkeep
 
 writable/uploads/*
 !writable/uploads/index.html
@@ -107,6 +107,7 @@ nb-configuration.xml
 .nb-gradle/
 public/file/pasien/*
 public/file/user/*
+app/Database/Migrations/*
 
 # Sublime Text
 *.tmlanguage.cache

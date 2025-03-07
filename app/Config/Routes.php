@@ -264,7 +264,6 @@ $routes->group('master', ['namespace' => 'App\Controllers\Master', 'filter' => '
     $routes->post('jenis/update/(:num)', 'KategoriObat::update/$1');
     $routes->get('jenis/delete/(:num)', 'KategoriObat::delete/$1');
 });
-
 /** END MASTER **/
 
 /*
@@ -278,10 +277,10 @@ $routes->group('transaksi', ['namespace' => 'App\Controllers\Transaksi', 'filter
     $routes->get('po/detail/(:num)', 'TransBeliPO::detail/$1');
     $routes->get('po/edit/(:num)', 'TransBeliPO::edit/$1');
     $routes->post('po/update/(:num)', 'TransBeliPO::update/$1');
-    $routes->get('po/print/(:num)', 'TransBeliPO::pdf_po/$1');
+    $routes->get('po/print/(:num)', 'TransBeliPO::print/$1');
     $routes->post('po/cart_add/(:num)', 'TransBeliPO::cart_add/$1');
-    $routes->post('po/update-status/(:num)', 'TransBeliPO::updateStatus/$1');
-    $routes->post('po/proses/(:num)', 'TransBeliPO::proses/$1');
+    $routes->get('po/cart_delete/(:num)', 'TransBeliPO::cart_delete/$1');
+    $routes->get('po/proses/(:num)', 'TransBeliPO::proses/$1');
 });
 
 // Purchase Transaction Routes
@@ -313,15 +312,29 @@ $routes->group('stock', ['namespace' => 'App\Controllers\Gudang', 'filter' => 'a
 * MEDICAL RECORDS ROUTES
 */
 // Medical Records Routes
-$routes->group('medrecords', ['namespace' => 'App\Controllers\Medrecords'], function ($routes) {
-    $routes->get('daftar', 'MedDaftar::create');
-    $routes->post('daftar/store', 'MedDaftar::store');
+$routes->group('medrecords', ['namespace' => 'App\Controllers\Medrecords', 'filter' => 'auth'], function ($routes) {
+    $routes->get('reg', 'MedDaftar::create'); // Register Form
+    $routes->post('reg/store', 'MedDaftar::store'); // Register Store
+    
     $routes->get('antrian', 'Antrian::index');
     $routes->get('antrian/detail/(:num)', 'Antrian::detail/$1');
     $routes->get('daftar/konfirm/(:num)', 'MedDaftar::konfirm/$1');
     $routes->get('trans/create/(:num)', 'MedTrans::create/$1');
     $routes->post('trans/store', 'MedTrans::store');
-    $routes->get('trans', 'MedTrans::index');
+    $routes->get('rawat_jalan', 'MedTrans::index');
+    $routes->get('rawat_inap', 'MedTrans::rawat_inap');
+    $routes->get('aksi/(:num)', 'MedTrans::aksi/$1');
+    $routes->post('cart_tindakan', 'MedTrans::cart_tindakan');
+    $routes->get('cart_tindakan_del/(:num)', 'MedTrans::cart_tindakan_del/$1');
+    $routes->post('add_icd', 'MedTrans::addICD');
+    $routes->post('delete_icd/(:num)', 'MedTrans::deleteICD/$1');
+    $routes->post('cart_icd', 'MedTrans::cart_icd');
+    $routes->post('store_periksa', 'MedTrans::store_periksa');
+    $routes->post('upload/(:num)', 'Medrecords\MedTransFile::upload/$1');
+    $routes->get('patient/cards/(:num)', 'MedTrans::pdf_kartu_pasien/$1');
+    $routes->get('patient/label/(:num)', 'MedTrans::pdf_label/$1');
+    $routes->get('rawat_inap', 'Medrecords\MedTrans::rawat_inap');
+    $routes->post('cart_icd', 'Medrecords\MedTrans::cart_icd');
 });
 /* -- END -- */
 
@@ -336,6 +349,10 @@ $routes->group('pengaturan', ['filter' => 'auth'], function ($routes) {
 $routes->group('publik', function ($routes) {
     $routes->get('items', 'Publik::getItems');
     $routes->get('items_stock', 'Publik::getItemsStock');
+    $routes->get('tindakan/(:num)', 'Publik::getTindakan/$1');
+    $routes->post('deleteTindakan/(:num)', 'Publik::deleteTindakan/$1');
+    $routes->get('icd/(:num)', 'Publik::getIcd/$1');
+    $routes->get('get_patient_icd/(:num)', 'Publik::getPatientICD/$1');
 });
 
 $routes->group('', ['filter' => 'auth'], function($routes) {

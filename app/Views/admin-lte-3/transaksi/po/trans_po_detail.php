@@ -107,23 +107,21 @@
             <a href="<?= base_url("transaksi/po/edit/{$po->id}") ?>" class="btn btn-warning rounded-0">
                 <i class="fas fa-edit"></i> Edit
             </a>
-            <a href="<?= base_url("transaksi/po/delete/{$po->id}") ?>" 
-               class="btn btn-danger rounded-0"
-               onclick="return confirm('Apakah anda yakin ingin menghapus PO ini?')">
+            <a href="<?= base_url("transaksi/po/delete/{$po->id}") ?>" class="btn btn-danger rounded-0"
+                onclick="return confirm('Apakah anda yakin ingin menghapus PO ini?')">
                 <i class="fas fa-trash"></i> Hapus
             </a>
+        <?php else: ?>
+            <?php if ($po->status == '4'): ?>
+                <a href="<?= base_url("transaksi/beli/create?id_po=$po->id") ?>" class="btn btn-primary rounded-0">
+                    <i class="fas fa-file-invoice"></i> Buat Faktur
+                </a>
             <?php else: ?>
                 <a href="<?= base_url("transaksi/po/proses/{$po->id}") ?>" class="btn btn-success rounded-0">
                     <i class="fas fa-check"></i> Proses
                 </a>
-                <?php if ($po->status == '1'): ?>
-                    <a href="<?= base_url("transaksi/beli/create?id_po=$po->id") ?>" class="btn btn-primary rounded-0">
-                        <i class="fas fa-file-invoice"></i> Buat Faktur
-                    </a>
-                <?php endif; ?>
-
-            <?php endif ?>
+            <?php endif; ?>
+        <?php endif ?>
     </div>
 </div>
-
-<?= $this->endSection() ?> 
+<?= $this->endSection() ?>

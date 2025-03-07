@@ -53,6 +53,7 @@ if (!isset($Pengaturan)) {
 
     <!-- jQuery UI -->
     <link rel="stylesheet" href="<?= base_url('public/assets/theme/admin-lte-3/plugins/jquery-ui/jquery-ui.min.css') ?>">
+    <meta name="<?= csrf_token() ?>" content="<?= csrf_hash() ?>" />
 </head>
 
 <body class="hold-transition sidebar-mini">
@@ -142,5 +143,8 @@ if (!isset($Pengaturan)) {
 
     <!-- jQuery UI -->
     <script src="<?= base_url('public/assets/theme/admin-lte-3/plugins/jquery-ui/jquery-ui.min.js') ?>"></script>
+
+    <!-- Select2 -->
+    <script src="<?= base_url('public/assets/theme/admin-lte-3/plugins/select2/js/select2.full.min.js') ?>"></script>
 </body>
 </html>

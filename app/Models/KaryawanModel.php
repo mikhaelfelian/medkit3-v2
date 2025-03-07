@@ -87,4 +87,19 @@ class KaryawanModel extends Model
 
         return $labels[$status] ?? '-';
     }
+
+    /**
+     * Get karyawan by group ID
+     * 
+     * @param int $groupId The group ID to filter by
+     * @return array Array of karyawan objects
+     */
+    public function getByGroup($groupId)
+    {
+        return $this->select('tbl_m_karyawan.*')
+                    ->where('tbl_m_karyawan.id_user_group', $groupId)
+                    ->where('tbl_m_karyawan.status', '1')
+                    ->orderBy('tbl_m_karyawan.nama', 'ASC')
+                    ->findAll();
+    }
 } 
