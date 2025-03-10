@@ -35,3 +35,4 @@ deploy:
   script:
     - echo "Deploying application..."
     - rsync -avz --exclude 'writable/cache/*' ./ user@server:/var/www/html/
+
